@@ -1,0 +1,66 @@
+<% content_for :title, "Email list · Admin" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold tracking-tight">Email list</h1>
+  <div class="flex items-center gap-3">
+    <%= link_to "Export CSV", admin_subscribers_path(format: :csv, q: @query.presence),
+          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+    <%= link_to "Add subscriber", new_admin_subscriber_path,
+          class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+  </div>
+</div>
+
+<%# Counts %>
+<div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <% [["Total", @counts[:total], "text-neutral-900"],
+      ["Confirmed", @counts[:confirmed], "text-emerald-600"],
+      ["Unconfirmed", @counts[:unconfirmed], "text-amber-600"],
+      ["Unsubscribed", @counts[:unsubscribed], "text-neutral-400"]].each do |label, count, color| %>
+    <div class="rounded-xl border border-neutral-200 bg-white p-4">
+      <div class="text-2xl font-bold <%= color %>"><%= count %></div>
+      <div class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></div>
+    </div>
+  <% end %>
+</div>
+
+<%# Search %>
+<%= form_with url: admin_subscribers_path, method: :get, class: "mt-6 flex gap-2" do |f| %>
+  <%= f.search_field :q, value: @query, placeholder: "Search by email…",
+        class: "w-full max-w-sm rounded-md border border-neutral-300 px-3 py-1.5 text-sm focus:border-neutral-900 focus:outline-none" %>
+  <%= f.submit "Search", class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50 cursor-pointer" %>
+  <% if @query.present? %>
+    <%= link_to "Clear", admin_subscribers_path, class: "px-2 py-1.5 text-sm text-neutral-500 hover:text-neutral-900" %>
+  <% end %>
+<% end %>
+
+<%# List %>
+<div class="mt-4 overflow-hidden rounded-xl border border-neutral-200 bg-white divide-y divide-neutral-200">
+  <% if @subscribers.any? %>
+    <% @subscribers.each do |subscriber| %>
+      <div class="flex flex-wrap items-center gap-3 px-4 py-3">
+        <div class="flex-1 min-w-0">
+          <p class="font-medium truncate"><%= subscriber.email %></p>
+          <p class="text-xs text-neutral-500">
+            joined <%= subscriber.created_at.to_date.to_fs(:long) %>
+            <% if subscriber.confirmed_at %> · confirmed <%= subscriber.confirmed_at.to_date.to_fs(:long) %><% end %>
+          </p>
+        </div>
+        <%= tag.span subscriber.status,
+              class: "rounded-full px-2.5 py-0.5 text-xs font-semibold #{status_badge_class(subscriber.status)}" %>
+        <div class="flex shrink-0 items-center gap-2">
+          <% if subscriber.status == "unconfirmed" %>
+            <%= button_to "Resend", resend_confirmation_admin_subscriber_path(subscriber), method: :post,
+                  class: "rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold text-neutral-600 hover:bg-neutral-50" %>
+          <% end %>
+          <%= button_to "Remove", admin_subscriber_path(subscriber), method: :delete,
+                form: { data: { turbo_confirm: "Remove #{subscriber.email}?" } },
+                class: "rounded-md border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50" %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="px-4 py-6 text-sm text-neutral-500">
+      <%= @query.present? ? "No subscribers match “#{@query}”." : "No subscribers yet." %>
+    </p>
+  <% end %>
+</div>
