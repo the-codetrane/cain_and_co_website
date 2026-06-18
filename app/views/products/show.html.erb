@@ -46,7 +46,7 @@
               <label class="block text-sm font-medium text-neutral-300 mb-2">Select option</label>
               <select name="variant_id" required
                       class="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-sm focus:border-white focus:outline-none">
-                <% @product.variants.select(&:in_stock?).each do |variant| %>
+                <% in_stock_variants.each do |variant| %>
                   <option value="<%= variant.id %>">
                     <%= variant.name %> — $<%= "%.2f" % variant.price_dollars %>
                   </option>

@@ -48,6 +48,10 @@ Rails.application.routes.draw do
   resource :cart, only: %i[show] do
     resources :cart_items, only: %i[create update destroy]
   end
+  post "checkout" => "checkout#create", as: :checkout
+  get  "orders/:id/success" => "orders#success", as: :order_success
+  get  "orders/:id/cancel"  => "orders#cancel",  as: :order_cancel
+  post "webhooks/stripe" => "stripe_webhooks#create", as: :stripe_webhook
 
   # Newsletter (account-free, double opt-in)
   post "newsletter/subscribe"          => "newsletter/subscriptions#create",  as: :newsletter_subscribe

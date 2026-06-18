@@ -27,7 +27,9 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <%= form_with url: cart_cart_item_path(item), method: :patch, class: "flex items-center gap-1" do |f| %>
+            <%= form_with url: cart_cart_item_path(item), method: :patch,
+                          class: "flex items-center gap-1",
+                          data: { controller: "auto-submit" } do |f| %>
               <%= f.number_field :quantity, value: item.quantity, min: 0, max: 99,
                     class: "w-16 rounded-md border border-neutral-700 bg-neutral-800 px-2 py-1 text-center text-sm",
                     data: { action: "change->auto-submit#submit" } %>
@@ -53,9 +55,9 @@
         <span>$<%= "%.2f" % (@cart.total_cents / 100.0) %></span>
       </div>
       <p class="mt-1 text-xs text-neutral-500">Shipping calculated at checkout</p>
-      <div class="mt-5 rounded-xl border border-dashed border-neutral-700 p-4 text-center">
-        <p class="text-sm text-neutral-400">Secure checkout via Stripe — coming soon</p>
-      </div>
+      <%= button_to "Checkout with Stripe →", checkout_path,
+            class: "mt-5 w-full rounded-xl bg-white py-3 text-center font-bold text-black hover:bg-neutral-100 transition",
+            data: { turbo: false } %>
     </div>
 
     <div class="mt-4 text-center">

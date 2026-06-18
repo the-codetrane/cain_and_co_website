@@ -27,7 +27,7 @@
                 <div class="font-medium"><%= order.buyer_name %></div>
                 <div class="text-neutral-400"><%= order.buyer_email %></div>
               </td>
-              <td class="px-4 py-3 text-neutral-500"><%= order.order_items.sum(:quantity) %></td>
+              <td class="px-4 py-3 text-neutral-500"><%= order.order_items.sum { |i| i.quantity } %></td>
               <td class="px-4 py-3">$<%= "%.2f" % order.total_dollars %></td>
               <td class="px-4 py-3 text-neutral-500"><%= order.created_at.strftime("%b %-d") %></td>
               <td class="px-4 py-3 text-right">
