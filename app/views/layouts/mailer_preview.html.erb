@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Preview · <%= @newsletter.subject %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <%= stylesheet_link_tag "tailwind", "application", "actiontext", "data-turbo-track": "reload" %>
+  </head>
+  <body class="bg-neutral-200 py-10">
+    <div class="mx-auto max-w-2xl">
+      <p class="mb-3 text-center text-xs uppercase tracking-widest text-neutral-500">Email preview</p>
+      <div class="rounded-lg bg-white p-8 shadow-sm">
+        <%= yield %>
+      </div>
+    </div>
+  </body>
+</html>

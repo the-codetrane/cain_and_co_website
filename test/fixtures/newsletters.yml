@@ -1,0 +1,13 @@
+draft_issue:
+  subject: "Draft — June Update"
+  status: 0
+
+scheduled_issue:
+  subject: "Scheduled — July Update"
+  status: 1
+  scheduled_at: <%= 2.days.from_now.to_fs(:db) %>
+
+sent_issue:
+  subject: "Sent — May Update"
+  status: 3
+  sent_at: <%= 5.days.ago.to_fs(:db) %>

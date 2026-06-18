@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_192219) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_193513) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -47,6 +47,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_192219) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "deliveries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error"
+    t.integer "newsletter_id", null: false
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.integer "subscriber_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["newsletter_id", "subscriber_id"], name: "index_deliveries_on_newsletter_id_and_subscriber_id", unique: true
+    t.index ["newsletter_id"], name: "index_deliveries_on_newsletter_id"
+    t.index ["subscriber_id"], name: "index_deliveries_on_subscriber_id"
+  end
+
+  create_table "newsletters", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "scheduled_at"
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.string "subject", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -102,5 +124,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_192219) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "deliveries", "newsletters"
+  add_foreign_key "deliveries", "subscribers"
   add_foreign_key "sessions", "users"
 end

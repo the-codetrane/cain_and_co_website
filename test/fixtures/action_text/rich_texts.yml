@@ -1,4 +1,14 @@
-# one:
-#   record: name_of_fixture (ClassOfFixture)
-#   name: content
-#   body: <p>In a <i>million</i> stars!</p>
+draft_issue_body:
+  record: draft_issue (Newsletter)
+  name: body
+  body: <div>Hello from the band — new shows coming up!</div>
+
+scheduled_issue_body:
+  record: scheduled_issue (Newsletter)
+  name: body
+  body: <div>Save the date for our July run.</div>
+
+sent_issue_body:
+  record: sent_issue (Newsletter)
+  name: body
+  body: <div>Thanks for a great May.</div>

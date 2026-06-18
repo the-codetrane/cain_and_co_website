@@ -1,0 +1,5 @@
+sent_issue_to_confirmed:
+  newsletter: sent_issue
+  subscriber: confirmed_fan
+  status: 1
+  sent_at: <%= 5.days.ago.to_fs(:db) %>

@@ -1,0 +1,7 @@
+<%= @newsletter.body.to_plain_text %>
+
+--
+You're receiving this because you subscribed to the Cain & Co. newsletter.
+Unsubscribe: <%= @unsubscribe_url %>
+
+<%= ENV.fetch("MAIL_ADDRESS", "Cain & Co. · mailing address on file") %>

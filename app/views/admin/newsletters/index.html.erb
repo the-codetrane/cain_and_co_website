@@ -1,0 +1,32 @@
+<% content_for :title, "Newsletter · Admin" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold tracking-tight">Newsletter</h1>
+  <%= link_to "New newsletter", new_admin_newsletter_path,
+        class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+</div>
+
+<div class="mt-6 overflow-hidden rounded-xl border border-neutral-200 bg-white divide-y divide-neutral-200">
+  <% if @newsletters.any? %>
+    <% @newsletters.each do |newsletter| %>
+      <%= link_to admin_newsletter_path(newsletter), class: "flex flex-wrap items-center gap-3 px-4 py-3 hover:bg-neutral-50" do %>
+        <div class="flex-1 min-w-0">
+          <p class="font-medium truncate"><%= newsletter.subject %></p>
+          <p class="text-xs text-neutral-500">
+            <% if newsletter.sent? && newsletter.sent_at %>
+              sent <%= newsletter.sent_at.to_date.to_fs(:long) %>
+            <% elsif newsletter.scheduled? && newsletter.scheduled_at %>
+              scheduled for <%= newsletter.scheduled_at.to_fs(:long) %>
+            <% else %>
+              created <%= newsletter.created_at.to_date.to_fs(:long) %>
+            <% end %>
+          </p>
+        </div>
+        <%= tag.span newsletter.status,
+              class: "rounded-full px-2.5 py-0.5 text-xs font-semibold #{newsletter_status_class(newsletter.status)}" %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="px-4 py-6 text-sm text-neutral-500">No newsletters yet. Create your first draft.</p>
+  <% end %>
+</div>

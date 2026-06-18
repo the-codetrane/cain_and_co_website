@@ -1,0 +1,14 @@
+<%# The rich-text body composed by the admin in Trix. Active Storage images
+    resolve to absolute URLs via default_url_options[:host]. %>
+<%= @newsletter.body %>
+
+<hr style="margin:32px 0 16px;border:none;border-top:1px solid #ddd;">
+
+<p style="color:#888;font-size:12px;line-height:1.5;">
+  You're receiving this because you subscribed to the Cain &amp; Co. newsletter.<br>
+  <%= link_to "Unsubscribe", @unsubscribe_url, style: "color:#888;" %> at any time.
+</p>
+
+<p style="color:#888;font-size:12px;line-height:1.5;">
+  <%= ENV.fetch("MAIL_ADDRESS", "Cain & Co. · mailing address on file") %>
+</p>
