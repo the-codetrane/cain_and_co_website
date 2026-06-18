@@ -1,0 +1,7 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  token: cart_token_one_abc123
+
+two:
+  token: cart_token_two_xyz789

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product: one
+  name: One Size
+  price_cents: 2500
+  stock_quantity: 10
+  sku: PROD-001-OS
+
+two:
+  product: two
+  name: Medium
+  price_cents: 3000
+  stock_quantity: 5
+  sku: PROD-002-M

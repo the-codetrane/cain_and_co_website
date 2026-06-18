@@ -32,12 +32,22 @@ Rails.application.routes.draw do
         post :generate
       end
     end
+    resources :products do
+      resources :variants, except: %i[show index]
+    end
+    resources :orders, only: %i[index show] do
+      member { patch :fulfill }
+    end
   end
 
   # Public, fan-facing pages
   get "about" => "pages#about", as: :about
   get "shows/past" => "shows#past", as: :past_shows
   resources :shows, only: :index
+  resources :products, only: %i[index show]
+  resource :cart, only: %i[show] do
+    resources :cart_items, only: %i[create update destroy]
+  end
 
   # Newsletter (account-free, double opt-in)
   post "newsletter/subscribe"          => "newsletter/subscriptions#create",  as: :newsletter_subscribe

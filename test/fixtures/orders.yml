@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  status: paid
+  buyer_name: Alice Fan
+  buyer_email: alice@example.com
+  shipping_name: Alice Fan
+  shipping_address1: 123 Main St
+  shipping_city: Nashville
+  shipping_state: TN
+  shipping_zip: "37201"
+  shipping_country: US
+  subtotal_cents: 2500
+  shipping_cents: 500
+  total_cents: 3000
+  stripe_checkout_session_id: cs_test_abc123
+  stripe_payment_intent_id: pi_test_abc123
+
+two:
+  status: fulfilled
+  buyer_name: Bob Fan
+  buyer_email: bob@example.com
+  shipping_name: Bob Fan
+  shipping_address1: 456 Oak Ave
+  shipping_city: Austin
+  shipping_state: TX
+  shipping_zip: "78701"
+  shipping_country: US
+  subtotal_cents: 3000
+  shipping_cents: 500
+  total_cents: 3500
+  stripe_checkout_session_id: cs_test_xyz789
+  stripe_payment_intent_id: pi_test_xyz789

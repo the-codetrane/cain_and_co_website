@@ -1,0 +1,79 @@
+<% content_for :title, "#{@product.name} · Merch · Cain & Co." %>
+
+<section class="container mx-auto px-5 py-16 max-w-4xl">
+  <div class="mb-6">
+    <%= link_to "← Merch", products_path, class: "text-sm text-neutral-400 hover:text-white" %>
+  </div>
+
+  <div class="grid gap-10 md:grid-cols-2">
+    <%# Image gallery %>
+    <div>
+      <% if @product.images.attached? %>
+        <div class="aspect-square rounded-2xl overflow-hidden bg-neutral-900">
+          <%= image_tag @product.images.first.variant(resize_to_fill: [600, 600]),
+                class: "w-full h-full object-cover",
+                alt: @product.name %>
+        </div>
+        <% if @product.images.count > 1 %>
+          <div class="mt-3 flex gap-3 overflow-x-auto">
+            <% @product.images.each do |image| %>
+              <%= image_tag image.variant(resize_to_fill: [100, 100]),
+                    class: "h-20 w-20 flex-shrink-0 rounded-lg object-cover border border-neutral-700",
+                    alt: @product.name %>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="aspect-square rounded-2xl bg-neutral-900 flex items-center justify-center">
+          <span class="text-7xl text-neutral-700">🎸</span>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Product info + add to cart %>
+    <div>
+      <h1 class="text-3xl font-black tracking-tight"><%= @product.name %></h1>
+
+      <% if @product.description.present? %>
+        <p class="mt-4 text-neutral-300 leading-relaxed"><%= @product.description %></p>
+      <% end %>
+
+      <% in_stock_variants = @product.variants.select(&:in_stock?) %>
+      <% if in_stock_variants.any? %>
+        <%= form_with url: cart_cart_items_path, method: :post, class: "mt-8 space-y-4" do |f| %>
+          <% if @product.variants.many? %>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Select option</label>
+              <select name="variant_id" required
+                      class="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-sm focus:border-white focus:outline-none">
+                <% @product.variants.select(&:in_stock?).each do |variant| %>
+                  <option value="<%= variant.id %>">
+                    <%= variant.name %> — $<%= "%.2f" % variant.price_dollars %>
+                  </option>
+                <% end %>
+              </select>
+            </div>
+          <% else %>
+            <% variant = in_stock_variants.first %>
+            <%= hidden_field_tag :variant_id, variant.id %>
+            <p class="text-2xl font-bold">$<%= "%.2f" % variant.price_dollars %></p>
+          <% end %>
+
+          <button type="submit"
+                  class="w-full rounded-full bg-white px-6 py-3.5 font-semibold text-neutral-900 hover:bg-neutral-200 transition-colors">
+            Add to cart
+          </button>
+        <% end %>
+      <% else %>
+        <div class="mt-8">
+          <p class="text-lg font-semibold text-red-400">Out of stock</p>
+          <p class="mt-1 text-sm text-neutral-400">Check back soon, or join the newsletter to hear about restocks.</p>
+        </div>
+      <% end %>
+
+      <% if @product.variants.any? && !@product.variants.map(&:in_stock?).all? && in_stock_variants.any? %>
+        <p class="mt-3 text-xs text-neutral-500">Some options are sold out — only in-stock choices shown above.</p>
+      <% end %>
+    </div>
+  </div>
+</section>
