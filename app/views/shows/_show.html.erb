@@ -13,7 +13,7 @@
       <%= show.venue_name %><% if show.location.present? %> &middot; <%= show.location %><% end %>
     </p>
     <p class="mt-1 text-sm text-neutral-500">
-      <%= show.starts_at.strftime("%A, %B %-d &middot; %-l:%M %p").html_safe %>
+      <%= show.starts_at.strftime("%A, %B %-d · %-l:%M %p") %>
     </p>
     <% if show.canceled? %>
       <span class="mt-2 inline-block rounded-full bg-red-900/60 border border-red-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-red-100">Canceled</span>

@@ -15,9 +15,29 @@ class ShowTest < ActiveSupport::TestCase
     assert_not_includes Show.upcoming, show
   end
 
-  test "ticket_url returns the first offer url" do
+  test "ticket_url returns the first available offer url" do
     assert_equal "https://tickets.example.com/echo", shows(:upcoming).ticket_url
     assert_nil shows(:past).ticket_url
+  end
+
+  test "ticket_url hides sold-out synced offers" do
+    show = shows(:upcoming)
+    show.update!(offers: [ { "type" => "Tickets", "url" => "https://x.test", "status" => "sold out" } ])
+    assert_nil show.ticket_url
+  end
+
+  test "ticket_url falls back to the info url for manual shows" do
+    show = Show.create!(title: "House show", starts_at: 3.days.from_now, source: "manual",
+                        bandsintown_url: "https://info.test/show")
+    assert_equal "https://info.test/show", show.ticket_url
+  end
+
+  test "a show starting exactly now is upcoming, not past" do
+    freeze_time do
+      show = Show.create!(title: "Now", starts_at: Time.current, source: "manual")
+      assert_includes Show.upcoming, show
+      assert_not_includes Show.past, show
+    end
   end
 
   test "location joins present parts" do

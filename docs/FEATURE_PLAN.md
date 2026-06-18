@@ -46,9 +46,12 @@ newsletter with AI, and runs the store.
   sessions + passwords controllers, `PasswordsMailer`.
 - **No signup controller** (the generator omits it by design — exactly what we want).
 - Seed a single admin in `db/seeds.rb` from `ENV["ADMIN_PASSWORD"]`.
-- `require_authentication` is global/opt-out → all **public** controllers must call
-  `allow_unauthenticated_access`. Pattern: protected area under `Admin::` base controller; public
-  controllers opt out.
+- **Access model — public-by-default with one admin chokepoint.** The generator's
+  `require_authentication` is global/opt-out, but because this site is overwhelmingly public
+  (account-free fans), `ApplicationController` calls `allow_unauthenticated_access` to make the whole
+  site public, and `Admin::BaseController` re-adds `require_authentication`. Every admin controller
+  inherits `Admin::BaseController`, so there is a single place to audit instead of an opt-out on every
+  public controller. (Sign-out also requires auth so `Current.session` is resumed.)
 - Password reset flow works out of the box (needs SMTP + `default_url_options[:host]`).
 
 ### 3. Shows / tour dates (Bandsintown-synced)

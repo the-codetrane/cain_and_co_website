@@ -13,16 +13,25 @@ class Show < ApplicationRecord
   scope :bandsintown, -> { where(source: "bandsintown") }
   scope :manual, -> { where(source: "manual") }
   scope :upcoming, -> { active.where(starts_at: Time.current..).order(:starts_at) }
-  scope :past, -> { where(starts_at: ..Time.current).order(starts_at: :desc) }
+  # Exclusive upper bound so a show starting exactly at Time.current is "upcoming", not both.
+  scope :past, -> { where(starts_at: ...Time.current).order(starts_at: :desc) }
   scope :featured, -> { active.where(featured: true) }
 
   def canceled?
     status == "canceled"
   end
 
-  # The first available ticket offer, if any.
+  # Best ticketing/info link for the card's "Tickets" button, or nil when there's
+  # nothing actionable to link to. Prefers an available Bandsintown offer; for manual
+  # shows (which carry no offers) falls back to the admin-entered ticket/info URL.
+  # Synced shows whose offers are all sold out intentionally return nil.
   def ticket_url
-    Array(offers).find { |o| o.is_a?(Hash) && o["url"].present? }&.dig("url")
+    available = Array(offers).find do |o|
+      o.is_a?(Hash) && o["url"].present? && offer_available?(o["status"])
+    end
+    return available["url"] if available
+
+    bandsintown_url.presence if Array(offers).empty?
   end
 
   def location
@@ -58,5 +67,13 @@ class Show < ApplicationRecord
     )
     show.save!
     show
+  end
+
+  private
+
+  # Bandsintown offer status is "available" when on sale; treat a missing status as
+  # available so we don't hide a valid link, but hide explicitly sold-out offers.
+  def offer_available?(status)
+    status.blank? || status.to_s.casecmp?("available")
   end
 end
