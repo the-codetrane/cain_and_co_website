@@ -1,0 +1,8 @@
+<% content_for :title, "Edit newsletter · Admin" %>
+
+<div class="mb-6">
+  <%= link_to "← Back", admin_newsletter_path(@newsletter), class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+  <h1 class="mt-2 text-2xl font-bold tracking-tight">Edit draft</h1>
+</div>
+
+<%= render "form", newsletter: @newsletter %>

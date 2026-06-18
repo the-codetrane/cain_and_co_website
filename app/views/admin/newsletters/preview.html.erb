@@ -1,0 +1,15 @@
+<h1 class="text-xl font-bold tracking-tight"><%= @newsletter.subject %></h1>
+
+<div class="trix-content prose prose-neutral mt-4 max-w-none">
+  <%= @newsletter.body %>
+</div>
+
+<hr class="my-8 border-neutral-200">
+
+<p class="text-xs text-neutral-400">
+  You're receiving this because you subscribed to the Cain &amp; Co. newsletter.
+  Unsubscribe at any time.
+</p>
+<p class="mt-2 text-xs text-neutral-400">
+  <%= ENV.fetch("MAIL_ADDRESS", "Cain & Co. · mailing address on file") %>
+</p>

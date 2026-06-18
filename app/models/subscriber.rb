@@ -7,6 +7,8 @@ class Subscriber < ApplicationRecord
   generates_token_for :confirmation, expires_in: 2.days
   generates_token_for :unsubscribe
 
+  has_many :deliveries, dependent: :destroy
+
   normalizes :email, with: ->(e) { e.to_s.strip.downcase }
 
   validates :email, presence: true,

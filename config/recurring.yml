@@ -16,3 +16,8 @@ production:
   sync_bandsintown_events:
     class: SyncBandsintownEventsJob
     schedule: every hour at minute 5
+  # Resume in-flight newsletter sends: pick up recipients deferred by the daily
+  # cap (after the count rolls over) and finalize completed sends.
+  drain_newsletter_deliveries:
+    class: DrainNewsletterDeliveriesJob
+    schedule: every hour at minute 20

@@ -20,6 +20,14 @@ Rails.application.routes.draw do
     resources :subscribers, only: %i[index new create destroy] do
       member { post :resend_confirmation }
     end
+    resources :newsletters do
+      member do
+        get  :preview
+        post :send_now
+        post :schedule
+        post :cancel
+      end
+    end
   end
 
   # Public, fan-facing pages

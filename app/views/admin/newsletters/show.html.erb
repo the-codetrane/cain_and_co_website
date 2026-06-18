@@ -1,0 +1,87 @@
+<% content_for :title, "#{@newsletter.subject} · Admin" %>
+
+<div class="mb-6">
+  <%= link_to "← Newsletters", admin_newsletters_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+  <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-2xl font-bold tracking-tight"><%= @newsletter.subject %></h1>
+    <%= tag.span @newsletter.status,
+          class: "rounded-full px-3 py-1 text-xs font-semibold #{newsletter_status_class(@newsletter.status)}" %>
+  </div>
+</div>
+
+<%# Status-specific banner %>
+<% if @newsletter.scheduled? %>
+  <div class="mb-6 rounded-md bg-indigo-50 border border-indigo-200 px-4 py-3 text-sm text-indigo-900">
+    Scheduled to send <strong><%= @newsletter.scheduled_at&.to_fs(:long) %></strong>.
+  </div>
+<% elsif @newsletter.sending? %>
+  <div class="mb-6 rounded-md bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
+    Sending in progress — <%= @stats[:sent] %> of <%= @stats[:total] %> delivered.
+    Reload to see progress.
+  </div>
+<% elsif @newsletter.sent? %>
+  <div class="mb-6 rounded-md bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-900">
+    Sent <%= @newsletter.sent_at&.to_fs(:long) %> ·
+    <%= @stats[:sent] %> delivered<%= ", #{@stats[:failed]} failed" if @stats[:failed].positive? %>.
+  </div>
+<% end %>
+
+<%# Delivery stats (once a send has started) %>
+<% unless @newsletter.draft? %>
+  <div class="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <% [["Recipients", @stats[:total], "text-neutral-900"],
+        ["Delivered", @stats[:sent], "text-emerald-600"],
+        ["Pending", @stats[:pending], "text-amber-600"],
+        ["Failed", @stats[:failed], "text-red-600"]].each do |label, count, color| %>
+      <div class="rounded-xl border border-neutral-200 bg-white p-4">
+        <div class="text-2xl font-bold <%= color %>"><%= count %></div>
+        <div class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Body preview %>
+<div class="rounded-xl border border-neutral-200 bg-white p-6">
+  <div class="trix-content prose prose-neutral max-w-none">
+    <%= @newsletter.body %>
+  </div>
+</div>
+
+<%# Actions %>
+<div class="mt-6 flex flex-wrap items-center gap-3">
+  <%= link_to "Preview email", preview_admin_newsletter_path(@newsletter), target: "_blank", rel: "noopener",
+        class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+
+  <% if @newsletter.draft? %>
+    <%= link_to "Edit", edit_admin_newsletter_path(@newsletter),
+          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+    <%= button_to "Send now", send_now_admin_newsletter_path(@newsletter), method: :post,
+          form: { data: { turbo_confirm: "Send “#{@newsletter.subject}” to #{Subscriber.active.count} subscribers now?" } },
+          class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+  <% elsif @newsletter.scheduled? %>
+    <%= button_to "Cancel schedule", cancel_admin_newsletter_path(@newsletter), method: :post,
+          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+  <% end %>
+
+  <% unless @newsletter.sent? %>
+    <%= button_to "Delete", admin_newsletter_path(@newsletter), method: :delete,
+          form: { data: { turbo_confirm: "Delete this newsletter?" } },
+          class: "rounded-md border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50" %>
+  <% end %>
+</div>
+
+<%# Schedule controls (draft only) %>
+<% if @newsletter.draft? %>
+  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6">
+    <h2 class="font-semibold">Schedule for later</h2>
+    <%= form_with url: schedule_admin_newsletter_path(@newsletter), method: :post, class: "mt-3 flex flex-wrap items-end gap-3" do |f| %>
+      <div>
+        <%= f.label "newsletter[scheduled_at]", "Send at", class: "block text-sm font-medium text-neutral-700 mb-1" %>
+        <%= f.datetime_local_field "newsletter[scheduled_at]", min: Time.current.strftime("%Y-%m-%dT%H:%M"),
+              class: "rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none", required: true %>
+      </div>
+      <%= f.submit "Schedule", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>
