@@ -115,7 +115,7 @@ class StripeWebhooksControllerTest < ActionDispatch::IntegrationTest
     assert_equal "pending", order.reload.status
   end
 
-  test "cancels order on checkout.session.expired" do
+  test "cancels pending order on checkout.session.expired" do
     order = orders(:one)
     order.update!(status: "pending")
     event = fake_event(type: "checkout.session.expired", stripe_session_id: order.stripe_checkout_session_id)
@@ -124,6 +124,25 @@ class StripeWebhooksControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :ok
     assert_equal "canceled", order.reload.status
+  end
+
+  test "does not cancel a paid order on checkout.session.expired" do
+    order = orders(:one)
+    assert_equal "paid", order.status
+    event = fake_event(type: "checkout.session.expired", stripe_session_id: order.stripe_checkout_session_id)
+
+    post_webhook(event)
+
+    assert_response :ok
+    assert_equal "paid", order.reload.status
+  end
+
+  test "returns 200 and skips fulfillment for unknown session id" do
+    event = fake_event(type: "checkout.session.completed", stripe_session_id: "cs_unknown_xyz")
+
+    post_webhook(event)
+
+    assert_response :ok
   end
 
   # — error handling —

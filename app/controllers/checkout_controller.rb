@@ -69,7 +69,7 @@ class CheckoutController < ApplicationController
         }
       ],
       success_url: order_success_url(order, session_id: "{CHECKOUT_SESSION_ID}"),
-      cancel_url: order_cancel_url(order)
+      cancel_url: order_cancel_url(order, session_id: "{CHECKOUT_SESSION_ID}")
     }
   end
 end

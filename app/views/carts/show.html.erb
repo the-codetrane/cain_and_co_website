@@ -27,7 +27,9 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <%= form_with url: cart_cart_item_path(item), method: :patch, class: "flex items-center gap-1" do |f| %>
+            <%= form_with url: cart_cart_item_path(item), method: :patch,
+                          class: "flex items-center gap-1",
+                          data: { controller: "auto-submit" } do |f| %>
               <%= f.number_field :quantity, value: item.quantity, min: 0, max: 99,
                     class: "w-16 rounded-md border border-neutral-700 bg-neutral-800 px-2 py-1 text-center text-sm",
                     data: { action: "change->auto-submit#submit" } %>

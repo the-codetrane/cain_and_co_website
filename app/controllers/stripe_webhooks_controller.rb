@@ -6,7 +6,7 @@ class StripeWebhooksController < ActionController::Base
   def create
     payload    = request.body.read
     sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
-    webhook_secret = Rails.application.credentials.stripe[:webhook_secret]
+    webhook_secret = Rails.application.credentials.dig(:stripe, :webhook_secret)
 
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, webhook_secret)
@@ -32,7 +32,8 @@ class StripeWebhooksController < ActionController::Base
     stripe_session = event.data.object
     return unless stripe_session.payment_status == "paid"
 
-    order = Order.find_by!(stripe_checkout_session_id: stripe_session.id)
+    order = Order.find_by(stripe_checkout_session_id: stripe_session.id)
+    return unless order
     return if order.paid? || order.fulfilled?
 
     ActiveRecord::Base.transaction do
@@ -70,9 +71,11 @@ class StripeWebhooksController < ActionController::Base
 
   def handle_checkout_canceled(event)
     stripe_session = event.data.object
+    order = Order.find_by(stripe_checkout_session_id: stripe_session.id)
+    return unless order&.pending?
     ActiveRecord::Base.transaction do
       StripeEvent.create!(stripe_event_id: event.id, processed_at: Time.current)
-      Order.find_by(stripe_checkout_session_id: stripe_session.id)&.update!(status: "canceled")
+      order.update!(status: "canceled")
     end
   rescue ActiveRecord::RecordNotUnique
     # Duplicate event.
