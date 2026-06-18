@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+shirt_in_paid_order:
+  order: one
+  variant: shirt_small
+  variant_name: Band Shirt — Small
+  unit_price_cents: 2500
+  quantity: 1
+
+vinyl_in_fulfilled_order:
+  order: two
+  variant: vinyl_standard
+  variant_name: Debut Vinyl — Standard
+  unit_price_cents: 3000
+  quantity: 1

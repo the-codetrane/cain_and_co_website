@@ -12,7 +12,15 @@
       <%= link_to "Shows", shows_path, class: "hover:text-white text-neutral-300" %>
       <%= link_to "About", about_path, class: "hover:text-white text-neutral-300" %>
       <a href="<%= root_path %>#newsletter" class="hover:text-white text-neutral-300">Newsletter</a>
-      <a href="<%= root_path %>#merch" class="hover:text-white text-neutral-300">Merch</a>
+      <%= link_to "Merch", products_path, class: "hover:text-white text-neutral-300" %>
+    </div>
+
+    <div class="hidden md:flex items-center gap-2">
+      <%= link_to cart_path, class: "text-neutral-300 hover:text-white p-1", aria: { label: "Cart" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007 17h10M7 13L5.4 5M17 17a2 2 0 11-4 0 2 2 0 014 0zm-8 0a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      <% end %>
     </div>
 
     <%# Mobile hamburger %>
@@ -35,7 +43,8 @@
       <%= link_to "Shows", shows_path, class: "text-neutral-200" %>
       <%= link_to "About", about_path, class: "text-neutral-200" %>
       <a href="<%= root_path %>#newsletter" class="text-neutral-200">Newsletter</a>
-      <a href="<%= root_path %>#merch" class="text-neutral-200">Merch</a>
+      <%= link_to "Merch", products_path, class: "text-neutral-200" %>
+      <%= link_to "Cart", cart_path, class: "text-neutral-200" %>
     </div>
   </div>
 </header>

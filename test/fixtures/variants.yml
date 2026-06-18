@@ -1,0 +1,22 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+shirt_small:
+  product: published_shirt
+  name: Small
+  price_cents: 2500
+  stock_quantity: 10
+  sku: SHIRT-S
+
+shirt_large:
+  product: published_shirt
+  name: Large
+  price_cents: 2500
+  stock_quantity: 0
+  sku: SHIRT-L
+
+vinyl_standard:
+  product: draft_vinyl
+  name: Standard
+  price_cents: 3000
+  stock_quantity: 5
+  sku: VINYL-STD

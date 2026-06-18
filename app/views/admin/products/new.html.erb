@@ -1,0 +1,10 @@
+<% content_for :title, "New Product · Admin" %>
+
+<div class="mb-6">
+  <%= link_to "← Products", admin_products_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+  <h1 class="mt-2 text-2xl font-bold tracking-tight">New product</h1>
+</div>
+
+<div class="rounded-xl border border-neutral-200 bg-white p-6">
+  <%= render "form", product: @product %>
+</div>

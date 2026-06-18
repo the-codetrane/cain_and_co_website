@@ -1,0 +1,6 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+shirt_in_cart:
+  cart: with_items
+  variant: shirt_small
+  quantity: 2

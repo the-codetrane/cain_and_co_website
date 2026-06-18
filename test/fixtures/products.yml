@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+published_shirt:
+  name: Band Shirt
+  description: Classic tour tee.
+  published: true
+  featured: true
+
+draft_vinyl:
+  name: Debut Vinyl
+  description: Limited pressing.
+  published: false
+  featured: false
