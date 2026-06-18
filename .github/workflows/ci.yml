@@ -75,9 +75,8 @@ jobs:
     #      - 6379:6379
     #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips
-
+      # No Active Storage / image_processing in the test suite yet, so libvips isn't
+      # needed here. Re-add the apt install if/when model tests exercise image variants.
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -93,7 +92,25 @@ jobs:
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test
 
+  # Cheap detector: only spin up the (slow, browser-driven) system-test job once
+  # system tests actually exist. Auto-enables when test/system/*_test.rb is added.
+  detect-system-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.check.outputs.present }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        run: |
+          if compgen -G "test/system/*_test.rb" > /dev/null; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
   system-test:
+    needs: detect-system-tests
+    if: needs.detect-system-tests.outputs.present == 'true'
     runs-on: ubuntu-latest
 
     # services:
