@@ -20,6 +20,9 @@ gem "jbuilder"
 # Use Tailwind CSS via the standalone CLI (no Node) [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails"
 
+# CSV is no longer a default gem as of Ruby 3.4; used for admin subscriber export
+gem "csv"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
 

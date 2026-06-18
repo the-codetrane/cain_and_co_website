@@ -1,0 +1,10 @@
+<% content_for :title, "Link expired · Cain & Co." %>
+
+<section class="container mx-auto px-5 py-24 max-w-lg text-center">
+  <h1 class="text-4xl font-black tracking-tight">This link isn't valid</h1>
+  <p class="mt-5 text-lg text-neutral-300">
+    Your confirmation link is invalid or has expired. No problem — just sign up again and we'll send a fresh one.
+  </p>
+  <%= link_to "Sign up again", root_path(anchor: "newsletter"),
+        class: "mt-10 inline-block rounded-full bg-white px-8 py-3 font-semibold text-neutral-900 hover:bg-neutral-200" %>
+</section>

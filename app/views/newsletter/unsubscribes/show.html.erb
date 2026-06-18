@@ -1,0 +1,15 @@
+<% content_for :title, "Unsubscribe · Cain & Co." %>
+
+<section class="container mx-auto px-5 py-24 max-w-lg text-center">
+  <h1 class="text-4xl font-black tracking-tight">Unsubscribe</h1>
+  <p class="mt-5 text-lg text-neutral-300">
+    Stop receiving the Cain &amp; Co. newsletter at <strong><%= @subscriber.email %></strong>?
+  </p>
+  <%= form_with url: newsletter_unsubscribe_path(token: params[:token]), method: :post, class: "mt-10" do %>
+    <%= submit_tag "Unsubscribe me",
+          class: "rounded-full bg-white px-8 py-3 font-semibold text-neutral-900 hover:bg-neutral-200 cursor-pointer" %>
+  <% end %>
+  <p class="mt-6">
+    <%= link_to "Never mind, keep me subscribed", root_path, class: "text-sm text-neutral-400 hover:text-white" %>
+  </p>
+</section>

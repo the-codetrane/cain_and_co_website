@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+confirmed_fan:
+  email: confirmed@example.com
+  confirmed_at: <%= 10.days.ago.to_fs(:db) %>
+
+unconfirmed_fan:
+  email: pending@example.com
+
+unsubscribed_fan:
+  email: gone@example.com
+  confirmed_at: <%= 30.days.ago.to_fs(:db) %>
+  unsubscribed_at: <%= 2.days.ago.to_fs(:db) %>

@@ -57,7 +57,14 @@
     <div id="newsletter" class="rounded-2xl border border-neutral-800 bg-neutral-900 p-8 scroll-mt-24">
       <h3 class="text-xl font-bold">Monthly newsletter</h3>
       <p class="mt-3 text-neutral-400">News, shows, and releases in your inbox once a month.</p>
-      <p class="mt-6 inline-block rounded-full bg-neutral-800 px-3 py-1 text-xs uppercase tracking-widest text-neutral-300">Coming soon</p>
+      <%= form_with url: newsletter_subscribe_path, method: :post, class: "mt-6 flex flex-col gap-3" do |f| %>
+        <%= f.email_field "subscriber[email]", required: true, placeholder: "you@email.com",
+              "aria-label": "Email address",
+              class: "w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm placeholder-neutral-500 focus:border-white focus:outline-none" %>
+        <%= f.submit "Subscribe",
+              class: "rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 hover:bg-neutral-200 cursor-pointer" %>
+      <% end %>
+      <p class="mt-3 text-xs text-neutral-500">Double opt-in. Unsubscribe anytime.</p>
     </div>
     <div id="merch" class="rounded-2xl border border-neutral-800 bg-neutral-900 p-8 scroll-mt-24">
       <h3 class="text-xl font-bold">Merch store</h3>
