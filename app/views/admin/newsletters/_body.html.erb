@@ -1,0 +1,12 @@
+<div class="rounded-xl border border-neutral-200 bg-white p-6">
+  <% if newsletter.body.blank? %>
+    <p class="text-sm text-neutral-500">
+      No content yet — generate a draft with AI below, or
+      <%= link_to "write one", edit_admin_newsletter_path(newsletter), class: "underline hover:text-neutral-900" %>.
+    </p>
+  <% else %>
+    <div class="trix-content prose prose-neutral max-w-none">
+      <%= newsletter.body %>
+    </div>
+  <% end %>
+</div>

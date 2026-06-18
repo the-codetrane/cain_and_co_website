@@ -1,5 +1,10 @@
 <% content_for :title, "#{@newsletter.subject} · Admin" %>
 
+<%# Live updates from GenerateNewsletterDraftJob (AI drafting). %>
+<%= turbo_stream_from @newsletter %>
+
+<div id="draft_status" class="mb-6 empty:hidden"></div>
+
 <div class="mb-6">
   <%= link_to "← Newsletters", admin_newsletters_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
   <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
@@ -41,11 +46,9 @@
   </div>
 <% end %>
 
-<%# Body preview %>
-<div class="rounded-xl border border-neutral-200 bg-white p-6">
-  <div class="trix-content prose prose-neutral max-w-none">
-    <%= @newsletter.body %>
-  </div>
+<%# Body preview — replaced live by the AI draft job via Turbo Streams. %>
+<div id="newsletter_body">
+  <%= render "body", newsletter: @newsletter %>
 </div>
 
 <%# Actions %>
@@ -70,6 +73,22 @@
           class: "rounded-md border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50" %>
   <% end %>
 </div>
+
+<%# AI drafting (draft only) %>
+<% if @newsletter.draft? %>
+  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6">
+    <h2 class="font-semibold">Draft with AI</h2>
+    <p class="mt-1 text-sm text-neutral-500">
+      Claude writes a first draft from your upcoming shows and an optional topic. You can edit it afterward.
+    </p>
+    <%= form_with url: regenerate_admin_newsletter_path(@newsletter), method: :post, class: "mt-3 space-y-3" do |f| %>
+      <%= f.text_area "newsletter[ai_topic]", rows: 2, placeholder: "Optional: what should this issue focus on? (e.g. new single, summer tour, merch drop)",
+            class: "block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+      <%= f.submit @newsletter.body.blank? ? "Generate with AI" : "Regenerate with AI",
+            class: "rounded-md bg-neutral-900 px-3 py-2 text-sm font-semibold text-white hover:bg-neutral-700 cursor-pointer" %>
+    <% end %>
+  </div>
+<% end %>
 
 <%# Schedule controls (draft only) %>
 <% if @newsletter.draft? %>

@@ -1,6 +1,6 @@
 module Admin
   class NewslettersController < BaseController
-    before_action :set_newsletter, except: %i[index new create]
+    before_action :set_newsletter, except: %i[index new create generate]
 
     def index
       @newsletters = Newsletter.recent
@@ -47,8 +47,31 @@ module Admin
       render layout: "mailer_preview"
     end
 
+    # Create a draft from a subject + topic and kick off AI generation ("Start with AI").
+    def generate
+      @newsletter = Newsletter.new(subject: params.dig(:newsletter, :subject))
+      if @newsletter.save
+        GenerateNewsletterDraftJob.perform_later(@newsletter.id, topic: ai_topic)
+        redirect_to admin_newsletter_path(@newsletter),
+                    notice: "Generating your draft… this page will update automatically."
+      else
+        @newsletter_ai_topic = ai_topic
+        render :new, status: :unprocessable_entity
+      end
+    end
+
+    # Re-run AI generation for an existing draft.
+    def regenerate
+      return reject_unsendable unless @newsletter.draft?
+
+      GenerateNewsletterDraftJob.perform_later(@newsletter.id, topic: ai_topic)
+      redirect_to admin_newsletter_path(@newsletter),
+                  notice: "Regenerating your draft… this page will update automatically."
+    end
+
     def send_now
       return reject_unsendable unless @newsletter.sendable?
+      return reject_blank_body if @newsletter.body.blank?
 
       @newsletter.update!(status: :sending)
       SendNewsletterJob.perform_later(@newsletter.id)
@@ -58,6 +81,7 @@ module Admin
 
     def schedule
       return reject_unsendable unless @newsletter.sendable?
+      return reject_blank_body if @newsletter.body.blank?
 
       if @newsletter.update(status: :scheduled, scheduled_at: params.dig(:newsletter, :scheduled_at))
         SendNewsletterJob.set(wait_until: @newsletter.scheduled_at).perform_later(@newsletter.id)
@@ -88,9 +112,19 @@ module Admin
       params.require(:newsletter).permit(:subject, :body)
     end
 
+    # The AI topic is a transient hint for the drafter, not a persisted column.
+    def ai_topic
+      params.dig(:newsletter, :ai_topic)
+    end
+
     def reject_unsendable
       redirect_to admin_newsletter_path(@newsletter),
                   alert: "This newsletter has already been sent or scheduled."
+    end
+
+    def reject_blank_body
+      redirect_to admin_newsletter_path(@newsletter),
+                  alert: "Add some content before sending — write it or generate a draft with AI."
     end
   end
 end
