@@ -9,9 +9,9 @@
 #   end
 
 # Seed the single admin user. There is no public signup — this is the only account.
-# Set ADMIN_EMAIL / ADMIN_PASSWORD in the environment (defaults are for local dev only).
+# ADMIN_EMAIL and ADMIN_PASSWORD must be set in the environment — no defaults in production.
 admin_email = ENV.fetch("ADMIN_EMAIL", "admin@cainandco.com")
-admin_password = ENV.fetch("ADMIN_PASSWORD", "change-me-in-production")
+admin_password = ENV.fetch("ADMIN_PASSWORD")
 
 admin = User.find_or_initialize_by(email_address: admin_email)
 admin.password = admin_password
