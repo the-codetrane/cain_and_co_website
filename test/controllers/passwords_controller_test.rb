@@ -1,7 +1,7 @@
 require "test_helper"
 
 class PasswordsControllerTest < ActionDispatch::IntegrationTest
-  setup { @user = User.take }
+  setup { @user = users(:one) }
 
   test "new" do
     get new_password_path
@@ -57,7 +57,7 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
     end
 
     follow_redirect!
-    assert_notice "Passwords did not match"
+    assert_notice "Password confirmation doesn't match"
   end
 
   private

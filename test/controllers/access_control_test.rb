@@ -16,7 +16,7 @@ class AccessControlTest < ActionDispatch::IntegrationTest
   end
 
   test "admin area is reachable after signing in" do
-    sign_in_as(User.take)
+    sign_in_as(users(:one))
     get admin_root_path
     assert_response :success
   end

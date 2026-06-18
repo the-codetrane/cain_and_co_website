@@ -33,7 +33,7 @@ newsletter with AI, and runs the store.
 
 ### 1. Foundation + homepage
 - TailwindCSS install (`bin/rails tailwindcss:install`), mobile-first layout shell, responsive nav,
-  viewport meta. Run watcher via Puma plugin so `bin/dev` stays single-process.
+  viewport meta. Tailwind watcher runs via Foreman (`bin/dev` is Procfile-based, multi-process).
 - Public layout (fan-facing) vs `Admin::` namespaced layout.
 - **Homepage / landing (`root` route):** band hero, intro/about blurb, music/streaming links
   (Spotify/Apple/Bandcamp), and entry points to shows, newsletter signup, and merch. This is the

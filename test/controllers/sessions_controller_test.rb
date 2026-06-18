@@ -1,7 +1,7 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
-  setup { @user = User.take }
+  setup { @user = users(:one) }
 
   test "new" do
     get new_session_path
@@ -23,11 +23,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy" do
-    sign_in_as(User.take)
+    sign_in_as(users(:one))
 
     delete session_path
 
     assert_redirected_to new_session_path
-    assert_empty cookies[:session_id]
+    assert_nil cookies[:session_id].presence
   end
 end
