@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_154119) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_160405) do
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -18,6 +18,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_154119) do
     t.string "user_agent"
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "shows", force: :cascade do |t|
+    t.string "bandsintown_id"
+    t.string "bandsintown_url"
+    t.string "city"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "ends_at"
+    t.boolean "featured", default: false, null: false
+    t.decimal "latitude", precision: 10, scale: 6
+    t.json "lineup"
+    t.decimal "longitude", precision: 10, scale: 6
+    t.json "offers"
+    t.string "region"
+    t.string "source", default: "bandsintown", null: false
+    t.datetime "starts_at", null: false
+    t.string "status", default: "active", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.string "venue_name"
+    t.index ["bandsintown_id"], name: "index_shows_on_bandsintown_id", unique: true
+    t.index ["starts_at"], name: "index_shows_on_starts_at"
+    t.index ["status"], name: "index_shows_on_status"
   end
 
   create_table "users", force: :cascade do |t|

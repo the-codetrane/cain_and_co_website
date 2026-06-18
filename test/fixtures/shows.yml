@@ -1,0 +1,43 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+upcoming:
+  bandsintown_id: "1001"
+  title: "Cain & Co. at The Echo"
+  starts_at: <%= 10.days.from_now.to_fs(:db) %>
+  venue_name: "The Echo"
+  city: "Los Angeles"
+  region: "CA"
+  country: "United States"
+  latitude: 34.078100
+  longitude: -118.260700
+  offers:
+    - type: Tickets
+      url: https://tickets.example.com/echo
+      status: available
+  bandsintown_url: "https://www.bandsintown.com/e/1001"
+  status: active
+  featured: true
+  source: bandsintown
+
+past:
+  bandsintown_id: "1000"
+  title: "Cain & Co. at The Basement"
+  starts_at: <%= 30.days.ago.to_fs(:db) %>
+  venue_name: "The Basement"
+  city: "Nashville"
+  region: "TN"
+  country: "United States"
+  status: active
+  featured: false
+  source: bandsintown
+
+manual_upcoming:
+  title: "Acoustic set at the record shop"
+  starts_at: <%= 5.days.from_now.to_fs(:db) %>
+  venue_name: "Vinyl Corner"
+  city: "Portland"
+  region: "OR"
+  country: "United States"
+  status: active
+  featured: false
+  source: manual
