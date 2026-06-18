@@ -9,8 +9,8 @@
     <%# Desktop links %>
     <div class="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-wide">
       <%= link_to "Home", root_path, class: "hover:text-white text-neutral-300" %>
+      <%= link_to "Shows", shows_path, class: "hover:text-white text-neutral-300" %>
       <%= link_to "About", about_path, class: "hover:text-white text-neutral-300" %>
-      <a href="<%= root_path %>#shows" class="hover:text-white text-neutral-300">Shows</a>
       <a href="<%= root_path %>#newsletter" class="hover:text-white text-neutral-300">Newsletter</a>
       <a href="<%= root_path %>#merch" class="hover:text-white text-neutral-300">Merch</a>
     </div>
@@ -32,8 +32,8 @@
   <div id="mobile-nav-menu" data-mobile-menu-target="menu" class="hidden md:hidden border-t border-neutral-800 px-5 py-4">
     <div class="flex flex-col gap-4 text-sm font-medium uppercase tracking-wide" data-action="click->mobile-menu#close">
       <%= link_to "Home", root_path, class: "text-neutral-200" %>
+      <%= link_to "Shows", shows_path, class: "text-neutral-200" %>
       <%= link_to "About", about_path, class: "text-neutral-200" %>
-      <a href="<%= root_path %>#shows" class="text-neutral-200">Shows</a>
       <a href="<%= root_path %>#newsletter" class="text-neutral-200">Newsletter</a>
       <a href="<%= root_path %>#merch" class="text-neutral-200">Merch</a>
     </div>

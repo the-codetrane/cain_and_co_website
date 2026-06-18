@@ -1,0 +1,34 @@
+<%# Mobile-first show card. Renders a Show. %>
+<article class="rounded-2xl border border-neutral-800 bg-neutral-900 p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center gap-5">
+  <%# Date block %>
+  <div class="shrink-0 text-center sm:w-24">
+    <div class="text-3xl font-black leading-none"><%= show.starts_at.strftime("%-d") %></div>
+    <div class="text-xs uppercase tracking-widest text-neutral-400 mt-1"><%= show.starts_at.strftime("%b %Y") %></div>
+  </div>
+
+  <%# Details %>
+  <div class="flex-1 min-w-0">
+    <h3 class="text-lg font-bold truncate"><%= show.title %></h3>
+    <p class="mt-1 text-neutral-300">
+      <%= show.venue_name %><% if show.location.present? %> &middot; <%= show.location %><% end %>
+    </p>
+    <p class="mt-1 text-sm text-neutral-500">
+      <%= show.starts_at.strftime("%A, %B %-d · %-l:%M %p") %>
+    </p>
+    <% if show.canceled? %>
+      <span class="mt-2 inline-block rounded-full bg-red-900/60 border border-red-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-red-100">Canceled</span>
+    <% end %>
+  </div>
+
+  <%# Actions %>
+  <div class="flex shrink-0 gap-3">
+    <% if show.map_url %>
+      <%= link_to "Map", show.map_url, target: "_blank", rel: "noopener",
+            class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
+    <% end %>
+    <% if show.ticket_url && !show.canceled? %>
+      <%= link_to "Tickets", show.ticket_url, target: "_blank", rel: "noopener",
+            class: "rounded-full bg-white px-5 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-200" %>
+    <% end %>
+  </div>
+</article>
