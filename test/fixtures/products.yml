@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  description: MyText
-  published: false
-  featured: false
+published_shirt:
+  name: Band Shirt
+  description: Classic tour tee.
+  published: true
+  featured: true
 
-two:
-  name: MyString
-  description: MyText
+draft_vinyl:
+  name: Debut Vinyl
+  description: Limited pressing.
   published: false
   featured: false
