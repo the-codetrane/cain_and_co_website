@@ -1,0 +1,23 @@
+<% content_for :title, "Dashboard · Admin" %>
+
+<h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
+<p class="mt-2 text-neutral-500">Welcome back. Manage the site from here.</p>
+
+<%# Phase 1 placeholders — each links out as later phases land. %>
+<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <% [
+       ["Shows", "Sync & feature tour dates", "Phase 2"],
+       ["Email list", "Subscribers & CSV export", "Phase 3"],
+       ["Newsletter", "Compose, AI drafts & send", "Phase 4–5"],
+       ["Store", "Products & orders", "Phase 6"],
+       ["Notifications", "Push to installed fans", "Phase 7"],
+     ].each do |title, desc, phase| %>
+    <div class="rounded-xl border border-neutral-200 bg-white p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="font-semibold"><%= title %></h2>
+        <span class="rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-500"><%= phase %></span>
+      </div>
+      <p class="mt-2 text-sm text-neutral-500"><%= desc %></p>
+    </div>
+  <% end %>
+</div>
