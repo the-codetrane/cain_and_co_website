@@ -52,6 +52,9 @@ gem "anthropic"
 # Stripe payments [https://github.com/stripe/stripe-ruby]
 gem "stripe"
 
+# Web Push notifications (VAPID) [https://github.com/zaru/webpush]
+gem "web-push"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

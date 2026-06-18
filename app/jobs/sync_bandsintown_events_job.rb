@@ -18,17 +18,28 @@ class SyncBandsintownEventsJob < ApplicationJob
       return
     end
 
+    new_upcoming = []
     seen_ids = []
     %w[upcoming past].each do |date|
       client.events(date: date).each do |payload|
         next if payload["id"].blank?
         show = Show.from_bandsintown(payload)
         seen_ids << show.bandsintown_id
+        new_upcoming << show if show.previously_new_record? && date == "upcoming"
       end
     end
 
     canceled = reconcile_upcoming(seen_ids)
     Rails.logger.info("[Bandsintown] synced #{seen_ids.size} events, canceled #{canceled} stale upcoming")
+
+    if new_upcoming.any? && PushSubscription.exists?
+      first = new_upcoming.first
+      BroadcastPushJob.perform_later(
+        title: "New show announced!",
+        body: [ first.title, first.location ].compact_blank.join(" – "),
+        url: "/shows"
+      )
+    end
   end
 
   private

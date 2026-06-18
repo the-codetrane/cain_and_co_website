@@ -4,3 +4,7 @@ import "controllers"
 
 import "trix"
 import "@rails/actiontext"
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker", { scope: "/" })
+}

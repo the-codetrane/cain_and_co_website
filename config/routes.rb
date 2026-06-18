@@ -52,6 +52,7 @@ Rails.application.routes.draw do
   get  "orders/:id/success" => "orders#success", as: :order_success
   get  "orders/:id/cancel"  => "orders#cancel",  as: :order_cancel
   post "webhooks/stripe" => "stripe_webhooks#create", as: :stripe_webhook
+  resources :push_subscriptions, only: :create
 
   # Newsletter (account-free, double opt-in)
   post "newsletter/subscribe"          => "newsletter/subscriptions#create",  as: :newsletter_subscribe
