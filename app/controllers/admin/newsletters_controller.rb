@@ -38,8 +38,12 @@ module Admin
     end
 
     def destroy
-      @newsletter.destroy
-      redirect_to admin_newsletters_path, notice: "Newsletter deleted.", status: :see_other
+      if @newsletter.sending? || @newsletter.sent?
+        redirect_to admin_newsletter_path(@newsletter), alert: "Sending or sent newsletters cannot be deleted."
+      else
+        @newsletter.destroy
+        redirect_to admin_newsletters_path, notice: "Newsletter deleted.", status: :see_other
+      end
     end
 
     # In-admin render of the email body as subscribers will see it.
