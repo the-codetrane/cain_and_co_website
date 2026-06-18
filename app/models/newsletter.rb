@@ -12,7 +12,9 @@ class Newsletter < ApplicationRecord
   enum :status, { draft: 0, scheduled: 1, sending: 2, sent: 3 }, default: :draft
 
   validates :subject, presence: true
-  validate  :body_present
+  # Body is optional while drafting (AI generation fills it in asynchronously),
+  # but required once the newsletter leaves draft for scheduling/sending.
+  validate  :body_present, unless: :draft?
   validates :scheduled_at, presence: true, if: :scheduled?
 
   scope :recent, -> { order(created_at: :desc) }

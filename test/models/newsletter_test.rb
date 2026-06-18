@@ -1,10 +1,19 @@
 require "test_helper"
 
 class NewsletterTest < ActiveSupport::TestCase
-  test "requires a subject and body" do
+  test "requires a subject" do
     newsletter = Newsletter.new
     assert_not newsletter.valid?
     assert_includes newsletter.errors[:subject], "can't be blank"
+  end
+
+  test "body is optional while draft but required once leaving draft" do
+    newsletter = Newsletter.new(subject: "Hi")
+    assert newsletter.valid?, "a draft without a body should be valid"
+
+    newsletter.status = :scheduled
+    newsletter.scheduled_at = 1.day.from_now
+    assert_not newsletter.valid?
     assert_includes newsletter.errors[:body], "can't be blank"
   end
 

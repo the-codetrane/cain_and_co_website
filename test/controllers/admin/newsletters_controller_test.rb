@@ -105,4 +105,51 @@ class Admin::NewslettersControllerTest < ActionDispatch::IntegrationTest
       delete admin_newsletter_path(newsletters(:draft_issue))
     end
   end
+
+  test "generate creates a draft and enqueues AI generation" do
+    assert_difference -> { Newsletter.count }, 1 do
+      assert_enqueued_with(job: GenerateNewsletterDraftJob) do
+        post generate_admin_newsletters_path, params: { newsletter: { subject: "AI issue", ai_topic: "summer tour" } }
+      end
+    end
+    newsletter = Newsletter.last
+    assert newsletter.draft?
+    assert_redirected_to admin_newsletter_path(newsletter)
+  end
+
+  test "generate rejects a blank subject" do
+    assert_no_difference -> { Newsletter.count } do
+      assert_no_enqueued_jobs only: GenerateNewsletterDraftJob do
+        post generate_admin_newsletters_path, params: { newsletter: { subject: "" } }
+      end
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "regenerate enqueues AI generation for a draft" do
+    assert_enqueued_with(job: GenerateNewsletterDraftJob) do
+      post regenerate_admin_newsletter_path(newsletters(:draft_issue)), params: { newsletter: { ai_topic: "merch" } }
+    end
+    assert_redirected_to admin_newsletter_path(newsletters(:draft_issue))
+  end
+
+  test "regenerate refuses a non-draft" do
+    assert_no_enqueued_jobs only: GenerateNewsletterDraftJob do
+      post regenerate_admin_newsletter_path(newsletters(:sent_issue))
+    end
+  end
+
+  test "send_now is rejected when the body is blank" do
+    blank = Newsletter.create!(subject: "Empty draft")
+    assert_no_enqueued_jobs only: SendNewsletterJob do
+      post send_now_admin_newsletter_path(blank)
+    end
+    assert blank.reload.draft?
+  end
+
+  test "schedule is rejected when the body is blank" do
+    blank = Newsletter.create!(subject: "Empty draft")
+    post schedule_admin_newsletter_path(blank), params: { newsletter: { scheduled_at: 2.days.from_now } }
+    assert blank.reload.draft?
+  end
 end
