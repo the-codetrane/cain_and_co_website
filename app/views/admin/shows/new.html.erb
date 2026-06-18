@@ -1,0 +1,9 @@
+<% content_for :title, "Add show · Admin" %>
+
+<div class="max-w-2xl">
+  <h1 class="text-2xl font-bold tracking-tight">Add a manual show</h1>
+  <p class="mt-1 text-sm text-neutral-500">For one-offs Bandsintown doesn't carry. Synced shows appear automatically.</p>
+  <div class="mt-8">
+    <%= render "form", show: @show %>
+  </div>
+</div>

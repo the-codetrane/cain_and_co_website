@@ -1,0 +1,18 @@
+<% content_for :title, "Past shows · Cain & Co." %>
+
+<section class="container mx-auto px-5 py-16 max-w-3xl">
+  <div class="flex items-end justify-between mb-10">
+    <h1 class="text-4xl font-black tracking-tight">Past shows</h1>
+    <%= link_to "Upcoming shows", shows_path, class: "text-sm text-neutral-400 hover:text-white" %>
+  </div>
+
+  <% if @shows.any? %>
+    <div class="flex flex-col gap-5">
+      <%= render @shows %>
+    </div>
+  <% else %>
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900 p-10 text-center">
+      <p class="text-lg text-neutral-300">No past shows to list yet.</p>
+    </div>
+  <% end %>
+</section>

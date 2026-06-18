@@ -14,10 +14,16 @@ Rails.application.routes.draw do
   # Admin area — all controllers inherit Admin::BaseController, which requires login.
   namespace :admin do
     root "dashboard#index"
+    resources :shows, except: :show do
+      member { patch :toggle_featured }
+      collection { post :sync }
+    end
   end
 
   # Public, fan-facing pages
   get "about" => "pages#about", as: :about
+  get "shows/past" => "shows#past", as: :past_shows
+  resources :shows, only: :index
 
   # Defines the root path route ("/")
   root "pages#home"

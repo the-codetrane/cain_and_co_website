@@ -1,0 +1,28 @@
+<% content_for :title, "Shows · Admin" %>
+
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold tracking-tight">Shows</h1>
+  <div class="flex items-center gap-3">
+    <%= button_to "Sync from Bandsintown", sync_admin_shows_path, method: :post,
+          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+    <%= link_to "Add manual show", new_admin_show_path,
+          class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+  </div>
+</div>
+
+<% unless @configured %>
+  <p class="mt-4 rounded-md bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900">
+    Bandsintown isn't configured yet — set <code>bandsintown.app_id</code> and <code>bandsintown.artist</code>
+    in Rails credentials to enable syncing. Manual shows still work.
+  </p>
+<% end %>
+
+<section class="mt-8">
+  <h2 class="text-sm font-semibold uppercase tracking-widest text-neutral-500">Upcoming</h2>
+  <%= render "table", shows: @upcoming, empty: "No upcoming shows." %>
+</section>
+
+<section class="mt-10">
+  <h2 class="text-sm font-semibold uppercase tracking-widest text-neutral-500">Past</h2>
+  <%= render "table", shows: @past, empty: "No past shows." %>
+</section>
