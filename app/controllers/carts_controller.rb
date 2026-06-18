@@ -6,7 +6,8 @@ class CartsController < ApplicationController
   private
 
   def current_cart
-    Cart.includes(cart_items: { variant: :product }).find_by(token: session[:cart_token]) ||
+    Cart.includes(cart_items: { variant: { product: { images_attachments: :blob } } })
+        .find_by(token: session[:cart_token]) ||
       Cart.new
   end
 end

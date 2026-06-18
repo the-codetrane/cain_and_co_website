@@ -1,0 +1,22 @@
+CAIN & CO. — ORDER CONFIRMATION
+
+Thanks<%= " #{@order.buyer_name}," if @order.buyer_name.present? %> your merch is on its way.
+
+ORDER #<%= @order.id %>
+<%= "=" * 40 %>
+<% @order.order_items.each do |item| %>
+<%= item.variant_name %> x<%= item.quantity %>   $<%= "%.2f" % (item.subtotal_cents / 100.0) %>
+<% end %>
+<%= "=" * 40 %>
+Subtotal:  $<%= "%.2f" % (@order.subtotal_cents / 100.0) %>
+Shipping:  $<%= "%.2f" % (@order.shipping_cents / 100.0) %>
+Total:     $<%= "%.2f" % (@order.total_cents / 100.0) %>
+<% if @order.shipping_address.present? %>
+
+SHIPPING TO
+<%= @order.shipping_address %>
+<% end %>
+
+Questions? Reply to this email — we're happy to help.
+
+Cain & Co.

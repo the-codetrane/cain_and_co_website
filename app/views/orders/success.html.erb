@@ -1,0 +1,25 @@
+<% content_for :title, "Order Confirmed · Cain & Co." %>
+
+<section class="container mx-auto px-5 py-24 max-w-2xl text-center">
+  <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 mb-6">
+    <svg class="h-8 w-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+  </div>
+
+  <h1 class="text-4xl font-black tracking-tight">You're in.</h1>
+  <p class="mt-4 text-lg text-neutral-300">
+    Payment received — your merch is on its way.
+  </p>
+  <p class="mt-2 text-sm text-neutral-500">
+    Order #<%= @order.id %> · We'll email your confirmation to
+    <%= @order.buyer_email.presence || "the address you provided" %> shortly.
+  </p>
+
+  <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+    <%= link_to "Browse more merch →", products_path,
+          class: "rounded-xl bg-white px-6 py-3 font-bold text-black hover:bg-neutral-100 transition" %>
+    <%= link_to "Back to home", root_path,
+          class: "text-sm text-neutral-400 hover:text-white" %>
+  </div>
+</section>

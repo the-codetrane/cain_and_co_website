@@ -53,9 +53,9 @@
         <span>$<%= "%.2f" % (@cart.total_cents / 100.0) %></span>
       </div>
       <p class="mt-1 text-xs text-neutral-500">Shipping calculated at checkout</p>
-      <div class="mt-5 rounded-xl border border-dashed border-neutral-700 p-4 text-center">
-        <p class="text-sm text-neutral-400">Secure checkout via Stripe — coming soon</p>
-      </div>
+      <%= button_to "Checkout with Stripe →", checkout_path,
+            class: "mt-5 w-full rounded-xl bg-white py-3 text-center font-bold text-black hover:bg-neutral-100 transition",
+            data: { turbo: false } %>
     </div>
 
     <div class="mt-4 text-center">

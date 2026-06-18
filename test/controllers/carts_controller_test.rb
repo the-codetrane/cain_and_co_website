@@ -8,11 +8,10 @@ class CartsControllerTest < ActionDispatch::IntegrationTest
     assert_match "empty", response.body
   end
 
-  test "show renders cart items when session token is set" do
-    cart = carts(:with_items)
-    cookies["cart_token"] = cart.token
-    # Cart token is stored in session not a plain cookie — simulate via session
-    get cart_path, headers: { "COOKIE" => "" }
+  test "show renders cart items when a cart exists in the session" do
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id }
+    get cart_path
     assert_response :success
+    assert_match products(:published_shirt).name, response.body
   end
 end

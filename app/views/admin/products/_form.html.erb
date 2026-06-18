@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, product], data: { controller: "auto-submit" } do |f| %>
+<%= form_with model: [:admin, product] do |f| %>
   <% if product.errors.any? %>
     <div class="mb-5 rounded-md bg-red-100 border border-red-300 px-4 py-3 text-sm text-red-900">
       <p class="font-semibold"><%= pluralize(product.errors.count, "error") %> prevented saving:</p>

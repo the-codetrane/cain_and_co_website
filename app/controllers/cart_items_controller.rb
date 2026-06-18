@@ -35,7 +35,9 @@ class CartItemsController < ApplicationController
   private
 
   def set_variant
-    @variant = Variant.find(params[:variant_id])
+    @variant = Variant.joins(:product).merge(Product.published).find(params[:variant_id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to products_path, alert: "Item not available." and return
   end
 
   def find_or_create_cart
