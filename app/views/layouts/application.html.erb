@@ -13,7 +13,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="<%= content_for?(:title) ? yield(:title).strip : "Cain & Co." %>">
     <meta property="og:description" content="<%= content_for?(:description) ? yield(:description).strip : "Cain & Co. — shows, merch, and monthly newsletter." %>">
-    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:url" content="<%= request.base_url + request.path %>">
     <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image).strip : "#{request.base_url}/icon.png" %>">
 
     <%# Twitter card %>

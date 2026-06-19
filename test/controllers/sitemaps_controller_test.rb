@@ -4,7 +4,7 @@ class SitemapsControllerTest < ActionDispatch::IntegrationTest
   test "returns valid XML" do
     get sitemap_path
     assert_response :success
-    assert_equal "application/xml; charset=utf-8", response.content_type
+    assert_equal "application/xml", response.media_type
   end
 
   test "includes all static public routes" do
