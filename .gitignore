@@ -71,5 +71,8 @@ yarn-debug.log*
 # IDEA files
 .idea
 
+# Playwright MCP files
+.playwright-mcp/
+
 /app/assets/builds/*
 !/app/assets/builds/.keep
