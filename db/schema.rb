@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_221935) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_235251) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -130,6 +130,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_221935) do
     t.string "name", null: false
     t.boolean "published", default: false, null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.string "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.string "endpoint", null: false
+    t.string "p256dh_key", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.index ["endpoint"], name: "index_push_subscriptions_on_endpoint", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

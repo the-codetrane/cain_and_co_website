@@ -19,6 +19,8 @@ class Newsletter < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
 
+  after_commit :broadcast_push_on_sent, on: :update
+
   # A newsletter can only be (re)sent or scheduled while it is still a draft —
   # guards against double-sending from a stale form or a duplicate click.
   def sendable?
@@ -52,5 +54,10 @@ class Newsletter < ApplicationRecord
 
   def body_present
     errors.add(:body, "can't be blank") if body.blank?
+  end
+
+  def broadcast_push_on_sent
+    return unless sent? && saved_change_to_status?
+    BroadcastPushJob.perform_later(title: "New newsletter from Cain & Co.", body: subject, url: "/")
   end
 end
