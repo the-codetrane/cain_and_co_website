@@ -55,6 +55,9 @@ gem "anthropic"
 # Stripe payments [https://github.com/stripe/stripe-ruby]
 gem "stripe"
 
+# Mailgun HTTP API delivery (bypasses SMTP port blocks) [https://github.com/mailgun/mailgun-ruby]
+gem "mailgun-ruby"
+
 # Web Push notifications (VAPID) [https://github.com/zaru/webpush]
 gem "web-push"
 

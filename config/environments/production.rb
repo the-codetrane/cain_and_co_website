@@ -59,16 +59,11 @@ Rails.application.configure do
 
   # Host used by links generated in mailer templates (confirm/unsubscribe links).
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cainandco.band"), protocol: "https" }
-  config.action_mailer.delivery_method = :smtp
-
-  config.action_mailer.smtp_settings = {
-    address:              "smtp.mailgun.org",
-    port:                 587,
-    domain:               "cainandco.band",
-    user_name:            Rails.application.credentials.dig(:mailgun, :smtp, :user_name),
-    password:             Rails.application.credentials.dig(:mailgun, :smtp, :password),
-    authentication:       :plain,
-    enable_starttls_auto: true
+  config.action_mailer.delivery_method = :mailgun
+  config.action_mailer.mailgun_settings = {
+    api_key:  Rails.application.credentials.dig(:mailgun, :api_key),
+    domain:   "cainandco.band",
+    api_host: "api.mailgun.net"
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
