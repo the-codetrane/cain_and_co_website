@@ -25,8 +25,8 @@ class PushSubscriptionTest < ActiveSupport::TestCase
   end
 
   test "endpoint must be unique" do
-    existing = push_subscriptions(:one)
-    dup = PushSubscription.new(endpoint: existing.endpoint, p256dh_key: "k2", auth_key: "a2")
+    PushSubscription.create!(endpoint: "https://push.example.com/existing", p256dh_key: "k1", auth_key: "a1")
+    dup = PushSubscription.new(endpoint: "https://push.example.com/existing", p256dh_key: "k2", auth_key: "a2")
     assert_not dup.valid?
     assert_includes dup.errors[:endpoint], "has already been taken"
   end
