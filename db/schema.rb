@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_235251) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_19_170940) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -121,6 +121,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_235251) do
     t.datetime "updated_at", null: false
     t.index ["status"], name: "index_orders_on_status"
     t.index ["stripe_checkout_session_id"], name: "index_orders_on_stripe_checkout_session_id", unique: true, where: "stripe_checkout_session_id IS NOT NULL"
+  end
+
+  create_table "photos", force: :cascade do |t|
+    t.string "caption"
+    t.datetime "created_at", null: false
+    t.integer "position", default: 1, null: false
+    t.boolean "published", default: true, null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "products", force: :cascade do |t|

@@ -5,5 +5,6 @@ class PagesController < ApplicationController
   end
 
   def about
+    @photos = Photo.published.with_attached_image
   end
 end

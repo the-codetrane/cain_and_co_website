@@ -1,0 +1,10 @@
+<% content_for :title, "Add Photo · Admin" %>
+
+<div class="mb-6">
+  <h1 class="text-2xl font-bold tracking-tight">Add Photo</h1>
+  <p class="mt-1 text-sm text-neutral-500">Uploaded photos are stored on DigitalOcean Spaces and shown in the gallery on the About page.</p>
+</div>
+
+<div class="rounded-xl border border-neutral-200 bg-white p-6">
+  <%= render "form", photo: @photo %>
+</div>
