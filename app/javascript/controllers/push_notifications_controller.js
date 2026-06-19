@@ -5,24 +5,22 @@ export default class extends Controller {
   static values = { vapidPublicKey: String }
 
   connect() {
-    if (!this.isPushSupported()) {
-      this.element.hidden = true
-      return
-    }
-    if (Notification.permission !== "default") {
-      this.element.hidden = true
-      return
-    }
-    if (this.isIOS()) {
-      if (!this.isStandalone()) {
-        this.promptTarget.hidden = true
-        if (this.hasIosHintTarget) this.iosHintTarget.hidden = false
-      } else {
-        this.promptTarget.hidden = false
+    if (!this.isPushSupported()) { this.element.hidden = true; return }
+    if (Notification.permission !== "default") { this.element.hidden = true; return }
+    if (localStorage.getItem("pushPromptDismissed")) { this.element.hidden = true; return }
+
+    setTimeout(() => {
+      if (this.isIOS()) {
+        if (!this.isStandalone()) {
+          this.promptTarget.hidden = true
+          if (this.hasIosHintTarget) this.iosHintTarget.hidden = false
+        } else {
+          this.promptTarget.hidden = false
+        }
+        return
       }
-      return
-    }
-    this.promptTarget.hidden = false
+      this.promptTarget.hidden = false
+    }, 4000)
   }
 
   async subscribe() {
@@ -63,6 +61,7 @@ export default class extends Controller {
   }
 
   dismiss() {
+    localStorage.setItem("pushPromptDismissed", "1")
     this.element.hidden = true
   }
 
