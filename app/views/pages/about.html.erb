@@ -88,10 +88,7 @@
 <% end %>
 
 <%# ── Video Gallery ───────────────────────────────────────────────────── %>
-<%# Replace YouTube IDs with real video IDs %>
-<% videos = [
-  { youtube_id: "hq-O6F957Eg", title: "Cain & Co. Live" }
-] %>
+<% if @videos.any? %>
 <section class="border-b border-neutral-800">
   <div class="container mx-auto px-5 py-16">
     <h2 class="text-sm uppercase tracking-[0.3em] text-neutral-400 mb-8">Videos</h2>
@@ -99,20 +96,23 @@
       <div class="relative overflow-hidden rounded-2xl bg-neutral-900">
         <div data-carousel-target="track"
              class="flex transition-transform duration-500 ease-in-out will-change-transform">
-          <% videos.each do |video| %>
+          <% @videos.each do |video| %>
             <div data-carousel-target="slide" class="min-w-full">
-              <div class="aspect-video">
-                <iframe src="https://www.youtube-nocookie.com/embed/<%= video[:youtube_id] %>"
-                        title="<%= video[:title] %>"
-                        class="w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen
-                        loading="lazy"></iframe>
+              <%# Shorts are 9:16; regular videos are 16:9 %>
+              <div class="<%= video.short? ? 'flex justify-center bg-neutral-900' : '' %>">
+                <div class="<%= video.short? ? 'w-full max-w-sm aspect-[9/16]' : 'aspect-video w-full' %>">
+                  <iframe src="<%= video.embed_url %>"
+                          title="<%= video.title %>"
+                          class="w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowfullscreen
+                          loading="lazy"></iframe>
+                </div>
               </div>
             </div>
           <% end %>
         </div>
-        <% if videos.size > 1 %>
+        <% if @videos.size > 1 %>
           <button data-action="carousel#prev"
                   class="absolute left-3 top-1/2 -translate-y-1/2 z-10 rounded-full bg-neutral-900/80 border border-neutral-700 p-2.5 hover:bg-neutral-800 transition-colors"
                   aria-label="Previous video">
@@ -129,9 +129,9 @@
           </button>
         <% end %>
       </div>
-      <% if videos.size > 1 %>
+      <% if @videos.size > 1 %>
         <div class="flex justify-center gap-2 mt-5">
-          <% videos.each_with_index do |_, i| %>
+          <% @videos.each_with_index do |_, i| %>
             <button data-carousel-target="dot"
                     data-action="carousel#goTo"
                     data-index="<%= i %>"
@@ -143,6 +143,7 @@
     </div>
   </div>
 </section>
+<% end %>
 
 <%# ── Press & Reviews ─────────────────────────────────────────────────── %>
 <%#

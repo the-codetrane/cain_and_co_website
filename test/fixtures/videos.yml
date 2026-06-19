@@ -1,0 +1,23 @@
+medicine_woman:
+  youtube_id: rzTzsWmexfM
+  title: Medicine Woman
+  thumbnail_url: https://i3.ytimg.com/vi/rzTzsWmexfM/hqdefault.jpg
+  published_at: 2025-08-01 17:03:07
+  visible: true
+  short: true
+
+late_night_chats:
+  youtube_id: Mk-rVyYq9u4
+  title: Late Night Chats with Jesus
+  thumbnail_url: https://i2.ytimg.com/vi/Mk-rVyYq9u4/hqdefault.jpg
+  published_at: 2025-07-30 17:03:47
+  visible: true
+  short: true
+
+hidden_video:
+  youtube_id: hq-O6F957Eg
+  title: Live at the Venue
+  thumbnail_url: https://i3.ytimg.com/vi/hq-O6F957Eg/hqdefault.jpg
+  published_at: 2024-06-01 12:00:00
+  visible: false
+  short: false

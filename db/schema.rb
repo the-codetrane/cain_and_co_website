@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_19_170940) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_19_205434) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -219,6 +219,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_19_170940) do
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_variants_on_product_id"
     t.index ["sku"], name: "index_variants_on_sku", unique: true, where: "sku IS NOT NULL"
+  end
+
+  create_table "videos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "published_at", null: false
+    t.boolean "short", default: false, null: false
+    t.string "thumbnail_url"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "visible", default: true, null: false
+    t.string "youtube_id", null: false
+    t.index ["published_at"], name: "index_videos_on_published_at"
+    t.index ["youtube_id"], name: "index_videos_on_youtube_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

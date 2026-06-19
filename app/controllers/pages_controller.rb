@@ -6,5 +6,6 @@ class PagesController < ApplicationController
 
   def about
     @photos = Photo.published.with_attached_image
+    @videos = Video.visible
   end
 end
