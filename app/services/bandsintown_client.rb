@@ -46,7 +46,7 @@ class BandsintownClient
   end
 
   def self.artist
-    Rails.application.credentials.dig(:bandsintown, :artist) || ENV["BANDSINTOWN_ARTIST"]
+    Rails.application.credentials.dig(:bandsintown, :artist_id) || ENV["BANDSINTOWN_ARTIST"]
   end
 
   private
