@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Cain And Co Website" %></title>
+    <title><%= content_for(:title) || "Cain & Co." %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Cain And Co Website">
+    <meta name="application-name" content="Cain & Co.">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description).strip : "Cain & Co. — shows, merch, and monthly newsletter." %>">
+
+    <%# OpenGraph %>
+    <meta property="og:site_name" content="Cain & Co.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for?(:title) ? yield(:title).strip : "Cain & Co." %>">
+    <meta property="og:description" content="<%= content_for?(:description) ? yield(:description).strip : "Cain & Co. — shows, merch, and monthly newsletter." %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image).strip : "#{request.base_url}/icon.png" %>">
+
+    <%# Twitter card %>
+    <meta name="twitter:card" content="summary">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <% if (vapid_key = Rails.application.credentials.dig(:vapid, :public_key)) %>

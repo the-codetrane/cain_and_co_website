@@ -60,6 +60,8 @@ Rails.application.routes.draw do
   get  "newsletter/unsubscribe/:token" => "newsletter/unsubscribes#show",     as: :newsletter_unsubscribe
   post "newsletter/unsubscribe/:token" => "newsletter/unsubscribes#create"
 
+  get "sitemap.xml" => "sitemaps#show", as: :sitemap
+
   # Defines the root path route ("/")
   root "pages#home"
 end

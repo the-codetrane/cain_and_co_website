@@ -19,8 +19,10 @@ class BroadcastPushJobTest < ActiveJob::TestCase
   test "is a no-op when VAPID key is not configured" do
     PushSubscription.create!(endpoint: "https://a.example.com", p256dh_key: "k", auth_key: "a")
 
-    assert_enqueued_jobs 0 do
-      BroadcastPushJob.new.perform(title: "Test", body: "Body")
+    Rails.application.credentials.stub(:dig, nil) do
+      assert_enqueued_jobs 0 do
+        BroadcastPushJob.new.perform(title: "Test", body: "Body")
+      end
     end
   end
 end

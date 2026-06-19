@@ -1,5 +1,0 @@
-one:
-  endpoint: https://push.example.com/subscription/one
-  p256dh_key: BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlzo1N4n2Hllj
-  auth_key: tBHItJI5svbpez7KI4CCXg
-  user_agent: "Mozilla/5.0 (Test)"
