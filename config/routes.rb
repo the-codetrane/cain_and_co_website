@@ -39,6 +39,9 @@ Rails.application.routes.draw do
       member { patch :fulfill }
     end
     resources :photos, except: :show
+    resources :videos, only: %i[index update] do
+      collection { post :sync }
+    end
   end
 
   # Public, fan-facing pages
