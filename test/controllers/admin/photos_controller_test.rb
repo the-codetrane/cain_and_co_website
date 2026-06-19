@@ -25,6 +25,20 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_match "Hidden", response.body
   end
 
+  test "index filters to visible photos only" do
+    get admin_photos_path(filter: "visible")
+    assert_response :success
+    assert_match photos(:outdoor_shoot).caption, response.body
+    assert_no_match photos(:hidden_draft).caption, response.body
+  end
+
+  test "index filters to hidden photos only" do
+    get admin_photos_path(filter: "hidden")
+    assert_response :success
+    assert_no_match photos(:outdoor_shoot).caption, response.body
+    assert_match photos(:hidden_draft).caption, response.body
+  end
+
   # ── new ───────────────────────────────────────────────────────────────────
 
   test "new renders the upload form" do
@@ -84,6 +98,42 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
       photo: { position: -1 }
     }
     assert_response :unprocessable_entity
+  end
+
+  # ── bulk_update ───────────────────────────────────────────────────────────
+
+  test "bulk_update publishes selected photos" do
+    patch bulk_update_admin_photos_path, params: {
+      photo_ids: [ photos(:hidden_draft).id ],
+      published: "1"
+    }
+    assert_redirected_to admin_photos_path
+    assert photos(:hidden_draft).reload.published?
+  end
+
+  test "bulk_update hides selected photos" do
+    patch bulk_update_admin_photos_path, params: {
+      photo_ids: [ photos(:outdoor_shoot).id, photos(:stage_shot).id ],
+      published: "0"
+    }
+    assert_redirected_to admin_photos_path
+    assert_not photos(:outdoor_shoot).reload.published?
+    assert_not photos(:stage_shot).reload.published?
+  end
+
+  test "bulk_update preserves current filter in redirect" do
+    patch bulk_update_admin_photos_path, params: {
+      photo_ids: [ photos(:hidden_draft).id ],
+      published: "1",
+      filter: "hidden"
+    }
+    assert_redirected_to admin_photos_path(filter: "hidden")
+  end
+
+  test "bulk_update with no ids redirects with alert" do
+    patch bulk_update_admin_photos_path, params: { published: "1" }
+    assert_redirected_to admin_photos_path
+    assert_equal "No photos selected.", flash[:alert]
   end
 
   # ── destroy ───────────────────────────────────────────────────────────────
