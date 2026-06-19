@@ -7,7 +7,7 @@ image: cain_and_co_website
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 167.172.146.61
   # job:
   #   hosts:
   #     - 192.168.0.1

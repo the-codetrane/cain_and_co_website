@@ -58,13 +58,13 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Host used by links generated in mailer templates (confirm/unsubscribe links).
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cainandco.com"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cainandco.band"), protocol: "https" }
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
     address:              "smtp.gmail.com",
     port:                 587,
-    domain:               "gmail.com",
+    domain:               "cainandco.band",
     user_name:            Rails.application.credentials.dig(:google, :smtp, :user_name),
     password:             Rails.application.credentials.dig(:google, :smtp, :password),
     authentication:       :plain,
