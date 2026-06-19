@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Cain & Co." %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+    <% if notice || alert %>
+      <div class="fixed top-4 left-0 right-0 z-50 flex justify-center px-5">
+        <% if notice %>
+          <p class="rounded-lg bg-emerald-900/80 border border-emerald-700 px-4 py-3 text-sm text-emerald-100 shadow-lg"><%= notice %></p>
+        <% end %>
+        <% if alert %>
+          <p class="rounded-lg bg-red-900/80 border border-red-700 px-4 py-3 text-sm text-red-100 shadow-lg"><%= alert %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>

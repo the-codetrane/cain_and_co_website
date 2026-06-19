@@ -1,23 +1,45 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Sign in</h1>
+<% content_for :title, "Sign in · Cain & Co." %>
 
-  <%= form_with url: session_url, class: "contents" do |form| %>
-    <div class="my-5">
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
+<div class="min-h-screen flex items-center justify-center px-5">
+  <div class="w-full max-w-sm">
+    <div class="mb-8 text-center">
+      <%= link_to root_path, class: "text-xl font-black tracking-[0.2em] uppercase hover:opacity-80 transition" do %>
+        Cain&nbsp;&amp;&nbsp;Co.
+      <% end %>
+      <p class="mt-2 text-sm text-neutral-400">Admin sign in</p>
     </div>
 
-    <div class="my-5">
-      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
-    </div>
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900 p-8">
+      <%= form_with url: session_url do |f| %>
+        <div class="space-y-4">
+          <div>
+            <%= f.label :email_address, "Email", class: "block text-sm font-medium text-neutral-300 mb-1.5" %>
+            <%= f.email_field :email_address,
+                  required: true,
+                  autofocus: true,
+                  autocomplete: "username",
+                  value: params[:email_address],
+                  class: "w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 focus:border-white focus:outline-none transition" %>
+          </div>
 
-    <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
-      <div class="inline">
-        <%= form.submit "Sign in", class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-      </div>
+          <div>
+            <%= f.label :password, "Password", class: "block text-sm font-medium text-neutral-300 mb-1.5" %>
+            <%= f.password_field :password,
+                  required: true,
+                  autocomplete: "current-password",
+                  maxlength: 72,
+                  class: "w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2.5 text-sm text-neutral-100 placeholder-neutral-500 focus:border-white focus:outline-none transition" %>
+          </div>
+        </div>
 
-      <div class="mt-4 text-sm text-gray-500 sm:mt-0">
-        <%= link_to "Forgot password?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
-      </div>
+        <%= f.submit "Sign in",
+              class: "mt-6 w-full rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-neutral-900 hover:bg-neutral-100 transition cursor-pointer" %>
+
+        <div class="mt-4 text-center">
+          <%= link_to "Forgot password?", new_password_path,
+                class: "text-xs text-neutral-500 hover:text-neutral-300 transition" %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>

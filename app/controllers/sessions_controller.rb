@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  layout "minimal"
+
   # Public by default via ApplicationController (account-free site), but signing out
   # requires a live session so Current.session is resumed before terminate_session.
   before_action :require_authentication, only: :destroy
