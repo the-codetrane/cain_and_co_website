@@ -36,6 +36,11 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
 
