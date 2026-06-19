@@ -30,7 +30,6 @@ module Admin
     end
 
     def destroy
-      @photo.purge_later
       @photo.destroy
       redirect_to admin_photos_path, notice: "Photo removed."
     end

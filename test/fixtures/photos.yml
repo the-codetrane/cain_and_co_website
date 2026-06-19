@@ -1,0 +1,17 @@
+# Fixture loading bypasses validations — no Active Storage attachment needed here.
+# Tests that require an attached image create one on the fly.
+
+outdoor_shoot:
+  caption: Band outdoors
+  position: 1
+  published: true
+
+stage_shot:
+  caption: Live on stage
+  position: 2
+  published: true
+
+hidden_draft:
+  caption: Draft not yet approved
+  position: 3
+  published: false

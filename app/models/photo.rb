@@ -1,5 +1,5 @@
 class Photo < ApplicationRecord
-  has_one_attached :image
+  has_one_attached :image, dependent: :purge_later
 
   validates :position, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :image, presence: true

@@ -1,0 +1,26 @@
+outdoor_shoot_blob:
+  key: outdoor-shoot-blob-key
+  filename: outdoor_shoot.gif
+  content_type: image/gif
+  metadata: "{}"
+  byte_size: 43
+  checksum: "abc123checksum=="
+  service_name: test
+
+stage_shot_blob:
+  key: stage-shot-blob-key
+  filename: stage_shot.gif
+  content_type: image/gif
+  metadata: "{}"
+  byte_size: 43
+  checksum: "abc123checksum=="
+  service_name: test
+
+hidden_draft_blob:
+  key: hidden-draft-blob-key
+  filename: hidden_draft.gif
+  content_type: image/gif
+  metadata: "{}"
+  byte_size: 43
+  checksum: "abc123checksum=="
+  service_name: test
