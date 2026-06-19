@@ -61,16 +61,13 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cainandco.com"), protocol: "https" }
   config.action_mailer.delivery_method = :smtp
 
-  # Provider-agnostic SMTP, configured entirely via ENV so we can start on Gmail
-  # (app password — 2FA required) and later swap to Resend/Postmark with no code change.
-  # Gmail defaults are baked in; override SMTP_ADDRESS/PORT/DOMAIN for other providers.
   config.action_mailer.smtp_settings = {
-    address:              ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
-    port:                 ENV.fetch("SMTP_PORT", 587).to_i,
-    domain:               ENV.fetch("SMTP_DOMAIN", "gmail.com"),
-    user_name:            ENV["SMTP_USERNAME"],
-    password:             ENV["SMTP_PASSWORD"],
-    authentication:       ENV.fetch("SMTP_AUTHENTICATION", "plain").to_sym,
+    address:              "smtp.gmail.com",
+    port:                 587,
+    domain:               "gmail.com",
+    user_name:            Rails.application.credentials.dig(:google, :smtp, :user_name),
+    password:             Rails.application.credentials.dig(:google, :smtp, :password),
+    authentication:       :plain,
     enable_starttls_auto: true
   }
 
