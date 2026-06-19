@@ -22,7 +22,7 @@ servers:
 #
 proxy:
   ssl: true
-  host: app.cainandco.band
+  host: cainandco.band
 
 # Where you keep your container images.
 registry:

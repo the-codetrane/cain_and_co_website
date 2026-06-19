@@ -58,7 +58,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Host used by links generated in mailer templates (confirm/unsubscribe links).
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "app.cainandco.band"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "cainandco.band"), protocol: "https" }
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
