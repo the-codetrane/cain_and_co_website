@@ -1,0 +1,14 @@
+outdoor_shoot_image:
+  name: image
+  record: outdoor_shoot (Photo)
+  blob: outdoor_shoot_blob
+
+stage_shot_image:
+  name: image
+  record: stage_shot (Photo)
+  blob: stage_shot_blob
+
+hidden_draft_image:
+  name: image
+  record: hidden_draft (Photo)
+  blob: hidden_draft_blob

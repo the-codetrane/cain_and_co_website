@@ -1,0 +1,48 @@
+<%= form_with model: [:admin, photo], multipart: true do |f| %>
+  <% if photo.errors.any? %>
+    <div class="mb-5 rounded-md bg-red-100 border border-red-300 px-4 py-3 text-sm text-red-900">
+      <p class="font-semibold"><%= pluralize(photo.errors.count, "error") %> prevented saving:</p>
+      <ul class="mt-1 list-disc list-inside">
+        <% photo.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% field = "block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+  <% label = "block text-sm font-medium text-neutral-700 mb-1" %>
+
+  <div class="space-y-5">
+    <div>
+      <%= f.label :image, "Photo", class: label %>
+      <%= f.file_field :image, accept: "image/*",
+            class: "block w-full text-sm text-neutral-500 file:mr-4 file:rounded-md file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold hover:file:bg-neutral-200" %>
+      <% if photo.image.attached? %>
+        <div class="mt-2">
+          <%= image_tag photo.image, class: "h-32 w-auto rounded-md object-cover", alt: photo.caption.presence || "Photo" %>
+          <p class="mt-1 text-xs text-neutral-500">Current image — upload a new file to replace it.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :caption, "Caption / alt text (optional)", class: label %>
+      <%= f.text_field :caption, class: field, placeholder: "e.g. Cain & Co. at First Avenue, Minneapolis" %>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <div>
+        <%= f.label :position, "Display order", class: label %>
+        <%= f.number_field :position, min: 1, class: "w-24 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+      </div>
+      <label class="flex items-center gap-2 text-sm font-medium text-neutral-700 mt-5">
+        <%= f.check_box :published, class: "h-4 w-4 rounded border-neutral-300" %>
+        Visible on About page
+      </label>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center gap-3">
+    <%= f.submit class: "rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 cursor-pointer" %>
+    <%= link_to "Cancel", admin_photos_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+  </div>
+<% end %>

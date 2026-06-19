@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     resources :orders, only: %i[index show] do
       member { patch :fulfill }
     end
+    resources :photos, except: :show
   end
 
   # Public, fan-facing pages

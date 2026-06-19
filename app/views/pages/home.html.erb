@@ -2,32 +2,42 @@
 <% content_for :description, "The official site for Cain & Co. — upcoming shows, monthly newsletter, and merch. Live music, straight from the band." %>
 
 <%# ── Hero ─────────────────────────────────────────────────────────── %>
-<section class="relative overflow-hidden">
-  <div class="container mx-auto px-5 py-24 sm:py-32 text-center">
-    <p class="text-sm uppercase tracking-[0.4em] text-neutral-400 mb-6">Official site</p>
-    <h1 class="text-5xl sm:text-7xl font-black tracking-tight">CAIN &amp; CO.</h1>
-    <%# TODO: replace with the band's real tagline %>
-    <p class="mt-6 max-w-xl mx-auto text-lg text-neutral-300">
-      Live music, new releases, and merch — straight from the band.
-    </p>
-    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="#newsletter" class="rounded-full bg-white px-8 py-3 font-semibold text-neutral-900 hover:bg-neutral-200">
-        Join the newsletter
-      </a>
-      <%= link_to "See upcoming shows", shows_path,
-            class: "rounded-full border border-neutral-600 px-8 py-3 font-semibold text-neutral-100 hover:border-white" %>
-    </div>
-  </div>
+<section class="relative overflow-hidden flex justify-center">
+  <%= image_tag "logo_banner.png", alt: "Cain & Co.", class: "max-h-[70vh] w-full object-contain" %>
 </section>
 
 <%# ── Listen / streaming ───────────────────────────────────────────── %>
 <section class="border-t border-neutral-800">
   <div class="container mx-auto px-5 py-16">
     <h2 class="text-sm uppercase tracking-[0.3em] text-neutral-400 mb-8">Listen</h2>
-    <%# TODO: replace # with the band's real streaming URLs %>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <% [["Spotify", "#"], ["Apple Music", "#"], ["Bandcamp", "#"], ["YouTube", "#"]].each do |label, url| %>
-        <a href="<%= url %>" class="rounded-xl border border-neutral-800 bg-neutral-900 px-5 py-6 text-center font-semibold hover:border-neutral-600">
+      <% [
+        ["Spotify",     "https://open.spotify.com/playlist/6dP0ime4nMxyeNbN3Y30fg"],
+        ["Apple Music", "https://music.apple.com/us/artist/cain-co/1837917282"],
+        ["YouTube",     "https://www.youtube.com/@cainandcoband"],
+        ["Amazon Music","https://www.amazon.com/music/player/albums/B0FNYHGK29"]
+      ].each do |label, url| %>
+        <a href="<%= url %>" target="_blank" rel="noopener noreferrer"
+           class="rounded-xl border border-neutral-800 bg-neutral-900 px-5 py-6 text-center font-semibold hover:border-neutral-600">
+          <%= label %>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ── Follow / social ──────────────────────────────────────────────── %>
+<section class="border-t border-neutral-800">
+  <div class="container mx-auto px-5 py-16">
+    <h2 class="text-sm uppercase tracking-[0.3em] text-neutral-400 mb-8">Follow</h2>
+    <div class="grid grid-cols-3 gap-4">
+      <% [
+        ["Facebook",  "https://www.facebook.com/cainandcoband"],
+        ["Instagram", "https://www.instagram.com/cainandcoband/"],
+        ["TikTok",    "https://www.tiktok.com/@cainandcoband"]
+      ].each do |label, url| %>
+        <a href="<%= url %>" target="_blank" rel="noopener noreferrer"
+           class="rounded-xl border border-neutral-800 bg-neutral-900 px-5 py-6 text-center font-semibold hover:border-neutral-600">
           <%= label %>
         </a>
       <% end %>

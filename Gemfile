@@ -46,6 +46,9 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# S3-compatible storage for Active Storage (DigitalOcean Spaces)
+gem "aws-sdk-s3", require: false
+
 # Official Anthropic SDK — AI newsletter drafting (Claude) [https://github.com/anthropics/anthropic-sdk-ruby]
 gem "anthropic"
 
