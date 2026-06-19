@@ -3,7 +3,9 @@
 
 <%# ── Hero ─────────────────────────────────────────────────────────── %>
 <section class="relative overflow-hidden flex justify-center">
-  <%= image_tag "logo_banner.png", alt: "Cain & Co.", class: "max-h-[70vh] w-full object-contain" %>
+  <%= link_to about_path do %>
+    <%= image_tag "logo_banner.png", alt: "Cain & Co.", class: "max-h-[70vh] w-full object-contain" %>
+  <% end %>
 </section>
 
 <%# ── Listen / streaming ───────────────────────────────────────────── %>
