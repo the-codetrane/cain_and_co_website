@@ -42,6 +42,18 @@ module Admin
       redirect_to admin_photos_path, notice: "Photo removed."
     end
 
+    def visible
+      @photos = Photo.with_attached_image.where(published: true).order(:position)
+    end
+
+    def reorder
+      ids = Array(params[:ids]).map(&:to_i).reject(&:zero?)
+      Photo.transaction do
+        ids.each_with_index { |id, i| Photo.where(id: id, published: true).update_all(position: i + 1) }
+      end
+      head :ok
+    end
+
     def bulk_update
       ids = Array(params[:photo_ids]).reject(&:blank?)
       if ids.empty?

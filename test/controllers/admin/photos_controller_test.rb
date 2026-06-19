@@ -100,6 +100,36 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  # ── visible ───────────────────────────────────────────────────────────────
+
+  test "visible renders only published photos" do
+    get visible_admin_photos_path
+    assert_response :success
+    assert_match photos(:outdoor_shoot).caption, response.body
+    assert_match photos(:stage_shot).caption,    response.body
+    assert_no_match photos(:hidden_draft).caption, response.body
+  end
+
+  # ── reorder ───────────────────────────────────────────────────────────────
+
+  test "reorder updates positions of visible photos in submitted order" do
+    patch reorder_admin_photos_path, params: {
+      ids: [ photos(:stage_shot).id, photos(:outdoor_shoot).id ]
+    }, as: :json
+    assert_response :ok
+    assert_equal 1, photos(:stage_shot).reload.position
+    assert_equal 2, photos(:outdoor_shoot).reload.position
+  end
+
+  test "reorder ignores hidden photos" do
+    original_position = photos(:hidden_draft).position
+    patch reorder_admin_photos_path, params: {
+      ids: [ photos(:hidden_draft).id ]
+    }, as: :json
+    assert_response :ok
+    assert_equal original_position, photos(:hidden_draft).reload.position
+  end
+
   # ── bulk_update ───────────────────────────────────────────────────────────
 
   test "bulk_update publishes selected photos" do

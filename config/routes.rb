@@ -39,7 +39,11 @@ Rails.application.routes.draw do
       member { patch :fulfill }
     end
     resources :photos, except: :show do
-      collection { patch :bulk_update }
+      collection do
+        patch :bulk_update
+        get   :visible
+        patch :reorder
+      end
     end
     resources :videos, only: %i[index update] do
       collection { post :sync }
