@@ -56,15 +56,22 @@
   <%= link_to "Preview email", preview_admin_newsletter_path(@newsletter), target: "_blank", rel: "noopener",
         class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
 
+  <%= link_to "Edit", edit_admin_newsletter_path(@newsletter),
+        class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+
   <% if @newsletter.draft? %>
-    <%= link_to "Edit", edit_admin_newsletter_path(@newsletter),
-          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
     <%= button_to "Send now", send_now_admin_newsletter_path(@newsletter), method: :post,
-          form: { data: { turbo_confirm: "Send “#{@newsletter.subject}” to #{Subscriber.active.count} subscribers now?" } },
+          form: { data: { turbo_confirm: "Send #{@newsletter.subject} to #{Subscriber.active.count} subscribers now?" } },
           class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
   <% elsif @newsletter.scheduled? %>
     <%= button_to "Cancel schedule", cancel_admin_newsletter_path(@newsletter), method: :post,
           class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+  <% end %>
+
+  <% if @newsletter.sent? && @stats[:failed].positive? %>
+    <%= button_to "Resend #{@stats[:failed]} failed", resend_admin_newsletter_path(@newsletter), method: :post,
+          form: { data: { turbo_confirm: "Are you sure? This newsletter has been previously sent." } },
+          class: "rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100" %>
   <% end %>
 
   <% unless @newsletter.sent? %>

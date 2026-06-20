@@ -28,6 +28,7 @@ Rails.application.routes.draw do
         post :schedule
         post :cancel
         post :regenerate
+        post :resend
       end
       collection do
         post :generate

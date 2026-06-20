@@ -1,7 +1,6 @@
 module Admin
   class NewslettersController < BaseController
     before_action :set_newsletter, except: %i[index new create generate]
-    before_action :require_draft_status, only: %i[edit update]
 
     def index
       @newsletters = Newsletter.recent
@@ -94,6 +93,17 @@ module Admin
       end
     end
 
+    def resend
+      failed = @newsletter.deliveries.failed
+      return redirect_to admin_newsletter_path(@newsletter), alert: "No failed deliveries to resend." unless failed.exists?
+
+      count = failed.count
+      failed.update_all(status: Delivery.statuses[:pending], error: nil, updated_at: Time.current)
+      @newsletter.update!(status: :sending)
+      SendNewsletterJob.perform_later(@newsletter.id)
+      redirect_to admin_newsletter_path(@newsletter), notice: "Resending to #{count} subscriber#{"s" if count != 1}."
+    end
+
     # Revert a scheduled newsletter to draft. The already-enqueued SendNewsletterJob
     # becomes a no-op when it fires (it only runs for scheduled/sending newsletters).
     def cancel
@@ -126,10 +136,6 @@ module Admin
     def reject_blank_body
       redirect_to admin_newsletter_path(@newsletter),
                   alert: "Add some content before sending — write it or generate a draft with AI."
-    end
-
-    def require_draft_status
-      redirect_to admin_newsletter_path(@newsletter), alert: "Only drafts can be edited." unless @newsletter.draft?
     end
   end
 end

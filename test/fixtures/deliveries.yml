@@ -3,3 +3,9 @@ sent_issue_to_confirmed:
   subscriber: confirmed_fan
   status: 1
   sent_at: <%= 5.days.ago.to_fs(:db) %>
+
+failed_issue_to_unconfirmed:
+  newsletter: sent_issue
+  subscriber: unconfirmed_fan
+  status: 2
+  error: "SMTP timeout"

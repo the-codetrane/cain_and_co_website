@@ -48,10 +48,10 @@ class Admin::NewslettersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Updated", newsletters(:draft_issue).reload.subject
   end
 
-  test "update refuses to edit a sent newsletter" do
-    patch admin_newsletter_path(newsletters(:sent_issue)), params: { newsletter: { subject: "Nope" } }
+  test "update edits a sent newsletter" do
+    patch admin_newsletter_path(newsletters(:sent_issue)), params: { newsletter: { subject: "Corrected subject" } }
     assert_redirected_to admin_newsletter_path(newsletters(:sent_issue))
-    assert_not_equal "Nope", newsletters(:sent_issue).reload.subject
+    assert_equal "Corrected subject", newsletters(:sent_issue).reload.subject
   end
 
   test "send_now starts the send pipeline" do
@@ -131,6 +131,25 @@ class Admin::NewslettersControllerTest < ActionDispatch::IntegrationTest
       post regenerate_admin_newsletter_path(newsletters(:draft_issue)), params: { newsletter: { ai_topic: "merch" } }
     end
     assert_redirected_to admin_newsletter_path(newsletters(:draft_issue))
+  end
+
+  test "resend resets failed deliveries and re-enqueues" do
+    newsletter = newsletters(:sent_issue)
+    assert deliveries(:failed_issue_to_unconfirmed).failed?
+    assert_enqueued_with(job: SendNewsletterJob, args: [ newsletter.id ]) do
+      post resend_admin_newsletter_path(newsletter)
+    end
+    assert newsletter.reload.sending?
+    assert deliveries(:failed_issue_to_unconfirmed).reload.pending?
+    assert_redirected_to admin_newsletter_path(newsletter)
+  end
+
+  test "resend rejects a newsletter with no failed deliveries" do
+    newsletter = newsletters(:draft_issue)
+    assert_no_enqueued_jobs only: SendNewsletterJob do
+      post resend_admin_newsletter_path(newsletter)
+    end
+    assert_redirected_to admin_newsletter_path(newsletter)
   end
 
   test "regenerate refuses a non-draft" do
