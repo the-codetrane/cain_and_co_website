@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     end
     resources :subscribers, only: %i[index new create destroy] do
       member { post :resend_confirmation }
+      collection { get :import; post :import }
     end
     resources :newsletters do
       member do

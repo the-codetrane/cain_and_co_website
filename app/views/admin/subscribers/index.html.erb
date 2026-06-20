@@ -5,6 +5,8 @@
   <div class="flex items-center gap-3">
     <%= link_to "Export CSV", admin_subscribers_path(format: :csv, q: @query.presence),
           class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
+    <%= link_to "Import CSV", import_admin_subscribers_path,
+          class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
     <%= link_to "Add subscriber", new_admin_subscriber_path,
           class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
   </div>
