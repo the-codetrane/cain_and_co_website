@@ -3,8 +3,14 @@
 <div data-controller="bulk-select">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <h1 class="text-2xl font-bold tracking-tight">Photos</h1>
-    <%= link_to "Add photo", new_admin_photo_path,
-          class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+    <div class="flex gap-2">
+      <% if @filter == "visible" %>
+        <%= link_to "⠿ Reorder", visible_admin_photos_path,
+              class: "rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
+      <% end %>
+      <%= link_to "Add photo", new_admin_photo_path,
+            class: "rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-neutral-700" %>
+    </div>
   </div>
 
   <% tab = ->(label, value) {
