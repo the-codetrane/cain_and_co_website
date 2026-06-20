@@ -175,7 +175,9 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Trust deployment server host key
-        run: ssh-keyscan -H 167.172.146.61 >> ~/.ssh/known_hosts
+        run: |
+          ssh-keygen -R 167.172.146.61 2>/dev/null || true
+          ssh-keyscan -H 167.172.146.61 >> ~/.ssh/known_hosts
 
       - name: Deploy with Kamal
         env:
