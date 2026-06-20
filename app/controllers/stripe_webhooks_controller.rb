@@ -10,9 +10,7 @@ class StripeWebhooksController < ActionController::Base
 
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, webhook_secret)
-    rescue JSON::ParserError
-      head :bad_request and return
-    rescue Stripe::SignatureVerificationError
+    rescue JSON::ParserError, Stripe::SignatureVerificationError
       head :bad_request and return
     end
 
@@ -36,9 +34,7 @@ class StripeWebhooksController < ActionController::Base
     return unless order
     return if order.paid? || order.fulfilled?
 
-    ActiveRecord::Base.transaction do
-      StripeEvent.create!(stripe_event_id: event.id, processed_at: Time.current)
-
+    within_new_stripe_event(event) do
       order.update!(
         status: "paid",
         stripe_payment_intent_id: stripe_session.payment_intent,
@@ -62,22 +58,27 @@ class StripeWebhooksController < ActionController::Base
           item.variant.update!(stock_quantity: new_stock)
         end
       end
-    end
 
-    OrderMailer.receipt(order).deliver_later
-  rescue ActiveRecord::RecordNotUnique
-    # Duplicate event — already processed, safe to ignore.
+      OrderMailer.receipt(order).deliver_later
+    end
   end
 
   def handle_checkout_canceled(event)
     stripe_session = event.data.object
     order = Order.find_by(stripe_checkout_session_id: stripe_session.id)
     return unless order&.pending?
-    ActiveRecord::Base.transaction do
-      StripeEvent.create!(stripe_event_id: event.id, processed_at: Time.current)
+
+    within_new_stripe_event(event) do
       order.update!(status: "canceled")
     end
+  end
+
+  def within_new_stripe_event(event)
+    ActiveRecord::Base.transaction do
+      StripeEvent.create!(stripe_event_id: event.id, processed_at: Time.current)
+      yield
+    end
   rescue ActiveRecord::RecordNotUnique
-    # Duplicate event.
+    # Duplicate event — already processed, safe to ignore.
   end
 end

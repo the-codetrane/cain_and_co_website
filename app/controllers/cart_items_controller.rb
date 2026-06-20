@@ -12,16 +12,14 @@ class CartItemsController < ApplicationController
 
   def update
     item = current_cart&.cart_items&.find_by(id: params[:id])
-    if item
-      qty = params[:quantity].to_i
-      if qty <= 0
-        item.destroy
-        redirect_to cart_path, notice: "Item removed."
-      else
-        item.update!(quantity: qty.clamp(1, 99))
-        redirect_to cart_path
-      end
+    return redirect_to cart_path unless item
+
+    qty = params[:quantity].to_i
+    if qty <= 0
+      item.destroy
+      redirect_to cart_path, notice: "Item removed."
     else
+      item.update!(quantity: qty.clamp(1, 99))
       redirect_to cart_path
     end
   end
@@ -51,7 +49,9 @@ class CartItemsController < ApplicationController
   end
 
   def current_cart
-    token = session[:cart_token]
-    token && Cart.find_by(token: token)
+    @current_cart ||= begin
+      token = session[:cart_token]
+      token && Cart.find_by(token: token)
+    end
   end
 end

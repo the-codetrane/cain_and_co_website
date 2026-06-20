@@ -1,6 +1,7 @@
 module Admin
   class NewslettersController < BaseController
     before_action :set_newsletter, except: %i[index new create generate]
+    before_action :require_draft_status, only: %i[edit update]
 
     def index
       @newsletters = Newsletter.recent
@@ -23,13 +24,9 @@ module Admin
       end
     end
 
-    def edit
-      redirect_to admin_newsletter_path(@newsletter), alert: "Only drafts can be edited." unless @newsletter.draft?
-    end
+    def edit; end
 
     def update
-      return redirect_to admin_newsletter_path(@newsletter), alert: "Only drafts can be edited." unless @newsletter.draft?
-
       if @newsletter.update(newsletter_params)
         redirect_to admin_newsletter_path(@newsletter), notice: "Draft updated."
       else
@@ -129,6 +126,10 @@ module Admin
     def reject_blank_body
       redirect_to admin_newsletter_path(@newsletter),
                   alert: "Add some content before sending — write it or generate a draft with AI."
+    end
+
+    def require_draft_status
+      redirect_to admin_newsletter_path(@newsletter), alert: "Only drafts can be edited." unless @newsletter.draft?
     end
   end
 end
