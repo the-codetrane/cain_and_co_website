@@ -2,7 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-import "trix"
+import "trix_config"
 import "@rails/actiontext"
 
 if ("serviceWorker" in navigator) {
