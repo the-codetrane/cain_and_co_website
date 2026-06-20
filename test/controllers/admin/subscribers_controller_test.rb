@@ -55,4 +55,52 @@ class Admin::SubscribersControllerTest < ActionDispatch::IntegrationTest
       delete admin_subscriber_path(subscribers(:unsubscribed_fan))
     end
   end
+
+  # CSV import
+  test "import shows the upload form" do
+    get import_admin_subscribers_path
+    assert_response :success
+    assert_match "Import subscribers", response.body
+  end
+
+  test "import creates new confirmed subscribers from csv" do
+    csv = fixture_file_upload("subscribers_import.csv", "text/csv")
+    assert_difference -> { Subscriber.count }, 2 do
+      post import_admin_subscribers_path, params: { csv_file: csv }
+    end
+    assert_redirected_to admin_subscribers_path
+    assert_match "Imported 2 subscribers", flash[:notice]
+  end
+
+  test "import skips already-existing emails" do
+    csv = fixture_file_upload("subscribers_import.csv", "text/csv")
+    post import_admin_subscribers_path, params: { csv_file: csv }
+    assert_match "1 already existed", flash[:notice]
+  end
+
+  test "import reports invalid rows" do
+    csv = fixture_file_upload("subscribers_import.csv", "text/csv")
+    post import_admin_subscribers_path, params: { csv_file: csv }
+    assert_match "2 invalid", flash[:notice]
+  end
+
+  test "imported subscribers are confirmed immediately" do
+    csv = fixture_file_upload("subscribers_import.csv", "text/csv")
+    post import_admin_subscribers_path, params: { csv_file: csv }
+    assert Subscriber.find_by(email: "import1@example.com").confirmed?
+  end
+
+  test "import without a file re-renders form with error" do
+    post import_admin_subscribers_path, params: {}
+    assert_response :unprocessable_entity
+    assert_match "Please choose a CSV file", response.body
+  end
+
+  test "import with no email column re-renders form with format guidance" do
+    csv = fixture_file_upload("subscribers_import_no_email_col.csv", "text/csv")
+    post import_admin_subscribers_path, params: { csv_file: csv }
+    assert_response :unprocessable_entity
+    assert_match "No email column found", response.body
+    assert_match "Email", response.body
+  end
 end
