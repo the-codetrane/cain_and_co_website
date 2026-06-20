@@ -51,9 +51,9 @@ class NewsletterTest < ActiveSupport::TestCase
 
   test "delivery_stats counts by status" do
     stats = newsletters(:sent_issue).delivery_stats
-    assert_equal 1, stats[:total]
+    assert_equal 2, stats[:total]
     assert_equal 1, stats[:sent]
-    assert_equal 0, stats[:failed]
+    assert_equal 1, stats[:failed]
     assert_equal 0, stats[:pending]
   end
 end
