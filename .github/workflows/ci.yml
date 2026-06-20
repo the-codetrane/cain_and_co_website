@@ -155,9 +155,10 @@ jobs:
     needs: [scan_ruby, scan_js, lint, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: production
     concurrency:
       group: deploy
-      cancel-in-progress: true
+      cancel-in-progress: false
 
     steps:
       - name: Checkout code
