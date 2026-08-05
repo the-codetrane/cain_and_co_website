@@ -18,7 +18,7 @@
             class: "block w-full text-sm text-neutral-500 file:mr-4 file:rounded-md file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold hover:file:bg-neutral-200" %>
       <% if photo.image.attached? %>
         <div class="mt-2">
-          <%= image_tag photo.image, class: "h-32 w-auto rounded-md object-cover", alt: photo.caption.presence || "Photo" %>
+          <%= image_tag photo.image_src, class: "h-32 w-auto rounded-md object-cover", alt: photo.caption.presence || "Photo" %>
           <p class="mt-1 text-xs text-neutral-500">Current image — upload a new file to replace it.</p>
         </div>
       <% end %>

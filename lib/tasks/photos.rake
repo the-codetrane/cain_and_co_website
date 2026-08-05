@@ -123,6 +123,115 @@ namespace :photos do
     puts
   end
 
+  desc "Re-point Photo blob keys at their current DigitalOcean Spaces object keys (dry run unless APPLY=1)"
+  task rekey: :environment do
+    require "aws-sdk-s3"
+
+    apply = ENV["APPLY"] == "1"
+    bucket = "ig-mcp-images"
+
+    creds = Rails.application.credentials.dig(:digitalocean)
+    unless creds&.dig(:spaces_key) && creds&.dig(:spaces_secret)
+      abort "\nMissing DigitalOcean Spaces credentials. Run: bin/rails credentials:edit\n"
+    end
+
+    client = Aws::S3::Client.new(
+      access_key_id:     creds[:spaces_key],
+      secret_access_key: creds[:spaces_secret],
+      endpoint:          "https://sfo3.digitaloceanspaces.com",
+      region:            "sfo3"
+    )
+
+    puts "\nListing #{bucket}..."
+    objects = []
+    token   = nil
+    loop do
+      resp = client.list_objects_v2(bucket: bucket, continuation_token: token)
+      resp.contents.each { |o| objects << [ o.key, o.size ] unless o.key.end_with?("/") }
+      break unless resp.is_truncated
+      token = resp.next_continuation_token
+    end
+    puts "#{objects.size} object(s) found.\n\n"
+
+    # Active Storage sanitizes filenames on upload (`:` becomes `-`, among
+    # others), so match on the sanitized basename rather than the raw one.
+    by_filename = objects.group_by { |key, _size| ActiveStorage::Filename.new(File.basename(key)).sanitized }
+    live_keys   = objects.map(&:first).to_set
+
+    already     = 0
+    unmatched   = []
+    by_new_key  = Hash.new { |h, k| h[k] = [] }
+
+    Photo.includes(image_attachment: :blob).find_each do |photo|
+      blob = photo.image_attachment&.blob
+      next unless blob
+
+      if live_keys.include?(blob.key)
+        already += 1
+        next
+      end
+
+      candidates = by_filename[blob.filename.to_s] || []
+      candidates = candidates.select { |_key, size| size == blob.byte_size } if candidates.size > 1
+
+      if candidates.size == 1
+        by_new_key[candidates.first.first] << photo
+      else
+        unmatched << [ photo.id, blob.filename.to_s, candidates.size ]
+      end
+    end
+
+    # `active_storage_blobs.key` is uniquely indexed, so when an earlier
+    # `photos:import` run imported the same object twice only one record can
+    # own the key. Keep the published record, then the oldest, and leave the
+    # rest alone for a human to review.
+    rekeyed    = 0
+    duplicates = []
+
+    by_new_key.each do |new_key, photos|
+      winner, *losers = photos.sort_by { |p| [ p.published? ? 0 : 1, p.id ] }
+
+      puts "  photo #{winner.id}: #{winner.image_attachment.blob.key} -> #{new_key}"
+      winner.image_attachment.blob.update_column(:key, new_key) if apply
+      rekeyed += 1
+
+      losers.each { |p| duplicates << [ p.id, p.published?, new_key ] }
+    end
+
+    puts
+    puts "─" * 60
+    puts "  Already correct     : #{already}"
+    puts "  #{apply ? 'Re-keyed           ' : 'Would re-key       '} : #{rekeyed}"
+    puts "  Duplicate records   : #{duplicates.size}"
+    puts "  Unmatched           : #{unmatched.size}"
+    puts "─" * 60
+
+    if duplicates.any?
+      puts "\nDuplicate photos (same Spaces object as another record — left untouched):"
+      duplicates.each { |id, published, key| puts "  photo #{id}#{published ? ' [published]' : ''} — duplicate of #{key}" }
+      puts "\nReview and delete these at /admin/photos, or run:"
+      puts "  bin/rails photos:rekey APPLY=1 PRUNE_DUPLICATES=1"
+    end
+
+    unmatched.each { |id, filename, count| puts "  photo #{id}: #{filename} — #{count} candidate(s) in Spaces" }
+
+    if ENV["PRUNE_DUPLICATES"] == "1" && duplicates.any?
+      if apply
+        # Only destroy records whose blob still points at a key that no longer
+        # exists in Spaces — never one that owns a live object.
+        prunable = Photo.where(id: duplicates.map(&:first)).includes(image_attachment: :blob)
+                        .reject { |p| live_keys.include?(p.image_attachment&.blob&.key) }
+        prunable.each(&:destroy)
+        puts "\nPruned #{prunable.size} duplicate photo record(s)."
+      else
+        puts "\nPRUNE_DUPLICATES is set but APPLY is not — nothing was deleted."
+      end
+    end
+
+    puts "\nDry run — re-run with APPLY=1 to write the new keys.\n" unless apply
+    puts
+  end
+
   def image_file?(key)
     IMAGE_EXTENSIONS.include?(File.extname(key).downcase)
   end
