@@ -60,7 +60,7 @@
                    class="h-4 w-4 rounded border-white/50 bg-white/80 accent-neutral-900 shadow-sm">
           </label>
           <% if photo.image.attached? %>
-            <%= image_tag photo.image, class: "w-full aspect-square object-cover", alt: photo.caption.presence || "Photo #{photo.position}" %>
+            <%= image_tag photo.image_src, class: "w-full aspect-square object-cover", loading: "lazy", alt: photo.caption.presence || "Photo #{photo.position}" %>
           <% else %>
             <div class="w-full aspect-square bg-neutral-100 flex items-center justify-center">
               <span class="text-xs text-neutral-400">No image</span>

@@ -45,6 +45,29 @@ class PhotoTest < ActiveSupport::TestCase
     assert Photo.new.published
   end
 
+  # ── Rendering ────────────────────────────────────────────────────────────
+
+  test "image_src is nil when no image is attached" do
+    assert_nil Photo.new.image_src
+  end
+
+  test "image_src falls back to the attachment on a non-public service" do
+    photo = attached_photo(position: 99)
+    photo.save!
+    assert_not photo.image.blob.service.public?
+    assert_equal photo.image, photo.image_src
+  end
+
+  test "image_src returns the object URL on a public service" do
+    photo = attached_photo(position: 98)
+    photo.save!
+    photo.image.blob.service.stub(:public?, true) do
+      photo.image.blob.stub(:url, "https://example.test/photo.gif") do
+        assert_equal "https://example.test/photo.gif", photo.image_src
+      end
+    end
+  end
+
   # ── Scopes ───────────────────────────────────────────────────────────────
 
   test "published scope excludes unpublished photos" do
