@@ -1,0 +1,136 @@
+<% content_for :title, "Privacy Policy · Cain & Co." %>
+<% content_for :description, "How Cain & Co. collects, uses, and retains information on this site." %>
+
+<section class="border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-20 max-w-3xl">
+    <p class="text-sm uppercase tracking-[0.4em] text-neutral-400 mb-4">Legal</p>
+    <h1 class="text-4xl sm:text-5xl font-black tracking-tight">Privacy Policy</h1>
+    <p class="mt-3 text-sm text-neutral-400">
+      Last updated <%= @last_updated.strftime("%B %-d, %Y") %>
+    </p>
+
+    <div class="mt-12 space-y-10 text-neutral-300 leading-relaxed
+                [&_h2]:text-white [&_h2]:text-xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:mb-3
+                [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:marker:text-neutral-600
+                [&_a]:text-white [&_a]:underline [&_a]:underline-offset-4">
+
+      <section>
+        <p>
+          This site is operated by <strong class="text-white">2100 Enterprises, LLC</strong>
+          (&ldquo;we,&rdquo; &ldquo;us&rdquo;), which does business as Cain &amp; Co. This policy
+          explains what information we collect through this website, why we collect it, and how
+          long we keep it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Information we collect</h2>
+        <p>We collect information only when you choose to give it to us:</p>
+        <ul>
+          <li>
+            <strong class="text-white">Merchandise orders.</strong> When you buy something, we
+            store your name, email address, and shipping address so we can fulfill and ship the
+            order, along with a reference to the corresponding Stripe payment.
+          </li>
+          <li>
+            <strong class="text-white">Newsletter.</strong> If you subscribe, we store your email
+            address, the date you confirmed it, and a record of which newsletters we sent you.
+          </li>
+          <li>
+            <strong class="text-white">Push notifications.</strong> If you enable them, we store
+            the notification endpoint your browser issues, the associated encryption keys, and
+            your browser's user-agent string.
+          </li>
+          <li>
+            <strong class="text-white">Shopping cart.</strong> We store a random cart token in a
+            cookie so your cart survives page loads. It is not tied to your identity.
+          </li>
+          <li>
+            <strong class="text-white">Site administrators.</strong> Accounts used to manage this
+            site store an email address, a hashed password, and the IP address and user-agent of
+            each sign-in. These are not fan-facing accounts.
+          </li>
+        </ul>
+        <p>
+          We do not sell or share your information with third parties for their own marketing, and
+          we do not use advertising or cross-site tracking cookies.
+        </p>
+      </section>
+
+      <section>
+        <h2>Payment information</h2>
+        <p>
+          Payments are processed by <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe</a>.
+          Card numbers are submitted directly to Stripe and never reach our servers &mdash; we
+          store only Stripe's identifiers for your checkout session and payment, plus the order
+          and shipping details described above.
+        </p>
+      </section>
+
+      <section>
+        <h2>Service providers</h2>
+        <p>We rely on a small number of vendors to run this site:</p>
+        <ul>
+          <li><strong class="text-white">Stripe</strong> &mdash; payment processing.</li>
+          <li><strong class="text-white">Mailgun</strong> &mdash; delivery of order confirmations and newsletters.</li>
+          <li><strong class="text-white">DigitalOcean</strong> &mdash; hosting and image storage.</li>
+        </ul>
+        <p>
+          Each receives only what it needs to perform its function. Embedded content from
+          YouTube and links to streaming services are governed by those companies' own policies.
+        </p>
+      </section>
+
+      <section>
+        <h2>Retention</h2>
+        <p>
+          Order records are kept as long as required for tax, accounting, and customer-service
+          purposes. Newsletter subscriptions are kept until you unsubscribe; every email we send
+          includes a one-click unsubscribe link. Push notification subscriptions are kept until
+          you disable notifications or the endpoint expires.
+        </p>
+      </section>
+
+      <section>
+        <h2>Your rights</h2>
+        <p>
+          Depending on where you live &mdash; including under the GDPR in the European Economic
+          Area and the UK, and the CCPA/CPRA in California &mdash; you may have the right to
+          request access to the personal information we hold about you, ask us to correct or
+          delete it, or object to certain processing. We honor these requests regardless of where
+          you live.
+        </p>
+        <p>
+          To make a request, email us at
+          <a href="mailto:info@2100enterprises.com">info@2100enterprises.com</a>. We do not
+          discriminate against anyone for exercising these rights.
+        </p>
+      </section>
+
+      <section>
+        <h2>Children</h2>
+        <p>
+          This site is not directed at children under 13, and we do not knowingly collect
+          information from them. If you believe a child has given us information, contact us and
+          we will delete it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes</h2>
+        <p>
+          If we update this policy, we will revise the &ldquo;last updated&rdquo; date above.
+          Material changes will be noted on this page.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          2100 Enterprises, LLC<br>
+          <a href="mailto:info@2100enterprises.com">info@2100enterprises.com</a>
+        </p>
+      </section>
+    </div>
+  </div>
+</section>

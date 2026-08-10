@@ -8,4 +8,16 @@ class PagesController < ApplicationController
     @photos = Photo.published.with_attached_image
     @videos = Video.visible
   end
+
+  # Legal pages. LAST_UPDATED is rendered on both and should be bumped whenever
+  # the policy text changes.
+  LAST_UPDATED = Date.new(2026, 8, 10)
+
+  def privacy
+    @last_updated = LAST_UPDATED
+  end
+
+  def tos
+    @last_updated = LAST_UPDATED
+  end
 end

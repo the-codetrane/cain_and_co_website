@@ -54,6 +54,8 @@ Rails.application.routes.draw do
 
   # Public, fan-facing pages
   get "about" => "pages#about", as: :about
+  get "privacy" => "pages#privacy", as: :privacy
+  get "tos" => "pages#tos", as: :tos
   get "shows/past" => "shows#past", as: :past_shows
   resources :shows, only: :index
   resources :products, only: %i[index show]
