@@ -25,6 +25,16 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc><%= privacy_url %></loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc><%= tos_url %></loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
   <% @products.each do |product| %>
   <url>
     <loc><%= product_url(product) %></loc>

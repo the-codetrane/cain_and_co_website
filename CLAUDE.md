@@ -36,3 +36,15 @@ CI (`.github/workflows/ci.yml`) runs, on every PR and push to `main`: Brakeman, 
 - **Tests use Minitest**, not RSpec (`test/` dir, fixtures in `test/fixtures/`). System tests use Capybara + Selenium.
 - **Linting is rubocop-rails-omakase** — add house-style overrides to `.rubocop.yml` rather than fighting the defaults.
 - The `/up` route (`rails/health#show`) is the health check used by load balancers/Kamal.
+
+## Personal data
+
+`docs/DATA_PRIVACY.md` is the inventory of every column holding personal data, the three vendors it
+reaches (Stripe, Mailgun, DigitalOcean), and the runbook for access/deletion requests, which go to
+`info@2100enterprises.com`.
+
+**When a migration adds or removes a column holding personal data, update `docs/DATA_PRIVACY.md` and
+check whether the public policy in `app/views/pages/privacy.html.erb` needs the same change.** The
+published policy is a binding public statement — letting it drift out of sync with the schema is a
+liability in itself. The legal pages are served by `PagesController#privacy` / `#tos`; bump
+`PagesController::LAST_UPDATED` whenever their text changes.

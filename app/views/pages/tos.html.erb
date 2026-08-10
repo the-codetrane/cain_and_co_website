@@ -1,0 +1,134 @@
+<% content_for :title, "Terms of Service · Cain & Co." %>
+<% content_for :description, "The terms that govern use of the Cain & Co. website and store." %>
+
+<section class="border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-20 max-w-3xl">
+    <p class="text-sm uppercase tracking-[0.4em] text-neutral-400 mb-4">Legal</p>
+    <h1 class="text-4xl sm:text-5xl font-black tracking-tight">Terms of Service</h1>
+    <p class="mt-3 text-sm text-neutral-400">
+      Last updated <%= @last_updated.strftime("%B %-d, %Y") %>
+    </p>
+
+    <div class="mt-12 space-y-10 text-neutral-300 leading-relaxed
+                [&_h2]:text-white [&_h2]:text-xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:mb-3
+                [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:marker:text-neutral-600
+                [&_a]:text-white [&_a]:underline [&_a]:underline-offset-4">
+
+      <section>
+        <p>
+          These terms govern your use of this website and store, operated by
+          <strong class="text-white">2100 Enterprises, LLC</strong> (&ldquo;we,&rdquo;
+          &ldquo;us&rdquo;), doing business as Cain &amp; Co. By using the site or placing an
+          order, you agree to them.
+        </p>
+      </section>
+
+      <section>
+        <h2>Using the site</h2>
+        <p>
+          You may browse the site, subscribe to the newsletter, and purchase merchandise for your
+          own personal, non-commercial use. Please do not attempt to disrupt or gain unauthorized
+          access to the site, scrape it in a way that degrades service for others, or use it for
+          anything unlawful.
+        </p>
+      </section>
+
+      <section>
+        <h2>Orders and payment</h2>
+        <p>
+          Prices are listed in U.S. dollars and may change at any time before you order. Payment
+          is processed by Stripe; placing an order is an offer to buy, which we accept when we
+          confirm the order by email.
+        </p>
+        <p>
+          We may cancel and refund an order if an item is out of stock or if a price or
+          description was listed in error. Merchandise availability is limited and not guaranteed.
+        </p>
+      </section>
+
+      <section>
+        <h2>Shipping, returns, and exchanges</h2>
+        <p>
+          We ship to the address you provide at checkout &mdash; please make sure it is correct,
+          as we cannot reroute a package once it has shipped. Risk of loss passes to you on
+          delivery to the carrier.
+        </p>
+        <p>
+          If your order arrives damaged or incorrect, email
+          <a href="mailto:info@2100enterprises.com">info@2100enterprises.com</a> within 30 days of
+          delivery and we will make it right with a replacement or a refund.
+        </p>
+      </section>
+
+      <section>
+        <h2>Newsletter and notifications</h2>
+        <p>
+          Subscribing to the newsletter or enabling push notifications is entirely optional. You
+          can unsubscribe from emails using the link in any message, and you can disable push
+          notifications in your browser settings at any time.
+        </p>
+      </section>
+
+      <section>
+        <h2>Tickets and shows</h2>
+        <p>
+          Show listings on this site are provided for information and may come from third parties
+          such as Bandsintown or a venue. Dates, times, lineups, and ticket availability can change
+          or be cancelled by the venue or promoter, and tickets are sold by those third parties
+          under their own terms &mdash; not by us.
+        </p>
+      </section>
+
+      <section>
+        <h2>Intellectual property</h2>
+        <p>
+          The Cain &amp; Co. name and logo, and all music, recordings, photographs, videos, and
+          text on this site, are owned by us or our licensors and are protected by copyright and
+          trademark law. You may share links to the site freely, but you may not reproduce or sell
+          this material without written permission.
+        </p>
+      </section>
+
+      <section>
+        <h2>Disclaimer and limitation of liability</h2>
+        <p>
+          The site is provided &ldquo;as is,&rdquo; without warranties of any kind, express or
+          implied, to the fullest extent permitted by law. We do not warrant that the site will be
+          uninterrupted or error-free.
+        </p>
+        <p>
+          To the fullest extent permitted by law, our total liability arising out of your use of
+          the site or any order will not exceed the amount you paid us for that order. We are not
+          liable for indirect, incidental, or consequential damages. Some jurisdictions do not
+          allow these limitations, so they may not apply to you.
+        </p>
+      </section>
+
+      <section>
+        <h2>Privacy</h2>
+        <p>
+          Our <%= link_to "Privacy Policy", privacy_path %> explains what information we collect
+          and how we handle it, and forms part of these terms.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes and governing law</h2>
+        <p>
+          We may update these terms; the &ldquo;last updated&rdquo; date above will reflect any
+          revision, and continuing to use the site means you accept the change. These terms are
+          governed by the laws of the State of Minnesota, without regard to its conflict-of-laws
+          rules.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          2100 Enterprises, LLC<br>
+          <a href="mailto:info@2100enterprises.com">info@2100enterprises.com</a>
+        </p>
+      </section>
+    </div>
+  </div>
+</section>
