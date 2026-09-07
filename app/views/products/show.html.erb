@@ -39,21 +39,45 @@
         <p class="mt-4 text-neutral-300 leading-relaxed"><%= @product.description %></p>
       <% end %>
 
-      <% in_stock_variants = @product.variants.select(&:in_stock?) %>
+      <% variants = @product.variants.to_a %>
+      <% in_stock_variants = variants.select(&:in_stock?) %>
       <% if in_stock_variants.any? %>
-        <%= form_with url: cart_cart_items_path, method: :post, class: "mt-8 space-y-4" do |f| %>
-          <% if @product.variants.many? %>
-            <div>
-              <label class="block text-sm font-medium text-neutral-300 mb-2">Select option</label>
-              <select name="variant_id" required
-                      class="w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-sm focus:border-white focus:outline-none">
-                <% in_stock_variants.each do |variant| %>
-                  <option value="<%= variant.id %>">
-                    <%= variant.name %> — $<%= "%.2f" % variant.price_dollars %>
-                  </option>
+        <%= form_with url: cart_cart_items_path, method: :post,
+                      class: "mt-8 space-y-5",
+                      data: { controller: "variant-picker" } do %>
+          <% if variants.many? %>
+            <fieldset>
+              <legend class="block text-sm font-medium text-neutral-300 mb-2">
+                <%= variants.all?(&:size?) ? "Select size" : "Select option" %>
+              </legend>
+              <div class="flex flex-wrap gap-2">
+                <% variants.each do |variant| %>
+                  <% if variant.in_stock? %>
+                    <label class="cursor-pointer select-none rounded-xl border border-neutral-700 px-4 py-2.5 text-sm font-semibold text-neutral-200 transition-colors hover:border-neutral-400 has-[:checked]:border-white has-[:checked]:bg-white has-[:checked]:text-neutral-900 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-white has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-neutral-950">
+                      <%= radio_button_tag :variant_id, variant.id,
+                            variant == in_stock_variants.first,
+                            required: true,
+                            class: "sr-only",
+                            data: {
+                              variant_picker_target: "option",
+                              action: "change->variant-picker#update",
+                              price: "$%.2f" % variant.price_dollars
+                            } %>
+                      <%= variant.name %>
+                    </label>
+                  <% else %>
+                    <span class="cursor-not-allowed rounded-xl border border-neutral-800 px-4 py-2.5 text-sm font-semibold text-neutral-600 line-through"
+                          title="Sold out">
+                      <%= variant.name %>
+                    </span>
+                  <% end %>
                 <% end %>
-              </select>
-            </div>
+              </div>
+            </fieldset>
+
+            <p class="text-2xl font-bold" data-variant-picker-target="price">
+              $<%= "%.2f" % in_stock_variants.first.price_dollars %>
+            </p>
           <% else %>
             <% variant = in_stock_variants.first %>
             <%= hidden_field_tag :variant_id, variant.id %>
@@ -61,7 +85,8 @@
           <% end %>
 
           <button type="submit"
-                  class="w-full rounded-full bg-white px-6 py-3.5 font-semibold text-neutral-900 hover:bg-neutral-200 transition-colors">
+                  data-variant-picker-target="submit"
+                  class="w-full rounded-full bg-white px-6 py-3.5 font-semibold text-neutral-900 hover:bg-neutral-200 transition-colors disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400">
             Add to cart
           </button>
         <% end %>
@@ -72,8 +97,8 @@
         </div>
       <% end %>
 
-      <% if @product.variants.any? && !@product.variants.map(&:in_stock?).all? && in_stock_variants.any? %>
-        <p class="mt-3 text-xs text-neutral-500">Some options are sold out — only in-stock choices shown above.</p>
+      <% if variants.many? && in_stock_variants.size < variants.size %>
+        <p class="mt-3 text-xs text-neutral-500">Struck-through sizes are sold out.</p>
       <% end %>
     </div>
   </div>

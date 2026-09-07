@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_19_205434) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_07_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -212,11 +212,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_19_205434) do
   create_table "variants", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
+    t.integer "position", default: 0, null: false
     t.integer "price_cents", default: 0, null: false
     t.integer "product_id", null: false
     t.string "sku"
     t.integer "stock_quantity", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.index "product_id, lower(name)", name: "index_variants_on_product_id_and_lower_name", unique: true
+    t.index ["product_id", "position"], name: "index_variants_on_product_id_and_position"
     t.index ["product_id"], name: "index_variants_on_product_id"
     t.index ["sku"], name: "index_variants_on_sku", unique: true, where: "sku IS NOT NULL"
   end

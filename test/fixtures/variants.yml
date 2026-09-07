@@ -1,22 +1,27 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-shirt_small:
-  product: published_shirt
-  name: Small
-  price_cents: 2500
-  stock_quantity: 10
-  sku: SHIRT-S
-
+# Deliberately declared out of size order — Variant#assign_position is what puts
+# them back in S, M, L order, so the ordering tests are meaningful.
 shirt_large:
   product: published_shirt
-  name: Large
+  name: L
   price_cents: 2500
   stock_quantity: 0
   sku: SHIRT-L
+  position: 40
+
+shirt_small:
+  product: published_shirt
+  name: S
+  price_cents: 2500
+  stock_quantity: 10
+  sku: SHIRT-S
+  position: 20
 
 vinyl_standard:
   product: draft_vinyl
-  name: Standard
+  name: One Size
   price_cents: 3000
   stock_quantity: 5
   sku: VINYL-STD
+  position: 80
