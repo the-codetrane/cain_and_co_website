@@ -181,5 +181,12 @@ jobs:
 
       - name: Deploy with Kamal
         env:
+          # .kamal/secrets reads config/credentials/production.key when present and falls
+          # back to this. The key file is gitignored, so on a runner this is the only source.
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bin/kamal deploy
+        run: |
+          if [ -z "$RAILS_MASTER_KEY" ]; then
+            echo "::error::RAILS_MASTER_KEY is empty. Set the repository/environment secret to the contents of config/credentials/production.key."
+            exit 1
+          fi
+          bin/kamal deploy
