@@ -179,14 +179,18 @@ jobs:
           ssh-keygen -R 167.172.146.61 2>/dev/null || true
           ssh-keyscan -H 167.172.146.61 >> ~/.ssh/known_hosts
 
+      # A key that is present but wrong is not caught until the container boots, where it
+      # surfaces as "AEAD authentication tag verification failed" and a deploy that spends
+      # four minutes timing out on a health check that can never pass. Prove the key opens
+      # the credentials first, so a bad secret fails here in seconds with a legible message.
+      - name: Verify RAILS_MASTER_KEY decrypts the production credentials
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: bin/verify_credentials_key production
+
       - name: Deploy with Kamal
         env:
           # .kamal/secrets reads config/credentials/production.key when present and falls
           # back to this. The key file is gitignored, so on a runner this is the only source.
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: |
-          if [ -z "$RAILS_MASTER_KEY" ]; then
-            echo "::error::RAILS_MASTER_KEY is empty. Set the repository/environment secret to the contents of config/credentials/production.key."
-            exit 1
-          fi
-          bin/kamal deploy
+        run: bin/kamal deploy
