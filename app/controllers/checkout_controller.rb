@@ -68,8 +68,13 @@ class CheckoutController < ApplicationController
           }
         }
       ],
-      success_url: order_success_url(order, session_id: "{CHECKOUT_SESSION_ID}"),
-      cancel_url: order_cancel_url(order, session_id: "{CHECKOUT_SESSION_ID}")
+      # Stripe substitutes the literal "{CHECKOUT_SESSION_ID}" template string into
+      # these URLs. Passing it through a route helper as a query param percent-encodes
+      # the braces to %7B...%7D, which Stripe does not recognize, so the placeholder
+      # would reach OrdersController#success verbatim and fail its session_id check.
+      # Append it as a raw string to keep the braces intact.
+      success_url: "#{order_success_url(order)}?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: "#{order_cancel_url(order)}?session_id={CHECKOUT_SESSION_ID}"
     }
   end
 end
