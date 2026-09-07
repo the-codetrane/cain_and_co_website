@@ -33,6 +33,15 @@
       </div>
     </div>
 
+    <div>
+      <%= f.label :weight_oz, "Shipping weight (oz)", class: label %>
+      <%= f.number_field :weight_oz, class: field, min: 0 %>
+      <p class="mt-1 text-xs text-neutral-400">
+        Shipping is priced from the total weight of the cart. Leave at 0 to assume
+        <%= Variant::DEFAULT_WEIGHT_OZ %> oz — roughly a tee. A vinyl LP is about 16 oz.
+      </p>
+    </div>
+
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
         <%= f.label :sku, "SKU (optional)", class: label %>

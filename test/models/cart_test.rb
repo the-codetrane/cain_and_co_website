@@ -37,4 +37,23 @@ class CartTest < ActiveSupport::TestCase
     cart.add_variant(variants(:shirt_small), quantity: 3)
     assert_equal 5, item.reload.quantity
   end
+
+  test "shipping_weight_oz sums item weight times quantity" do
+    cart = carts(:empty_cart)
+    cart.add_variant(variants(:shirt_small), quantity: 3)
+
+    assert_equal 3 * variants(:shirt_small).weight_oz, cart.reload.shipping_weight_oz
+  end
+
+  test "shipping_weight_oz counts an unweighed variant at the default weight" do
+    variants(:shirt_small).update!(weight_oz: 0)
+    cart = carts(:empty_cart)
+    cart.add_variant(variants(:shirt_small), quantity: 2)
+
+    assert_equal 2 * Variant::DEFAULT_WEIGHT_OZ, cart.reload.shipping_weight_oz
+  end
+
+  test "an empty cart weighs nothing" do
+    assert_equal 0, carts(:empty_cart).shipping_weight_oz
+  end
 end

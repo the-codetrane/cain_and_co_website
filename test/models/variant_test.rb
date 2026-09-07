@@ -117,4 +117,27 @@ class VariantTest < ActiveSupport::TestCase
   test "no backfilled position uses the 0 auto-assign sentinel" do
     assert Variant.all.none? { |v| v.position.zero? }, "position 0 would be reassigned on next save"
   end
+
+  test "shipping_weight_oz falls back to the default when a variant is unweighed" do
+    variant = variants(:shirt_small)
+    variant.update!(weight_oz: 0)
+
+    assert_not variant.weighed?
+    assert_equal Variant::DEFAULT_WEIGHT_OZ, variant.shipping_weight_oz
+  end
+
+  test "shipping_weight_oz uses the recorded weight once one is set" do
+    variant = variants(:shirt_small)
+    variant.update!(weight_oz: 12)
+
+    assert variant.weighed?
+    assert_equal 12, variant.shipping_weight_oz
+  end
+
+  test "weight_oz rejects negative weights" do
+    variant = variants(:shirt_small)
+    variant.weight_oz = -1
+    assert_not variant.valid?
+    assert_includes variant.errors[:weight_oz], "must be greater than or equal to 0"
+  end
 end

@@ -3,8 +3,9 @@ class CheckoutController < ApplicationController
     cart = find_cart
     redirect_to cart_path, alert: "Your cart is empty." and return if cart.nil? || cart.empty?
 
-    order = build_order_from_cart(cart)
-    stripe_session = Stripe::Checkout::Session.create(stripe_params(order))
+    rate = ShippingRate.for_cart(cart)
+    order = build_order_from_cart(cart, rate)
+    stripe_session = Stripe::Checkout::Session.create(stripe_params(order, rate))
     order.update_column(:stripe_checkout_session_id, stripe_session.id)
 
     redirect_to stripe_session.url, allow_other_host: true
@@ -20,13 +21,16 @@ class CheckoutController < ApplicationController
         .find_by(token: session[:cart_token])
   end
 
-  def build_order_from_cart(cart)
+  # The shipping figures recorded here are the estimate we quote Stripe. The webhook
+  # overwrites both from the completed session, which stays authoritative — this just
+  # keeps a pending order internally consistent instead of showing $0 shipping.
+  def build_order_from_cart(cart, rate)
     ActiveRecord::Base.transaction do
       order = Order.create!(
         status: "pending",
         subtotal_cents: cart.total_cents,
-        shipping_cents: 0,
-        total_cents: cart.total_cents
+        shipping_cents: rate.cents,
+        total_cents: cart.total_cents + rate.cents
       )
       cart.cart_items.each do |item|
         order.order_items.create!(
@@ -40,7 +44,7 @@ class CheckoutController < ApplicationController
     end
   end
 
-  def stripe_params(order)
+  def stripe_params(order, rate)
     {
       mode: "payment",
       client_reference_id: order.id.to_s,
@@ -55,19 +59,7 @@ class CheckoutController < ApplicationController
         }
       },
       shipping_address_collection: { allowed_countries: [ "US" ] },
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: "fixed_amount",
-            fixed_amount: { amount: 800, currency: "usd" },
-            display_name: "Standard Shipping",
-            delivery_estimate: {
-              minimum: { unit: "business_day", value: 5 },
-              maximum: { unit: "business_day", value: 10 }
-            }
-          }
-        }
-      ],
+      shipping_options: [ rate.stripe_shipping_option ],
       # Stripe substitutes the literal "{CHECKOUT_SESSION_ID}" template string into
       # these URLs. Passing it through a route helper as a query param percent-encodes
       # the braces to %7B...%7D, which Stripe does not recognize, so the placeholder

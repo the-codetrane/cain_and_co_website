@@ -81,4 +81,50 @@ class CheckoutControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to cart_path
     assert_match "Something went wrong", flash[:alert]
   end
+
+  test "quotes Stripe a shipping rate derived from cart weight" do
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id, quantity: 2 }
+
+    captured_params = nil
+    Stripe::Checkout::Session.stub(:create, ->(params) { captured_params = params; mock_stripe_session }) do
+      post checkout_path
+    end
+
+    expected = ShippingRate.new(2 * variants(:shirt_small).weight_oz).cents
+    rate_data = captured_params[:shipping_options].sole[:shipping_rate_data]
+
+    assert_equal expected, rate_data[:fixed_amount][:amount]
+    assert_equal "usd", rate_data[:fixed_amount][:currency]
+  end
+
+  test "a heavier cart is quoted more shipping than a lighter one" do
+    light = nil
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id, quantity: 1 }
+    Stripe::Checkout::Session.stub(:create, ->(params) { light = params; mock_stripe_session(id: "cs_test_light") }) do
+      post checkout_path
+    end
+
+    heavy = nil
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id, quantity: 8 }
+    Stripe::Checkout::Session.stub(:create, ->(params) { heavy = params; mock_stripe_session(id: "cs_test_heavy") }) do
+      post checkout_path
+    end
+
+    amount = ->(params) { params[:shipping_options].sole[:shipping_rate_data][:fixed_amount][:amount] }
+    assert_operator amount.call(heavy), :>, amount.call(light)
+  end
+
+  test "records the quoted shipping on the pending order" do
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id, quantity: 2 }
+
+    Stripe::Checkout::Session.stub(:create, mock_stripe_session) do
+      post checkout_path
+    end
+
+    order = Order.last
+    expected_shipping = ShippingRate.new(2 * variants(:shirt_small).weight_oz).cents
+
+    assert_equal expected_shipping, order.shipping_cents
+    assert_equal order.subtotal_cents + expected_shipping, order.total_cents
+  end
 end

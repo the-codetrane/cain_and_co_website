@@ -27,13 +27,15 @@ module Admin
 
       price_cents    = params[:price_cents].to_i
       stock_quantity = params[:stock_quantity].to_i
+      weight_oz      = params[:weight_oz].to_i
       existing       = @product.existing_size_names
 
       created = []
       Variant.transaction do
         (sizes - existing).each do |size|
           created << @product.variants.create!(
-            name: size, price_cents: price_cents, stock_quantity: stock_quantity
+            name: size, price_cents: price_cents, stock_quantity: stock_quantity,
+            weight_oz: weight_oz
           )
         end
       end
@@ -73,7 +75,7 @@ module Admin
     end
 
     def variant_params
-      params.require(:variant).permit(:name, :price_cents, :stock_quantity, :sku, :position)
+      params.require(:variant).permit(:name, :price_cents, :stock_quantity, :weight_oz, :sku, :position)
     end
   end
 end
