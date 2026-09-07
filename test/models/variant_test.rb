@@ -104,4 +104,17 @@ class VariantTest < ActiveSupport::TestCase
     assert_includes Variant.in_stock, variants(:shirt_small)
     assert_not_includes Variant.in_stock, variants(:shirt_large)
   end
+  test "the database rejects a case-variant duplicate name even without validation" do
+    existing = variants(:shirt_small)
+    assert_raises ActiveRecord::RecordNotUnique do
+      Variant.connection.execute(<<~SQL)
+        INSERT INTO variants (product_id, name, price_cents, stock_quantity, position, created_at, updated_at)
+        VALUES (#{existing.product_id}, '#{existing.name.downcase}', 1, 1, 999, datetime(), datetime())
+      SQL
+    end
+  end
+
+  test "no backfilled position uses the 0 auto-assign sentinel" do
+    assert Variant.all.none? { |v| v.position.zero? }, "position 0 would be reassigned on next save"
+  end
 end

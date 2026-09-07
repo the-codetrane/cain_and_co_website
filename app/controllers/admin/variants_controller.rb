@@ -20,7 +20,7 @@ module Admin
     # product page). Sizes already defined on the product are skipped rather than
     # rejected, so re-submitting the picker is safe.
     def add_sizes
-      sizes = Array(params[:sizes]).map(&:to_s).select { |s| Variant::SIZES.include?(s) }
+      sizes = Array(params[:sizes]).map(&:to_s).uniq.select { |s| Variant::SIZES.include?(s) }
       if sizes.empty?
         redirect_to admin_product_path(@product), alert: "Pick at least one size." and return
       end

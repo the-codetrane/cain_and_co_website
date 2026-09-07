@@ -89,4 +89,13 @@ class Admin::VariantsControllerTest < ActionDispatch::IntegrationTest
     } }
     assert_response :unprocessable_entity
   end
+  test "add_sizes dedupes repeated sizes in one request" do
+    product = Product.create!(name: "Hoodie")
+    assert_difference -> { Variant.count }, 1 do
+      post add_sizes_admin_product_variants_path(product),
+           params: { sizes: %w[M M M], price_cents: 4500, stock_quantity: 2 }
+    end
+    assert_equal %w[M], product.variants.reload.map(&:name)
+    assert_equal "Added 1 size.", flash[:notice]
+  end
 end

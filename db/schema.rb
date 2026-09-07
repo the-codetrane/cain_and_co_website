@@ -218,7 +218,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_07_120000) do
     t.string "sku"
     t.integer "stock_quantity", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id", "name"], name: "index_variants_on_product_id_and_name", unique: true
+    t.index "product_id, lower(name)", name: "index_variants_on_product_id_and_lower_name", unique: true
     t.index ["product_id", "position"], name: "index_variants_on_product_id_and_position"
     t.index ["product_id"], name: "index_variants_on_product_id"
     t.index ["sku"], name: "index_variants_on_sku", unique: true, where: "sku IS NOT NULL"

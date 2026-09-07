@@ -11,6 +11,10 @@ export default class extends Controller {
   }
 
   update() {
+    // Single-variant products post a hidden variant_id and render no radios at all,
+    // so there is nothing to pick and nothing to gate the submit button on.
+    if (this.optionTargets.length === 0) return
+
     const selected = this.optionTargets.find((option) => option.checked)
 
     if (this.hasPriceTarget) {
