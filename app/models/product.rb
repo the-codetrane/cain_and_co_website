@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  has_many :variants, dependent: :destroy
+  has_many :variants, -> { ordered }, dependent: :destroy, inverse_of: :product
   has_many_attached :images
 
   validates :name, presence: true
@@ -15,7 +15,13 @@ class Product < ApplicationRecord
   end
 
   def in_stock?
-    variants.where("stock_quantity > 0").exists?
+    variants.in_stock.exists?
+  end
+
+  # Every size already defined on this product, so the admin picker can show which
+  # of Variant::SIZES are still available to add.
+  def existing_size_names
+    variants.filter_map { |variant| Variant.canonical_size(variant.name) }
   end
 
   private

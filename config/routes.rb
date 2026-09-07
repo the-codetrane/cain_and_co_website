@@ -35,7 +35,9 @@ Rails.application.routes.draw do
       end
     end
     resources :products do
-      resources :variants, except: %i[show index]
+      resources :variants, except: %i[show index] do
+        collection { post :add_sizes }
+      end
     end
     resources :orders, only: %i[index show] do
       member { patch :fulfill }
