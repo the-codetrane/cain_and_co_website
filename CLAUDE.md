@@ -37,6 +37,28 @@ CI (`.github/workflows/ci.yml`) runs, on every PR and push to `main`: Brakeman, 
 - **Linting is rubocop-rails-omakase** — add house-style overrides to `.rubocop.yml` rather than fighting the defaults.
 - The `/up` route (`rails/health#show`) is the health check used by load balancers/Kamal.
 
+## Credentials keys
+
+There are **two** encrypted credentials files with **two different keys**, and mixing them up is the
+single most common way to break a deploy:
+
+| File | Key | Used by |
+| --- | --- | --- |
+| `config/credentials.yml.enc` | `config/master.key` | development/test |
+| `config/credentials/production.yml.enc` | `config/credentials/production.key` | production |
+
+Both key files are gitignored, so they never reach a CI runner or the Docker image. Kamal injects
+the key as the `RAILS_MASTER_KEY` env var (see `.kamal/secrets`), sourced from the local key file
+when present and otherwise from the GitHub Actions secret of the same name. Despite that name it
+must hold **`config/credentials/production.key`**, not `config/master.key` — Rails resolves the key
+as `read_env_key || read_key_file`, so the env var wins inside the container and the wrong one fails
+boot with `ActiveSupport::MessageEncryptor::InvalidMessage: AEAD authentication tag verification
+failed`, which Kamal only reports as a health-check timeout.
+
+Run `bin/verify_credentials_key production` to check a key before deploying; the deploy job runs it
+as a preflight. **If you rotate `config/credentials/production.key`, update the `RAILS_MASTER_KEY`
+GitHub Actions secret in the same change** (`gh secret set RAILS_MASTER_KEY < config/credentials/production.key`).
+
 ## Personal data
 
 `docs/DATA_PRIVACY.md` is the inventory of every column holding personal data, the three vendors it
