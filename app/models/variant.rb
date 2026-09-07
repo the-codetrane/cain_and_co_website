@@ -23,6 +23,11 @@ class Variant < ApplicationRecord
   # never collides with a size slot.
   SIZE_POSITION_STEP = 10
 
+  # Shipping weight to assume for a variant nobody has weighed yet — roughly a
+  # printed tee in a poly mailer. ShippingRate tiers on total cart weight, so a
+  # literal 0 would ship a whole order for the lightest rate.
+  DEFAULT_WEIGHT_OZ = 8
+
   belongs_to :product
   has_many :cart_items, dependent: :destroy
   has_many :order_items, dependent: :nullify
@@ -32,6 +37,7 @@ class Variant < ApplicationRecord
                                  message: "is already an option on this product" }
   validates :price_cents, numericality: { greater_than_or_equal_to: 0 }
   validates :stock_quantity, numericality: { greater_than_or_equal_to: 0 }
+  validates :weight_oz, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   before_validation :normalize_sku
   before_validation :assign_position
   validates :sku, uniqueness: true, allow_nil: true
@@ -52,6 +58,16 @@ class Variant < ApplicationRecord
 
   def in_stock?
     stock_quantity > 0
+  end
+
+  # The weight ShippingRate should bill for. An unweighed variant (0) falls back to
+  # DEFAULT_WEIGHT_OZ rather than adding nothing to the parcel.
+  def shipping_weight_oz
+    weight_oz.to_i.positive? ? weight_oz : DEFAULT_WEIGHT_OZ
+  end
+
+  def weighed?
+    weight_oz.to_i.positive?
   end
 
   def size?

@@ -60,6 +60,7 @@
           <th class="px-4 py-3">Order</th>
           <th class="px-4 py-3">SKU</th>
           <th class="px-4 py-3">Price</th>
+          <th class="px-4 py-3">Weight</th>
           <th class="px-4 py-3">Stock</th>
           <th class="px-4 py-3"></th>
         </tr>
@@ -71,6 +72,15 @@
             <td class="px-4 py-3 text-neutral-400 tabular-nums"><%= variant.position %></td>
             <td class="px-4 py-3 text-neutral-500 font-mono text-xs"><%= variant.sku.presence || "—" %></td>
             <td class="px-4 py-3">$<%= "%.2f" % variant.price_dollars %></td>
+            <td class="px-4 py-3 tabular-nums">
+              <% if variant.weighed? %>
+                <%= variant.weight_oz %> oz
+              <% else %>
+                <span class="text-neutral-400" title="Not weighed — shipping assumes <%= Variant::DEFAULT_WEIGHT_OZ %> oz">
+                  <%= Variant::DEFAULT_WEIGHT_OZ %> oz*
+                </span>
+              <% end %>
+            </td>
             <td class="px-4 py-3">
               <% if variant.in_stock? %>
                 <span class="text-emerald-700"><%= variant.stock_quantity %></span>

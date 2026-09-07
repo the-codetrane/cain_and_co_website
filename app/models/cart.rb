@@ -12,6 +12,11 @@ class Cart < ApplicationRecord
     cart_items.sum(:quantity)
   end
 
+  # Summed item weight only — ShippingRate adds the packaging on top.
+  def shipping_weight_oz
+    cart_items.sum { |item| item.variant.shipping_weight_oz * item.quantity }
+  end
+
   def empty?
     cart_items.empty?
   end

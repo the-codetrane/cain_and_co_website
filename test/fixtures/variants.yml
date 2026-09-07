@@ -7,6 +7,7 @@ shirt_large:
   name: L
   price_cents: 2500
   stock_quantity: 0
+  weight_oz: 6
   sku: SHIRT-L
   position: 40
 
@@ -15,6 +16,7 @@ shirt_small:
   name: S
   price_cents: 2500
   stock_quantity: 10
+  weight_oz: 6
   sku: SHIRT-S
   position: 20
 
@@ -23,5 +25,6 @@ vinyl_standard:
   name: One Size
   price_cents: 3000
   stock_quantity: 5
+  weight_oz: 16
   sku: VINYL-STD
   position: 80
