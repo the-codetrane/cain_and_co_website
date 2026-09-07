@@ -1,9 +1,13 @@
 namespace :orders do
   # Truthy-ENV helper: a lambda rather than a `def`, which inside a rake block
-  # would leak a method onto Object.
-  flag = ->(name) {
+  # would leak a method onto Object. Unset or blank falls back to `default`, so
+  # opt-in flags default off while SEND_RECEIPTS defaults on; anything else is
+  # true unless it is a recognized falsey word, compared case-insensitively.
+  flag = ->(name, default: false) {
     value = ENV[name]
-    value.present? && !%w[0 false no].include?(value.downcase)
+    return default if value.blank?
+
+    !%w[0 false no off].include?(value.strip.downcase)
   }
 
   # Orders only leave "pending" when Stripe's checkout.session.completed webhook
@@ -20,7 +24,7 @@ namespace :orders do
   task reconcile_pending: :environment do
     dry_run       = flag.call("DRY_RUN")
     mark_expired  = flag.call("MARK_EXPIRED")
-    send_receipts = ENV.fetch("SEND_RECEIPTS", "true") != "false"
+    send_receipts = flag.call("SEND_RECEIPTS", default: true)
 
     scope = Order.pending.where.not(stripe_checkout_session_id: nil).order(:id)
     scope = scope.where(id: ENV["ORDER_IDS"].split(",").map(&:strip)) if ENV["ORDER_IDS"].present?
@@ -41,34 +45,45 @@ namespace :orders do
 
       state = "payment_status=#{stripe_session.payment_status} status=#{stripe_session.status}"
 
-      if stripe_session.payment_status == "paid"
-        if dry_run
-          counts[:would_pay] += 1
-          puts "  order ##{order.id} #{session_id}: #{state} — would mark paid " \
-               "(#{stripe_session.customer_details&.email}, $#{stripe_session.amount_total.to_i / 100.0})"
-        else
-          ActiveRecord::Base.transaction do
-            OrderPaymentSync.apply_paid_session!(order, stripe_session, send_receipt: send_receipts)
+      # One bad order must not strand the rest of the run. The transaction rolls
+      # back, so a failed order stays pending and is safely retried next time.
+      begin
+        if stripe_session.payment_status == "paid"
+          if dry_run
+            counts[:would_pay] += 1
+            puts "  order ##{order.id} #{session_id}: #{state} — would mark paid " \
+                 "(#{stripe_session.customer_details&.email}, $#{stripe_session.amount_total.to_i / 100.0})"
+          else
+            ActiveRecord::Base.transaction do
+              OrderPaymentSync.apply_paid_session!(order, stripe_session, send_receipt: send_receipts)
+            end
+            counts[:paid] += 1
+            puts "  order ##{order.id} #{session_id}: marked PAID (#{order.buyer_email}, $#{order.total_dollars})"
           end
-          counts[:paid] += 1
-          puts "  order ##{order.id} #{session_id}: marked PAID (#{order.buyer_email}, $#{order.total_dollars})"
-        end
-      elsif stripe_session.status == "expired"
-        if mark_expired && !dry_run
-          order.update!(status: "canceled")
-          counts[:canceled] += 1
-          puts "  order ##{order.id} #{session_id}: #{state} — marked canceled"
+        elsif stripe_session.status == "expired"
+          if mark_expired && !dry_run
+            order.update!(status: "canceled")
+            counts[:canceled] += 1
+            puts "  order ##{order.id} #{session_id}: #{state} — marked canceled"
+          else
+            counts[:expired] += 1
+            puts "  order ##{order.id} #{session_id}: #{state} — expired, left pending" \
+                 "#{" (pass MARK_EXPIRED=1 to cancel)" unless mark_expired}"
+          end
         else
-          counts[:expired] += 1
-          puts "  order ##{order.id} #{session_id}: #{state} — expired, left pending" \
-               "#{" (pass MARK_EXPIRED=1 to cancel)" unless mark_expired}"
+          counts[:open] += 1
+          puts "  order ##{order.id} #{session_id}: #{state} — not paid yet, left pending"
         end
-      else
-        counts[:open] += 1
-        puts "  order ##{order.id} #{session_id}: #{state} — not paid yet, left pending"
+      rescue StandardError => e
+        counts[:failed] += 1
+        puts "  order ##{order.id} #{session_id}: FAILED to apply — #{e.class}: #{e.message}"
+        next
       end
     end
 
     puts "Done. #{counts.map { |k, v| "#{k}: #{v}" }.join(", ").presence || "nothing to do"}"
+
+    failures = counts[:error] + counts[:failed]
+    puts "#{failures} order(s) were left pending by errors above — safe to re-run." if failures.positive?
   end
 end
