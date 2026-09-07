@@ -34,19 +34,22 @@ class StripeWebhooksController < ActionController::Base
     return unless order
     return if order.paid? || order.fulfilled?
 
+    shipping = shipping_details_for(stripe_session)
+    address  = shipping&.address
+
     within_new_stripe_event(event) do
       order.update!(
         status: "paid",
         stripe_payment_intent_id: stripe_session.payment_intent,
         buyer_email: stripe_session.customer_details&.email,
         buyer_name: stripe_session.customer_details&.name,
-        shipping_name: stripe_session.shipping_details&.name,
-        shipping_address1: stripe_session.shipping_details&.address&.line1,
-        shipping_address2: stripe_session.shipping_details&.address&.line2,
-        shipping_city: stripe_session.shipping_details&.address&.city,
-        shipping_state: stripe_session.shipping_details&.address&.state,
-        shipping_zip: stripe_session.shipping_details&.address&.postal_code,
-        shipping_country: stripe_session.shipping_details&.address&.country,
+        shipping_name: shipping&.name,
+        shipping_address1: address&.line1,
+        shipping_address2: address&.line2,
+        shipping_city: address&.city,
+        shipping_state: address&.state,
+        shipping_zip: address&.postal_code,
+        shipping_country: address&.country,
         shipping_cents: stripe_session.total_details&.amount_shipping.to_i,
         total_cents: stripe_session.amount_total.to_i
       )
@@ -71,6 +74,16 @@ class StripeWebhooksController < ActionController::Base
     within_new_stripe_event(event) do
       order.update!(status: "canceled")
     end
+  end
+
+  # Stripe moved Checkout::Session#shipping_details under collected_information in
+  # API version 2025-03-31.basil; the field is absent entirely on current versions,
+  # so reading it directly silently wrote nil into every shipping column. Prefer the
+  # new location and fall back to the legacy one so older or replayed event payloads
+  # still populate the address.
+  def shipping_details_for(stripe_session)
+    stripe_session.try(:collected_information)&.shipping_details ||
+      stripe_session.try(:shipping_details)
   end
 
   def within_new_stripe_event(event)
