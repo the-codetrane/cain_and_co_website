@@ -50,6 +50,25 @@ class CheckoutControllerTest < ActionDispatch::IntegrationTest
     assert_equal variants(:shirt_small).price_cents, line_item[:price_data][:unit_amount]
   end
 
+  test "sends Stripe an unencoded {CHECKOUT_SESSION_ID} placeholder in return URLs" do
+    post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id }
+
+    captured_params = nil
+    Stripe::Checkout::Session.stub(:create, ->(params) { captured_params = params; mock_stripe_session }) do
+      post checkout_path
+    end
+
+    # Route helpers percent-encode the braces to %7B...%7D, which Stripe will not
+    # substitute -- the placeholder then reaches OrdersController#success verbatim
+    # and fails its session_id check with a 404.
+    %i[success_url cancel_url].each do |key|
+      assert_includes captured_params[key], "session_id={CHECKOUT_SESSION_ID}",
+        "#{key} must carry the literal placeholder for Stripe to substitute"
+      assert_not_includes captured_params[key], "%7B",
+        "#{key} must not percent-encode the placeholder braces"
+    end
+  end
+
   test "destroys pending order if Stripe session creation fails" do
     post cart_cart_items_path, params: { variant_id: variants(:shirt_small).id }
 
