@@ -1,0 +1,8 @@
+# Public SSH host keys of the production server (167.172.146.61), pinned for the CI
+# deploy job. Refresh after rebuilding the server, checking the fingerprints out of band:
+#   ssh-keyscan -t ed25519,ecdsa,rsa 167.172.146.61 | sort -k2 > .kamal/known_hosts.new
+#   ssh-keygen -lf .kamal/known_hosts.new
+# then keep this header and replace the key lines below.
+167.172.146.61 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBA2RBFbGaJ33pFnZlvjDNbX80OMfmEPKHOb5pznexEx26cZ2a28wYAi3GQXpg33vqW1v9m5ea9OxFmhG+yrq26U=
+167.172.146.61 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMX87nAYVIn4sftUI8EqPZe4hfmw7FfG+IZOv9vbpBX
+167.172.146.61 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/VV2g31XBNtzek2fFWcCvFPyWKlMMvf1PsBk2cqNscBnz3qq09BOB6hfFulaRnBe5eukMgkwR6v/NXdRJEZZzZhNnheNJQJioME8TG2HPz4THsDmGgpaggAFZkzWo3qpEiy7kT1VmvY3bhRt6RVowcHJSnJ9fUtIUwbA78nAWhMJDT9P5ZpgCyk3DEhkGOGz9lXef35BLACsOI6s9tF9j0aXhFlhAHx4f8EKE+8M7BfwgEIqSjPR/KbedED9nhNVa08hjkfitRc0d/VDOWYuoNyawBBoDfnQoKU+NXtXi98n7Py5xpoVNneA/JjD70munisE5zwabM9lQj8f2o59hKUTijKVNJA9E65dQ/zD54jwLIo4Mm2x/Px+tR1xQbw5VbCJ+nXLxzxzsNIlV0j5DPMMPmapbcwgFlnz4WzZBoWrs9S3IVK6L6KlejY/RUgnTstsabiPObMqJlte1gP/WaiQuNxHFd4AzjTp7H1l08LjU6tVb7ifZeY//KCs5hYk=
