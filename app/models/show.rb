@@ -23,11 +23,13 @@ class Show < ApplicationRecord
 
   # Best ticketing link for the card's "Tickets" button, or nil when nothing is on
   # sale. Prefers an available Bandsintown offer; for manual shows (which carry no
-  # offers) falls back to the admin-entered ticket/info URL. Returns nil for canceled
-  # or past shows, synced shows whose offers are all sold out, and synced shows with
-  # no offers at all (their bandsintown_url is just the event page, not tickets).
+  # offers) falls back to the admin-entered ticket/info URL. Returns nil for free,
+  # canceled or past shows, synced shows whose offers are all sold out, and synced
+  # shows with no offers at all (their bandsintown_url is just the event page, not
+  # tickets). Free wins over offers: Bandsintown keeps serving stale ticket offers
+  # on events the band has since marked "no cover".
   def ticket_url
-    return if canceled? || starts_at.past?
+    return if free? || canceled? || starts_at.past?
 
     available = Array(offers).find do |o|
       o.is_a?(Hash) && o["url"].present? && offer_available?(o["status"])
@@ -66,6 +68,7 @@ class Show < ApplicationRecord
       longitude: venue["longitude"].presence,
       lineup: payload["lineup"],
       offers: payload["offers"],
+      free: payload["free"] == true,
       bandsintown_url: payload["url"]
     )
     show.save!

@@ -38,6 +38,29 @@ class ShowTest < ActiveSupport::TestCase
     assert_nil show.ticket_url
   end
 
+  test "ticket_url is nil for free shows even with an available offer" do
+    show = shows(:upcoming)
+    show.update!(free: true)
+    assert_nil show.ticket_url
+
+    manual = Show.create!(title: "Park gig", starts_at: 3.days.from_now, source: "manual",
+                          bandsintown_url: "https://info.test/park", free: true)
+    assert_nil manual.ticket_url
+  end
+
+  test "from_bandsintown stores the free flag" do
+    payload = { "id" => "2001", "title" => "No cover night", "starts_at" => 5.days.from_now.iso8601,
+                "venue" => { "name" => "The Dugout" }, "free" => true,
+                "offers" => [ { "type" => "Tickets", "url" => "https://bit.test/t/2001", "status" => "available" } ] }
+    show = Show.from_bandsintown(payload)
+    assert show.free?
+    assert_nil show.ticket_url
+
+    show = Show.from_bandsintown(payload.merge("free" => false))
+    assert_not show.free?
+    assert_equal "https://bit.test/t/2001", show.ticket_url
+  end
+
   test "ticket_url is nil for canceled and past shows" do
     show = shows(:upcoming)
     show.update!(status: "canceled")

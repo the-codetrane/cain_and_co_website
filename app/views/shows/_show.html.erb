@@ -17,6 +17,8 @@
     </p>
     <% if show.canceled? %>
       <span class="mt-2 inline-block rounded-full bg-red-900/60 border border-red-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-red-100">Canceled</span>
+    <% elsif show.free? %>
+      <span class="mt-2 inline-block rounded-full bg-emerald-900/60 border border-emerald-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-emerald-100">Free</span>
     <% end %>
   </div>
 

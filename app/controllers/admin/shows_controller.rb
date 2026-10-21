@@ -66,7 +66,7 @@ module Admin
     def show_params
       params.require(:show).permit(
         :title, :description, :starts_at, :ends_at,
-        :venue_name, :city, :region, :country, :bandsintown_url
+        :venue_name, :city, :region, :country, :bandsintown_url, :free
       )
     end
   end
