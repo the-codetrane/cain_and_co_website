@@ -154,6 +154,42 @@ jobs:
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
 
+  # Merge Dependabot's patch and minor bumps once every check above has passed; majors
+  # still wait for a human. This repo is private on the free plan, so there is no branch
+  # protection and GitHub's native auto-merge would merge before CI finishes. Gating on
+  # `needs` here is what guarantees the PR was validated. system-test is skipped while
+  # no system tests exist, so accept "skipped" but nothing else.
+  #
+  # A merge made with GITHUB_TOKEN does not trigger the push run on main, so these
+  # bumps do not deploy on their own; they ship with the next push to main.
+  dependabot-auto-merge:
+    needs: [scan_ruby, scan_js, lint, test, system-test]
+    if: >-
+      !cancelled()
+      && github.event_name == 'pull_request'
+      && github.event.pull_request.user.login == 'dependabot[bot]'
+      && !contains(needs.*.result, 'failure')
+      && !contains(needs.*.result, 'cancelled')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+
+      - name: Merge patch and minor updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        # --match-head-commit refuses to merge if Dependabot pushed a new commit (e.g. a
+        # rebase) after this run started; that push gets its own CI run.
+        run: gh pr merge "$PR_URL" --squash --match-head-commit "$HEAD_SHA"
+
   deploy:
     needs: [scan_ruby, scan_js, lint, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
