@@ -21,17 +21,20 @@ class Show < ApplicationRecord
     status == "canceled"
   end
 
-  # Best ticketing/info link for the card's "Tickets" button, or nil when there's
-  # nothing actionable to link to. Prefers an available Bandsintown offer; for manual
-  # shows (which carry no offers) falls back to the admin-entered ticket/info URL.
-  # Synced shows whose offers are all sold out intentionally return nil.
+  # Best ticketing link for the card's "Tickets" button, or nil when nothing is on
+  # sale. Prefers an available Bandsintown offer; for manual shows (which carry no
+  # offers) falls back to the admin-entered ticket/info URL. Returns nil for canceled
+  # or past shows, synced shows whose offers are all sold out, and synced shows with
+  # no offers at all (their bandsintown_url is just the event page, not tickets).
   def ticket_url
+    return if canceled? || starts_at.past?
+
     available = Array(offers).find do |o|
       o.is_a?(Hash) && o["url"].present? && offer_available?(o["status"])
     end
     return available["url"] if available
 
-    bandsintown_url.presence if Array(offers).empty?
+    bandsintown_url.presence if source == "manual"
   end
 
   def location

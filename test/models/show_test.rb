@@ -32,6 +32,21 @@ class ShowTest < ActiveSupport::TestCase
     assert_equal "https://info.test/show", show.ticket_url
   end
 
+  test "ticket_url is nil for synced shows with no offers" do
+    show = shows(:upcoming)
+    show.update!(offers: [])
+    assert_nil show.ticket_url
+  end
+
+  test "ticket_url is nil for canceled and past shows" do
+    show = shows(:upcoming)
+    show.update!(status: "canceled")
+    assert_nil show.ticket_url
+
+    show.update!(status: "active", starts_at: 1.day.ago)
+    assert_nil show.ticket_url
+  end
+
   test "a show starting exactly now is upcoming, not past" do
     freeze_time do
       show = Show.create!(title: "Now", starts_at: Time.current, source: "manual")
