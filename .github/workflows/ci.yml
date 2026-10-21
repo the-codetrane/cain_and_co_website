@@ -213,10 +213,16 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      # Trust the server's pinned host keys rather than scanning them at deploy time. A scan
+      # trusts whatever answers on that IP, and deploys intermittently failed with
+      # Net::SSH::HostKeyMismatch even though the server's key had not changed. If the server
+      # is rebuilt, refresh .kamal/known_hosts (see the comment at the top of that file).
       - name: Trust deployment server host key
         run: |
           ssh-keygen -R 167.172.146.61 2>/dev/null || true
-          ssh-keyscan -H 167.172.146.61 >> ~/.ssh/known_hosts
+          grep -v '^#' .kamal/known_hosts >> ~/.ssh/known_hosts
+          echo "Host keys trusted for 167.172.146.61:"
+          ssh-keygen -lF 167.172.146.61
 
       # A key that is present but wrong is not caught until the container boots, where it
       # surfaces as "AEAD authentication tag verification failed" and a deploy that spends
