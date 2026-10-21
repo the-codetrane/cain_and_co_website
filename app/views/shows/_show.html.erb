@@ -26,8 +26,8 @@
       <%= link_to "Map", show.map_url, target: "_blank", rel: "noopener",
             class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
     <% end %>
-    <% if show.ticket_url && !show.canceled? %>
-      <%= link_to "Tickets", show.ticket_url, target: "_blank", rel: "noopener",
+    <% if (ticket_url = show.ticket_url) %>
+      <%= link_to "Tickets", ticket_url, target: "_blank", rel: "noopener",
             class: "rounded-full bg-white px-5 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-200" %>
     <% end %>
   </div>

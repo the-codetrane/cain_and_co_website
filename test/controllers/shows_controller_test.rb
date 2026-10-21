@@ -13,4 +13,14 @@ class ShowsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match shows(:past).venue_name, response.body
   end
+
+  test "index only shows a Tickets button when tickets are on sale" do
+    shows(:upcoming).update!(offers: [])
+    get shows_path
+    assert_select "a", text: "Tickets", count: 0
+
+    shows(:upcoming).update!(offers: [ { "url" => "https://tickets.example.com/echo", "status" => "available" } ])
+    get shows_path
+    assert_select "a[href=?]", "https://tickets.example.com/echo", text: "Tickets"
+  end
 end
