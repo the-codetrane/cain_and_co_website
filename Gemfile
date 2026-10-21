@@ -49,7 +49,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.2"
 # libvips bindings for the :vips variant processor; image_processing 2.x no longer depends on it
 gem "ruby-vips", "~> 2.0", require: false
 
