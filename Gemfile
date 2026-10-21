@@ -23,7 +23,7 @@ gem "tailwindcss-rails"
 # Pinned to 2.x: json 3.0 removed positional-hash options from JSON.parse, but
 # ActiveSupport 8.1's JSON.decode still calls ::JSON.parse(json, options) that way,
 # which breaks every signed/encrypted cookie read. Unpin once Rails supports json 3.
-gem "json", "~> 2.21"
+gem "json", "~> 3.1"
 
 # CSV is no longer a default gem as of Ruby 3.4; used for admin subscriber export
 gem "csv"
