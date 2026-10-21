@@ -80,8 +80,11 @@ jobs:
     #      - 6379:6379
     #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      # No Active Storage / image_processing in the test suite yet, so libvips isn't
-      # needed here. Re-add the apt install if/when model tests exercise image variants.
+      # Active Storage loads the vips transformer at boot, and with image_processing 2.x a
+      # missing libvips raises instead of logging a warning.
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libvips
+
       - name: Checkout code
         uses: actions/checkout@v6
 
