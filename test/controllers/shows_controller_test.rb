@@ -23,4 +23,11 @@ class ShowsControllerTest < ActionDispatch::IntegrationTest
     get shows_path
     assert_select "a[href=?]", "https://tickets.example.com/echo", text: "Tickets"
   end
+
+  test "index marks free shows and hides their Tickets button" do
+    shows(:upcoming).update!(free: true)
+    get shows_path
+    assert_select "a", text: "Tickets", count: 0
+    assert_select "span", text: "Free"
+  end
 end

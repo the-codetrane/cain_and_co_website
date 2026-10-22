@@ -44,6 +44,11 @@
       <%= f.url_field :bandsintown_url, class: field, placeholder: "https://…" %>
     </div>
 
+    <div class="flex items-center gap-2">
+      <%= f.check_box :free, class: "h-4 w-4 rounded border-neutral-300" %>
+      <%= f.label :free, "Free show (no cover — hides the Tickets button)", class: "text-sm text-neutral-700" %>
+    </div>
+
     <div>
       <%= f.label :description, "Description (optional)", class: label %>
       <%= f.text_area :description, rows: 3, class: field %>
