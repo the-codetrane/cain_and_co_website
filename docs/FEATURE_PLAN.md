@@ -8,7 +8,7 @@ newsletter with AI, and runs the store.
 
 | Concern | Decision |
 |---|---|
-| Framework | Rails 8.1, Ruby 4.0.1, SQLite, Puma + Thruster |
+| Framework | Rails 8.1, Ruby 4.0.8, SQLite, Puma + Thruster |
 | Jobs / cache / cable | Solid Queue / Solid Cache / Solid Cable (DB-backed, no Redis) |
 | Frontend | Hotwire (Turbo + Stimulus), importmap-rails (no Node), Propshaft |
 | CSS | TailwindCSS v4 via `tailwindcss-rails` (standalone CLI, no Node), mobile-first |
