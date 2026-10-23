@@ -2,7 +2,7 @@
 
 ## Project
 
-Rails 8.1, Ruby 4.0.1. SQLite in all environments. No Redis — background jobs, cache, and Action Cable run on the Solid trio (`solid_queue`, `solid_cache`, `solid_cable`). Frontend is Hotwire (Turbo + Stimulus) via importmap — no Node, no bundler, no webpack. Assets via Propshaft. Deployed with Kamal.
+Rails 8.1, Ruby 4.0.8. SQLite in all environments. No Redis — background jobs, cache, and Action Cable run on the Solid trio (`solid_queue`, `solid_cache`, `solid_cable`). Frontend is Hotwire (Turbo + Stimulus) via importmap — no Node, no bundler, no webpack. Assets via Propshaft. Deployed with Kamal.
 
 ---
 

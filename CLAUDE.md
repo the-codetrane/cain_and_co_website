@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Cain & Co. company website. A freshly-generated **Rails 8.1** application (Ruby 4.0.1) on the modern Rails "omakase" stack — no custom domain models, controllers, or routes exist yet beyond the generated defaults. Treat this as a greenfield app: most feature work starts by generating models/controllers and adding routes.
+Cain & Co. company website. A freshly-generated **Rails 8.1** application (Ruby 4.0.8) on the modern Rails "omakase" stack — no custom domain models, controllers, or routes exist yet beyond the generated defaults. Treat this as a greenfield app: most feature work starts by generating models/controllers and adding routes.
 
 ## Stack
 
