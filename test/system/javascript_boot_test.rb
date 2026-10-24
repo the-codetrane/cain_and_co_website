@@ -9,13 +9,14 @@ class JavascriptBootTest < ApplicationSystemTestCase
 
     assert_text(/listen/i)
     assert_selector "[data-controller~='mobile-menu']"
-    assert page.evaluate_script("typeof window.Turbo") == "object", "Turbo did not load"
-    assert_operator page.evaluate_script("window.Stimulus.router.modulesByIdentifier.size"), :>, 0
+    assert_js "typeof window.Turbo === 'object'", "Turbo did not load"
+    wait_for_stimulus_controller "mobile-menu"
   end
 
   test "mobile menu toggles open" do
     page.driver.browser.manage.window.resize_to(390, 800)
     visit root_path
+    wait_for_stimulus_controller "mobile-menu"
 
     assert_no_selector "#mobile-nav-menu", visible: :visible
     find("button[aria-label='Toggle menu']").click
