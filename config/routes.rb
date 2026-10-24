@@ -52,6 +52,7 @@ Rails.application.routes.draw do
     resources :videos, only: %i[index update] do
       collection { post :sync }
     end
+    resource :push_notification, only: %i[new create]
   end
 
   # Public, fan-facing pages

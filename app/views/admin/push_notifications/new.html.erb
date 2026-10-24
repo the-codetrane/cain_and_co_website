@@ -1,0 +1,28 @@
+<% content_for :title, "Send notification · Admin" %>
+
+<div class="max-w-md">
+  <h1 class="text-2xl font-bold tracking-tight">Send a push notification</h1>
+  <p class="mt-1 text-sm text-neutral-500">
+    Goes to all <%= PushSubscription.count %> push <%= "subscriber".pluralize(PushSubscription.count) %> right away. It can't be recalled once sent.
+  </p>
+
+  <%= form_with url: admin_push_notification_path, class: "mt-8", data: { turbo_confirm: "Send this notification to everyone who has subscribed?" } do %>
+    <label for="title" class="block text-sm font-medium text-neutral-700 mb-1">Title</label>
+    <%= text_field_tag :title, @title, required: true, maxlength: 65,
+          class: "block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+
+    <label for="body" class="block text-sm font-medium text-neutral-700 mb-1 mt-5">Message</label>
+    <%= text_area_tag :body, @body, required: true, maxlength: 178, rows: 3,
+          class: "block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+
+    <label for="url" class="block text-sm font-medium text-neutral-700 mb-1 mt-5">Link when tapped</label>
+    <%= text_field_tag :url, @url.presence || "/", required: true,
+          class: "block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+    <p class="mt-1 text-xs text-neutral-500">A site path like <code>/shows</code>, or a full http(s) URL.</p>
+
+    <div class="mt-6 flex items-center gap-3">
+      <%= submit_tag "Send notification", class: "rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 cursor-pointer" %>
+      <%= link_to "Cancel", admin_root_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+    </div>
+  <% end %>
+</div>
