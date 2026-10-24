@@ -11,6 +11,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     page.document.synchronize do
       raise Capybara::ElementNotFound, message unless page.evaluate_script(expression)
     end
+  rescue Capybara::ElementNotFound => e
+    raise e.class, "#{e.message}\nBrowser console:\n#{browser_console}"
+  end
+
+  def browser_console
+    page.driver.browser.logs.get(:browser).map { |entry| "  #{entry.level}: #{entry.message}" }.join("\n").presence || "  (empty)"
+  rescue StandardError => e
+    "  (unavailable: #{e.class}: #{e.message})"
   end
 
   def wait_for_stimulus_controller(identifier)
