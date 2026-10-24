@@ -8,7 +8,7 @@
 
   <%# Details %>
   <div class="flex-1 min-w-0">
-    <h3 class="text-lg font-bold truncate"><%= show.title %></h3>
+    <h3 class="text-lg font-bold truncate"><%= link_to show.title, show_path(show), class: "hover:underline" %></h3>
     <p class="mt-1 text-neutral-300">
       <%= show.venue_name %><% if show.location.present? %> &middot; <%= show.location %><% end %>
     </p>

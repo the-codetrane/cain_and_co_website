@@ -4,6 +4,10 @@ class ShowsController < ApplicationController
     @shows = Show.upcoming
   end
 
+  def show
+    @show = Show.find(params[:id])
+  end
+
   def past
     @shows = Show.past.limit(100)
   end
