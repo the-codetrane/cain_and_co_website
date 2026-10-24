@@ -66,6 +66,14 @@ class ShowsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a", text: "View on Bandsintown", count: 0
   end
 
+  test "show does not link non-http ticket or event urls" do
+    shows(:upcoming).update!(offers: [ { "url" => "javascript:alert(1)", "status" => "available" } ],
+                             bandsintown_url: "javascript:alert(2)")
+    get show_path(shows(:upcoming))
+    assert_response :success
+    assert_select "a[href^=javascript]", count: 0
+  end
+
   test "show 404s for an unknown id" do
     get show_path(id: 0)
     assert_response :not_found

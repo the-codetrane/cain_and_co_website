@@ -51,16 +51,16 @@
     <% end %>
 
     <div class="mt-8 flex flex-wrap gap-3">
-      <% if (ticket_url = @show.ticket_url) %>
+      <% if (ticket_url = safe_external_url(@show.ticket_url)) %>
         <%= link_to "Tickets", ticket_url, target: "_blank", rel: "noopener",
               class: "rounded-full bg-white px-5 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-200" %>
       <% end %>
-      <% if @show.map_url %>
-        <%= link_to "Map", @show.map_url, target: "_blank", rel: "noopener",
+      <% if (map_url = safe_external_url(@show.map_url)) %>
+        <%= link_to "Map", map_url, target: "_blank", rel: "noopener",
               class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
       <% end %>
-      <% if @show.source == "bandsintown" && @show.bandsintown_url.present? %>
-        <%= link_to "View on Bandsintown", @show.bandsintown_url, target: "_blank", rel: "noopener",
+      <% if @show.source == "bandsintown" && (event_url = safe_external_url(@show.bandsintown_url)) %>
+        <%= link_to "View on Bandsintown", event_url, target: "_blank", rel: "noopener",
               class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
       <% end %>
     </div>
