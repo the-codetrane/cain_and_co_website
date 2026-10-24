@@ -35,6 +35,14 @@
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
+  <% @shows.each do |show| %>
+  <url>
+    <loc><%= show_url(show) %></loc>
+    <lastmod><%= show.updated_at.utc.strftime("%Y-%m-%d") %></lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <% end %>
   <% @products.each do |product| %>
   <url>
     <loc><%= product_url(product) %></loc>

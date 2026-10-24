@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   get "privacy" => "pages#privacy", as: :privacy
   get "tos" => "pages#tos", as: :tos
   get "shows/past" => "shows#past", as: :past_shows
-  resources :shows, only: :index
+  resources :shows, only: %i[index show]
   resources :products, only: %i[index show]
   resource :cart, only: %i[show] do
     resources :cart_items, only: %i[create update destroy]

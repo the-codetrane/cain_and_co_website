@@ -1,0 +1,68 @@
+<% content_for :title, "#{@show.title} · Cain & Co." %>
+<% content_for :description, "#{@show.title} — #{@show.starts_at.strftime("%B %-d, %Y")}#{" at #{@show.venue_name}" if @show.venue_name.present?}. #{@show.location}".strip %>
+
+<section class="container mx-auto px-5 py-16 max-w-3xl">
+  <%= link_to (@show.starts_at.past? ? "← Past shows" : "← Upcoming shows"),
+        (@show.starts_at.past? ? past_shows_path : shows_path),
+        class: "text-sm text-neutral-400 hover:text-white" %>
+
+  <div class="mt-6 rounded-2xl border border-neutral-800 bg-neutral-900 p-6 sm:p-8">
+    <p class="text-xs uppercase tracking-widest text-neutral-400">
+      <%= @show.starts_at.strftime("%A, %B %-d, %Y") %>
+    </p>
+    <h1 class="mt-2 text-4xl font-black tracking-tight"><%= @show.title %></h1>
+
+    <% if @show.canceled? %>
+      <span class="mt-3 inline-block rounded-full bg-red-900/60 border border-red-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-red-100">Canceled</span>
+    <% elsif @show.free? %>
+      <span class="mt-3 inline-block rounded-full bg-emerald-900/60 border border-emerald-700 px-2.5 py-0.5 text-xs uppercase tracking-widest text-emerald-100">Free</span>
+    <% end %>
+
+    <dl class="mt-6 space-y-3 text-neutral-300">
+      <div>
+        <dt class="text-xs uppercase tracking-widest text-neutral-500">When</dt>
+        <dd>
+          <%= @show.starts_at.strftime("%-l:%M %p") %><% if @show.ends_at %> – <%= @show.ends_at.strftime("%-l:%M %p") %><% end %>
+        </dd>
+      </div>
+      <% if @show.venue_name.present? || @show.location.present? %>
+        <div>
+          <dt class="text-xs uppercase tracking-widest text-neutral-500">Where</dt>
+          <dd>
+            <% if @show.venue_name.present? %><div class="font-semibold"><%= @show.venue_name %></div><% end %>
+            <% if @show.location.present? %><div><%= @show.location %></div><% end %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <% if @show.description.present? %>
+      <div class="mt-6 text-neutral-300"><%= simple_format(@show.description) %></div>
+    <% end %>
+
+    <% lineup = Array(@show.lineup).compact_blank %>
+    <% if lineup.any? %>
+      <div class="mt-6">
+        <h2 class="text-xs uppercase tracking-widest text-neutral-500">Lineup</h2>
+        <ul class="mt-2 text-neutral-300">
+          <% lineup.each do |name| %><li><%= name %></li><% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <% if (ticket_url = @show.ticket_url) %>
+        <%= link_to "Tickets", ticket_url, target: "_blank", rel: "noopener",
+              class: "rounded-full bg-white px-5 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-200" %>
+      <% end %>
+      <% if @show.map_url %>
+        <%= link_to "Map", @show.map_url, target: "_blank", rel: "noopener",
+              class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
+      <% end %>
+      <% if @show.source == "bandsintown" && @show.bandsintown_url.present? %>
+        <%= link_to "View on Bandsintown", @show.bandsintown_url, target: "_blank", rel: "noopener",
+              class: "rounded-full border border-neutral-600 px-5 py-2 text-sm font-semibold hover:border-white" %>
+      <% end %>
+    </div>
+  </div>
+</section>
