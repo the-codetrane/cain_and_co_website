@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [ main ]
+  # Dispatched by dependabot-auto-merge: a merge made with GITHUB_TOKEN does not trigger
+  # the push run, but a workflow_dispatch made with it does.
+  workflow_dispatch:
 
 jobs:
   scan_ruby:
@@ -157,14 +160,15 @@ jobs:
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
 
-  # Merge Dependabot's patch and minor bumps once every check above has passed; majors
-  # still wait for a human. This repo is private on the free plan, so there is no branch
+  # Merge every Dependabot PR (patch, minor and major) once every check above has passed.
+  # This repo is private on the free plan, so there is no branch
   # protection and GitHub's native auto-merge would merge before CI finishes. Gating on
   # `needs` here is what guarantees the PR was validated. system-test may be skipped only
   # because the detector found no system tests, never because a job it depends on failed.
   #
-  # A merge made with GITHUB_TOKEN does not trigger the push run on main, so these
-  # bumps do not deploy on their own; they ship with the next push to main.
+  # A merge made with GITHUB_TOKEN does not trigger the push run on main, so the last step
+  # dispatches this workflow on main, which runs the full pipeline and deploys. (Deploying
+  # from this run is not possible: Dependabot runs cannot read the deploy secrets.)
   dependabot-auto-merge:
     needs: [scan_ruby, scan_js, lint, test, detect-system-tests, system-test]
     if: >-
@@ -180,14 +184,10 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v3
-
-      - name: Merge patch and minor updates
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+      - name: Merge update
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
@@ -196,13 +196,18 @@ jobs:
         # rebase) after this run started; that push gets its own CI run.
         run: gh pr merge "$PR_URL" --squash --match-head-commit "$HEAD_SHA"
 
+      - name: Deploy the merged update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref main
+
   # Same gate as dependabot-auto-merge. That job never runs on a push, so depending on it
   # only fixes its place in the order; its "skipped" result is expected here.
   deploy:
     needs: [scan_ruby, scan_js, lint, test, detect-system-tests, system-test, dependabot-auto-merge]
     if: >-
       !cancelled()
-      && github.event_name == 'push'
+      && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       && github.ref == 'refs/heads/main'
       && needs.scan_ruby.result == 'success'
       && needs.scan_js.result == 'success'
