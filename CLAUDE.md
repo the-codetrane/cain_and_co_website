@@ -61,8 +61,8 @@ GitHub Actions secret in the same change** (`gh secret set RAILS_MASTER_KEY < co
 
 ## Personal data
 
-`docs/DATA_PRIVACY.md` is the inventory of every column holding personal data, the three vendors it
-reaches (Stripe, Mailgun, DigitalOcean), and the runbook for access/deletion requests, which go to
+`docs/DATA_PRIVACY.md` is the inventory of every column holding personal data, the four vendors it
+reaches (Stripe, Mailgun, DigitalOcean, and Meta for opted-in visitors), and the runbook for access/deletion requests, which go to
 `info@2100enterprises.com`.
 
 **When a migration adds or removes a column holding personal data, update `docs/DATA_PRIVACY.md` and

@@ -11,7 +11,7 @@ class PagesController < ApplicationController
 
   # Legal pages. LAST_UPDATED is rendered on both and should be bumped whenever
   # the policy text changes.
-  LAST_UPDATED = Date.new(2026, 8, 10)
+  LAST_UPDATED = Date.new(2026, 10, 30)
 
   def privacy
     @last_updated = LAST_UPDATED

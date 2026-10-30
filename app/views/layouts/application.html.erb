@@ -37,7 +37,9 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased flex flex-col">
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased flex flex-col"
+        data-controller="consent"
+        data-consent-pixel-id-value="<%= Rails.configuration.x.meta_pixel_id %>">
     <%= render "shared/public_nav" %>
 
     <% if notice || alert %>
@@ -59,5 +61,6 @@
 
     <%= render "shared/public_footer" %>
     <%= render "shared/push_prompt" %>
+    <%= render "shared/consent_banner" %>
   </body>
 </html>

@@ -16,6 +16,9 @@ module CainAndCoWebsite
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Public Meta Pixel ID; the pixel only loads after a visitor accepts the consent banner.
+    config.x.meta_pixel_id = "2201023634095800"
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
