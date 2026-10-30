@@ -30,7 +30,11 @@ Every table below holds personal data. Line references are to `db/schema.rb`.
 | `users` | `email_address`, `password_digest` | Admin login — **not** fan-facing; no public signup | Life of the admin account |
 | `carts` | `token` (random, in the Rails session cookie) | Cart persistence across requests | Not identifying on its own; becomes linkable only if the cart converts to an order |
 
-**Not collected:** no analytics, no advertising or cross-site tracking cookies, no fan accounts, no
+**Collected only with consent:** the Meta Pixel (`_fbp` cookie, page views, IP, user-agent sent to
+Meta) loads only after a visitor accepts the cookie banner (`consent_controller.js`; choice stored
+in the browser's `localStorage`, never server-side).
+
+**Not collected:** no first-party analytics, no fan accounts, no
 card numbers (see below), no location data beyond the shipping address a buyer types in.
 
 ### Card data
@@ -43,14 +47,15 @@ the processor of record for payment instruments.
 
 ## Third parties
 
-Personal data leaves our infrastructure to exactly three vendors, each receiving only what its
-function requires.
+Personal data leaves our infrastructure to four vendors, each receiving only what its
+function requires (Meta only for visitors who opt in).
 
 | Vendor | Receives | Role |
 |---|---|---|
 | Stripe | Buyer name, email, shipping and card details entered on Stripe Checkout | Payment processing |
 | Mailgun | Subscriber and buyer email addresses, message contents (`config/environments/production.rb:62`) | Transactional email + newsletter delivery |
 | DigitalOcean | Everything at rest — SQLite volume + Spaces object storage (`config/storage.yml`) | Hosting and image storage |
+| Meta | Page views, IP address, user-agent, `_fbp` cookie — **opt-in only** | Advertising measurement (Meta Pixel) |
 
 Bandsintown (show sync) and YouTube (embedded video) are outbound/inbound content only — we send
 them no personal data. A YouTube embed does let Google set its own cookies in the visitor's browser.

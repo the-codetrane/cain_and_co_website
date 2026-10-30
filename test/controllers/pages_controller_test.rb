@@ -21,6 +21,13 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "meta pixel is not inlined; it is gated behind the consent banner" do
+    get root_path
+    assert_no_match(/fbevents\.js|fbq\(/, response.body)
+    assert_select "body[data-controller=consent][data-consent-pixel-id-value]"
+    assert_select "[data-consent-target=banner][hidden]"
+  end
+
   test "footer links to both legal pages" do
     get root_path
     assert_select "footer a[href=?]", privacy_path
