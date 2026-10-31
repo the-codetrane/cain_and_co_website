@@ -17,7 +17,7 @@ module CainAndCoWebsite
     config.autoload_lib(ignore: %w[assets tasks])
 
     # Public Meta Pixel ID; the pixel only loads after a visitor accepts the consent banner.
-    config.x.meta_pixel_id = "2201023634095800"
+    config.x.meta_pixel_id = "1421061570188564"
 
     # Configuration for the application, engines, and railties goes here.
     #
