@@ -48,10 +48,10 @@ class EpkTest < ActionDispatch::IntegrationTest
     assert_select "#draw dd", text: "100"
   end
 
-  test "draw section cites ticket sales" do
+  test "draw section cites ticket sales and headcounts" do
     get epk_path
-    assert_select "#draw li", text: /\$1,000\s+in ticket sales at\s+Zhora Darling/
-    assert_select "#draw li", text: /\$475\s+in ticket sales at\s+KJ’s Hideaway/
+    assert_select "#draw li", text: /\$1,000\s+in ticket sales and\s+40\s+through the door at\s+Zhora Darling/
+    assert_select "#draw li", text: /\$475\s+in ticket sales and\s+45\s+through the door at\s+KJ’s Hideaway/
   end
 
   test "mailing list stat counts only confirmed subscribers" do
