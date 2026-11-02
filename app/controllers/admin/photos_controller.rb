@@ -72,7 +72,7 @@ module Admin
     end
 
     def photo_params
-      params.require(:photo).permit(:image, :caption, :position, :published)
+      params.require(:photo).permit(:image, :caption, :position, :published, :epk)
     end
   end
 end

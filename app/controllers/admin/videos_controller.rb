@@ -7,9 +7,8 @@ module Admin
     end
 
     def update
-      @video.update!(visible: params[:video][:visible])
-      redirect_to admin_videos_path,
-                  notice: "#{@video.title.truncate(40)} #{@video.visible? ? 'shown' : 'hidden'}."
+      @video.update!(params.require(:video).permit(:visible, :epk))
+      redirect_to admin_videos_path, notice: "#{@video.title.truncate(40)} updated."
     end
 
     def sync

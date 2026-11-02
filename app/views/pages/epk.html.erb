@@ -1,0 +1,314 @@
+<% content_for :title, "EPK · Cain & Co." %>
+<% content_for :description, "Cain & Co. electronic press kit — live video, music, draw, show history, tech and booking info." %>
+<% content_for :head do %>
+  <meta name="robots" content="noindex, nofollow">
+<% end %>
+
+<%#
+  Booker-facing electronic press kit. Unlisted (noindex, not in nav or sitemap) —
+  share the /epk link directly in booking emails.
+
+  Copy below is hand-authored on purpose (it changes rarely; keeping it in the view
+  means zero lookups). Data-driven parts:
+    - Live video  → Videos flagged "EPK" in Admin › Videos
+    - Photos      → Photos flagged "Press photo on EPK" in Admin › Photos
+    - Shows/draw  → Shows (Bandsintown sync + manual); attendance entered in Admin › Shows
+    - Mailing list→ confirmed newsletter subscribers
+%>
+<% booking_email = "booking@cainandco.band" %>
+<% booking_phone = "612-234-5305" %>
+<% section_label = "text-sm uppercase tracking-[0.3em] text-neutral-400 mb-6" %>
+<% card = "rounded-2xl border border-neutral-800 bg-neutral-900" %>
+
+<%# ── Header: pitch + contact (contact goes at the top for bookers) ───────── %>
+<section class="border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <p class="text-sm uppercase tracking-[0.4em] text-neutral-400 mb-4">Electronic Press Kit</p>
+    <h1 class="text-4xl sm:text-6xl font-black tracking-tight">Cain &amp; Co.</h1>
+    <p class="mt-4 text-xl sm:text-2xl text-neutral-200 font-medium max-w-3xl">
+      Five-piece American blues rock band from St.&nbsp;Paul, MN &mdash; for fans of
+      The Black Crowes, Blackberry Smoke and The Allman Brothers.
+    </p>
+
+    <div class="mt-8 <%= card %> p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-neutral-500">Booking email</p>
+        <a href="mailto:<%= booking_email %>?subject=Booking%20inquiry%20%E2%80%94%20Cain%20%26%20Co."
+           class="mt-1 block text-base font-semibold text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white break-all"><%= booking_email %></a>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-widest text-neutral-500">Phone</p>
+        <a href="tel:+1<%= booking_phone.delete("-") %>"
+           class="mt-1 block text-base font-semibold text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white"><%= booking_phone %></a>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-widest text-neutral-500">Based in</p>
+        <p class="mt-1 text-base font-semibold text-white">St. Paul, MN &middot; Twin Cities</p>
+      </div>
+    </div>
+
+    <nav aria-label="EPK sections" class="mt-8 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-widest">
+      <% [["Live video", "video"], ["Music", "music"], ["Bio", "bio"], ["Draw", "draw"],
+          ["Shows", "shows"], ["Booking info", "booking"], ["Press assets", "assets"]].each do |label, id| %>
+        <a href="#<%= id %>" class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-300 hover:border-white hover:text-white"><%= label %></a>
+      <% end %>
+    </nav>
+  </div>
+</section>
+
+<%# ── Live video (front and center) ───────────────────────────────────────── %>
+<% if @videos.any? %>
+<section id="video" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <h2 class="<%= section_label %>">Live video</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <% @videos.each_with_index do |video, i| %>
+        <figure class="<%= i.zero? ? 'sm:col-span-2' : '' %>">
+          <div class="aspect-video w-full overflow-hidden rounded-2xl bg-neutral-900"
+               data-controller="youtube-facade"
+               data-youtube-facade-src-value="<%= video.embed_url %>"
+               data-youtube-facade-title-value="<%= video.title %>">
+            <button type="button" data-action="youtube-facade#play"
+                    class="group relative block w-full h-full" aria-label="Play <%= video.title %>">
+              <img src="https://i.ytimg.com/vi/<%= video.youtube_id %>/hqdefault.jpg" alt=""
+                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                   loading="<%= i.zero? ? "eager" : "lazy" %>">
+              <span class="absolute inset-0 flex items-center justify-center">
+                <span class="rounded-full bg-red-600 group-hover:bg-red-500 p-4 sm:p-5 shadow-lg transition-colors">
+                  <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white translate-x-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              </span>
+            </button>
+          </div>
+          <figcaption class="mt-2 text-sm text-neutral-400"><%= video.title %></figcaption>
+        </figure>
+      <% end %>
+    </div>
+  </div>
+</section>
+<% end %>
+
+<%# ── Music (strongest track first) ──────────────────────────────────────── %>
+<section id="music" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <h2 class="<%= section_label %>">Listen</h2>
+    <div class="flex flex-col gap-3">
+      <% %w[4eNpR3Dn3qrgq70K1JqrAP 55UPGXoXTebbZTOVjh3B0j 6BaMnMtn4pQFHOxqR8BmSr].each do |track_id| %>
+        <iframe src="https://open.spotify.com/embed/track/<%= track_id %>?theme=0"
+                title="Cain &amp; Co. on Spotify"
+                class="w-full rounded-xl" height="152" frameborder="0" loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      <% end %>
+    </div>
+    <div class="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
+      <% [["Spotify", "https://open.spotify.com/playlist/6dP0ime4nMxyeNbN3Y30fg"],
+          ["Apple Music", "https://music.apple.com/us/artist/cain-co/1837917282"],
+          ["Amazon Music", "https://www.amazon.com/music/player/albums/B0FNYHGK29"],
+          ["YouTube", "https://www.youtube.com/@cainandcoband"]].each do |label, url| %>
+        <a href="<%= url %>" target="_blank" rel="noopener noreferrer"
+           class="rounded-full border border-neutral-700 px-4 py-2 hover:border-white"><%= label %> &rarr;</a>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ── Bio (live show + where we've played; no origin story) ──────────────── %>
+<section id="bio" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl grid grid-cols-1 md:grid-cols-5 gap-10">
+    <div class="md:col-span-3">
+      <h2 class="<%= section_label %>">Bio</h2>
+      <div class="space-y-4 text-lg text-neutral-300 leading-relaxed">
+        <p>
+          Cain &amp; Co. plays dual-guitar, keys-driven Southern blues rock with four voices on the harmonies.
+          The live show is loud, soulful and built for a full room &mdash; originals with the grit of
+          Skynyrd and the swing of the Allmans, brought up North to the Twin Cities.
+        </p>
+        <p>
+          The lineup: <strong class="text-white">Michael &ldquo;Chris&rdquo; Cain</strong> (lead vocals, guitar),
+          <strong class="text-white">Gabe Voland</strong> (guitar, vocals),
+          <strong class="text-white">Doug Grimm</strong> (keys, acoustic, vocals),
+          <strong class="text-white">Gunnar Bergman</strong> (drums, vocals) and
+          <strong class="text-white">Gavin Peterson</strong> (bass).
+        </p>
+        <p>
+          The band has headlined stages including Summit Brewing Co. and Omni Brewing&rsquo;s Kolschfest,
+          and plays clubs, breweries and festivals within 100 miles of the Twin Cities.
+        </p>
+      </div>
+    </div>
+
+    <%# Social proof %>
+    <div class="md:col-span-2 flex flex-col gap-4">
+      <h2 class="<%= section_label %> md:mb-2">What bookers say</h2>
+      <% @reviews.each do |review| %>
+        <blockquote class="<%= card %> p-5">
+          <p class="text-neutral-100 leading-relaxed">&ldquo;<%= review[:quote].html_safe %>&rdquo;</p>
+          <footer class="mt-3 text-sm">
+            <span class="font-semibold text-white">&mdash; <%= review[:author] %></span>,
+            <span class="text-neutral-400"><%= review[:source] %></span>
+          </footer>
+        </blockquote>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ── Draw ───────────────────────────────────────────────────────────────── %>
+<section id="draw" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <h2 class="<%= section_label %>">Draw</h2>
+    <p class="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-snug">
+      &ldquo;We promote every show with a 4-week campaign and bring our own crowd.&rdquo;
+    </p>
+
+    <% stats = [ [ number_with_delimiter(@shows_played), "Shows played" ] ]
+       if @counted_shows.to_i.positive?
+         stats << [ number_with_delimiter((@total_attendance.to_f / @counted_shows).round), "Average headcount" ]
+         stats << [ number_with_delimiter(@best_attendance), "Best night" ]
+       end
+       stats << [ number_with_delimiter(@subscriber_count), "Mailing list" ] if @subscriber_count.positive? %>
+    <dl class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <% stats.each do |value, label| %>
+        <div class="<%= card %> p-5">
+          <dt class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></dt>
+          <dd class="mt-2 text-3xl font-black tabular-nums"><%= value %></dd>
+        </div>
+      <% end %>
+    </dl>
+    <% if @counted_shows.to_i.positive? %>
+      <p class="mt-3 text-xs text-neutral-500">
+        Headcounts from <%= pluralize(@counted_shows, "show") %> with recorded attendance.
+      </p>
+    <% end %>
+  </div>
+</section>
+
+<%# ── Shows: upcoming + history ──────────────────────────────────────────── %>
+<section id="shows" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <% if @upcoming_shows.any? %>
+      <h2 class="<%= section_label %>">Upcoming</h2>
+      <ul class="<%= card %> divide-y divide-neutral-800 mb-12">
+        <% @upcoming_shows.each do |show| %>
+          <li class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 px-5 py-4">
+            <span class="sm:w-32 shrink-0 text-sm font-semibold text-neutral-300 tabular-nums"><%= show.starts_at.strftime("%a %b %-d, %Y") %></span>
+            <span class="flex-1 min-w-0">
+              <%= link_to show.venue_name.presence || show.title, show_path(show), class: "font-semibold text-white hover:underline" %>
+              <% if show.location.present? %><span class="text-neutral-400"> &middot; <%= show.location %></span><% end %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <h2 class="<%= section_label %>">Show history</h2>
+    <% if @past_shows.any? %>
+      <% cache [ "epk-show-history", @past_shows ] do %>
+        <div class="<%= card %> overflow-hidden">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-neutral-800 text-xs uppercase tracking-widest text-neutral-500">
+              <tr>
+                <th scope="col" class="px-4 py-3 font-semibold">Date</th>
+                <th scope="col" class="px-4 py-3 font-semibold">Venue</th>
+                <th scope="col" class="hidden sm:table-cell px-4 py-3 font-semibold">Event</th>
+                <th scope="col" class="px-4 py-3 font-semibold text-right">Attendance</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-800">
+              <% @past_shows.each do |show| %>
+                <tr>
+                  <td class="px-4 py-3 whitespace-nowrap text-neutral-400 tabular-nums"><%= show.starts_at.strftime("%b %-d, %Y") %></td>
+                  <td class="px-4 py-3">
+                    <span class="font-semibold text-white"><%= show.venue_name.presence || "—" %></span>
+                    <% if show.city.present? %><span class="block text-xs text-neutral-500"><%= [ show.city, show.region ].compact_blank.join(", ") %></span><% end %>
+                    <%# On phones the Event column is hidden, so show it under the venue. %>
+                    <span class="sm:hidden block text-xs text-neutral-400"><%= show.title %></span>
+                  </td>
+                  <td class="hidden sm:table-cell px-4 py-3 text-neutral-300"><%= show.title %></td>
+                  <td class="px-4 py-3 text-right tabular-nums <%= show.attendance ? 'font-semibold text-white' : 'text-neutral-600' %>">
+                    <%= show.attendance ? number_with_delimiter(show.attendance) : "—" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-neutral-400">Show history coming soon.</p>
+    <% end %>
+  </div>
+</section>
+
+<%# ── Booking info / logistics ───────────────────────────────────────────── %>
+<section id="booking" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <h2 class="<%= section_label %>">Booking info</h2>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <% [
+        ["Set length", "45, 60 or 90 minutes"],
+        ["Format", "All-original sets, or originals with covers mixed in"],
+        ["Band", "Five-piece: two guitars, bass, drums, keys/acoustic &mdash; four vocalists".html_safe],
+        ["Production", "Full production available for small rooms; 16-input stage plot below"],
+        ["Terms", "Negotiable &mdash; door split, guarantee, or a mix".html_safe],
+        ["Touring radius", "Within 100 miles of the Twin Cities"]
+      ].each do |label, value| %>
+        <div class="<%= card %> p-5">
+          <dt class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></dt>
+          <dd class="mt-1 text-white font-medium"><%= value %></dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+</section>
+
+<%# ── Press assets ───────────────────────────────────────────────────────── %>
+<section id="assets" class="scroll-mt-20 border-b border-neutral-800">
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <h2 class="<%= section_label %>">Press assets</h2>
+
+    <div class="flex flex-wrap gap-3 text-sm font-semibold">
+      <a href="/epk/cain-and-co-stage-plot.pdf" download
+         class="rounded-full bg-white text-neutral-950 px-5 py-2.5 hover:bg-neutral-200">Stage plot &amp; input list (PDF)</a>
+      <a href="<%= image_path("logo_banner.png") %>" download="cain-and-co-logo.png"
+         class="rounded-full border border-neutral-600 px-5 py-2.5 hover:border-white">Logo (transparent PNG)</a>
+    </div>
+
+    <% if @photos.any? %>
+      <h3 class="mt-10 mb-4 text-xs uppercase tracking-widest text-neutral-500">Press photos &middot; tap to download full resolution</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <% @photos.each do |photo| %>
+          <%= link_to rails_blob_path(photo.image, disposition: "attachment"),
+                class: "group block overflow-hidden rounded-xl bg-neutral-900",
+                aria: { label: "Download #{photo.caption.presence || 'press photo'}" } do %>
+            <%= image_tag photo.image.variant(resize_to_limit: [ 800, 800 ]),
+                  class: "w-full aspect-[4/3] object-cover group-hover:opacity-80 transition-opacity",
+                  loading: "lazy", alt: photo.caption.presence || "Cain & Co. press photo" %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mt-12 <%= card %> p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div>
+        <p class="text-xl font-bold text-white">Ready to book?</p>
+        <p class="mt-1 text-neutral-400">Email or call &mdash; terms are negotiable.</p>
+      </div>
+      <div class="flex flex-wrap gap-3 text-sm font-semibold">
+        <a href="mailto:<%= booking_email %>?subject=Booking%20inquiry%20%E2%80%94%20Cain%20%26%20Co."
+           class="rounded-full bg-white text-neutral-950 px-5 py-2.5 hover:bg-neutral-200"><%= booking_email %></a>
+        <a href="tel:+1<%= booking_phone.delete("-") %>"
+           class="rounded-full border border-neutral-600 px-5 py-2.5 hover:border-white"><%= booking_phone %></a>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-5 text-xs uppercase tracking-widest text-neutral-400">
+      <% [["Instagram", "https://www.instagram.com/cainandcoband/"],
+          ["Facebook", "https://www.facebook.com/cainandcoband"],
+          ["TikTok", "https://www.tiktok.com/@cainandcoband"],
+          ["YouTube", "https://www.youtube.com/@cainandcoband"]].each do |label, url| %>
+        <a href="<%= url %>" target="_blank" rel="noopener noreferrer" class="hover:text-white"><%= label %></a>
+      <% end %>
+    </div>
+  </div>
+</section>

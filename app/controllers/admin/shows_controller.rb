@@ -1,6 +1,6 @@
 module Admin
   class ShowsController < BaseController
-    before_action :set_show, only: %i[edit update destroy toggle_featured]
+    before_action :set_show, only: %i[edit update destroy toggle_featured attendance]
     # Synced shows are owned by Bandsintown; editing them would be overwritten on the
     # next sync. Only manual shows can be edited or deleted here.
     before_action :require_manual_show, only: %i[edit update destroy]
@@ -52,6 +52,16 @@ module Admin
       redirect_to admin_shows_path, notice: "Updated featured shows."
     end
 
+    # Attendance is a local field the Bandsintown sync never writes, so like
+    # featured it can be set on synced shows too. Blank clears it.
+    def attendance
+      if @show.update(attendance: params.dig(:show, :attendance).presence)
+        redirect_to admin_shows_path, notice: "Attendance saved for #{@show.title.truncate(40)}."
+      else
+        redirect_to admin_shows_path, alert: @show.errors.full_messages.to_sentence
+      end
+    end
+
     private
 
     def set_show
@@ -66,7 +76,7 @@ module Admin
     def show_params
       params.require(:show).permit(
         :title, :description, :starts_at, :ends_at,
-        :venue_name, :city, :region, :country, :bandsintown_url, :free
+        :venue_name, :city, :region, :country, :bandsintown_url, :free, :attendance
       )
     end
   end

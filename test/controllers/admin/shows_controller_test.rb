@@ -52,4 +52,34 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
       delete admin_show_path(show)
     end
   end
+
+  test "attendance can be recorded on a synced show" do
+    show = shows(:past)
+    patch attendance_admin_show_path(show), params: { show: { attendance: "85" } }
+    assert_redirected_to admin_shows_path
+    assert_equal 85, show.reload.attendance
+  end
+
+  test "blank attendance clears it" do
+    show = shows(:past)
+    show.update!(attendance: 40)
+    patch attendance_admin_show_path(show), params: { show: { attendance: "" } }
+    assert_nil show.reload.attendance
+  end
+
+  test "negative attendance is rejected" do
+    show = shows(:past)
+    patch attendance_admin_show_path(show), params: { show: { attendance: "-3" } }
+    assert_redirected_to admin_shows_path
+    assert_nil show.reload.attendance
+    assert flash[:alert].present?
+  end
+
+  test "sync does not overwrite recorded attendance" do
+    show = shows(:past)
+    show.update!(attendance: 85)
+    Show.from_bandsintown("id" => show.bandsintown_id, "datetime" => show.starts_at.iso8601,
+                          "title" => show.title, "venue" => { "name" => show.venue_name })
+    assert_equal 85, show.reload.attendance
+  end
 end

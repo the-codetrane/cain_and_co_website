@@ -7,6 +7,7 @@ class Show < ApplicationRecord
   validates :source, inclusion: { in: SOURCES }
   # Bandsintown shows carry a unique event id; manual shows leave it nil.
   validates :bandsintown_id, uniqueness: true, allow_nil: true
+  validates :attendance, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
   scope :active, -> { where(status: "active") }
   scope :canceled, -> { where(status: "canceled") }
@@ -16,6 +17,8 @@ class Show < ApplicationRecord
   # Exclusive upper bound so a show starting exactly at Time.current is "upcoming", not both.
   scope :past, -> { where(starts_at: ...Time.current).order(starts_at: :desc) }
   scope :featured, -> { active.where(featured: true) }
+  # Shows we actually played: past and not canceled. Drives the EPK show history.
+  scope :played, -> { active.past }
 
   def canceled?
     status == "canceled"

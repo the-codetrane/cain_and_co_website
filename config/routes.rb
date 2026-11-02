@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :shows, except: :show do
-      member { patch :toggle_featured }
+      member { patch :toggle_featured; patch :attendance }
       collection { post :sync }
     end
     resources :subscribers, only: %i[index new create destroy] do
@@ -57,6 +57,7 @@ Rails.application.routes.draw do
 
   # Public, fan-facing pages
   get "about" => "pages#about", as: :about
+  get "epk" => "pages#epk", as: :epk # unlisted booker press kit (noindex, not in nav/sitemap)
   get "privacy" => "pages#privacy", as: :privacy
   get "tos" => "pages#tos", as: :tos
   get "shows/past" => "shows#past", as: :past_shows
