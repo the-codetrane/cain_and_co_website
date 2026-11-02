@@ -6,18 +6,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Cain & Co.">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description).strip : "Cain & Co. — shows, merch, and monthly newsletter." %>">
+    <meta name="description" content="<%= content_for?(:description) ? meta_content(:description) : "Cain & Co. — shows, merch, and monthly newsletter." %>">
 
     <%# OpenGraph %>
     <meta property="og:site_name" content="Cain & Co.">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="<%= content_for?(:title) ? yield(:title).strip : "Cain & Co." %>">
-    <meta property="og:description" content="<%= content_for?(:description) ? yield(:description).strip : "Cain & Co. — shows, merch, and monthly newsletter." %>">
+    <meta property="og:title" content="<%= content_for?(:title) ? meta_content(:title) : "Cain & Co." %>">
+    <meta property="og:description" content="<%= content_for?(:description) ? meta_content(:description) : "Cain & Co. — shows, merch, and monthly newsletter." %>">
     <meta property="og:url" content="<%= request.base_url + request.path %>">
-    <meta property="og:image" content="<%= content_for?(:og_image) ? yield(:og_image).strip : "#{request.base_url}/icon.png" %>">
+    <meta property="og:image" content="<%= content_for?(:og_image) ? meta_content(:og_image) : "#{request.base_url}/icon.png" %>">
 
     <%# Twitter card %>
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="<%= content_for?(:twitter_card) ? meta_content(:twitter_card) : "summary" %>">
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -40,7 +40,8 @@
   <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased flex flex-col"
         data-controller="consent"
         data-consent-pixel-id-value="<%= Rails.configuration.x.meta_pixel_id %>">
-    <%= render "shared/public_nav" %>
+    <%# Pages can replace the site nav (e.g. /epk's booker header) via content_for :nav. %>
+    <%= content_for?(:nav) ? yield(:nav) : render("shared/public_nav") %>
 
     <% if notice || alert %>
       <div class="px-5">
@@ -60,7 +61,7 @@
     </main>
 
     <%= render "shared/public_footer" %>
-    <%= render "shared/push_prompt" %>
+    <%= render "shared/push_prompt" unless content_for?(:no_push_prompt) %>
     <%= render "shared/consent_banner" %>
   </body>
 </html>

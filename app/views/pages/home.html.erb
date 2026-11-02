@@ -67,7 +67,7 @@
             <% @upcoming_shows.each do |show| %>
               <li class="text-sm">
                 <span class="text-neutral-400"><%= show.starts_at.strftime("%b %-d") %></span>
-                &middot; <%= show.venue_name %><% if show.city.present? %>, <%= show.city %><% end %>
+                &middot; <%= show.venue || show.title %><% if show.city.present? %>, <%= show.city %><% end %>
               </li>
             <% end %>
           </ul>

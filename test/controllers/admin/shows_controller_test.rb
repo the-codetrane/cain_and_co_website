@@ -55,7 +55,7 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
 
   test "attendance can be recorded on a synced show" do
     show = shows(:past)
-    patch stats_admin_show_path(show), params: { show: { attendance: "85" } }
+    patch annotate_admin_show_path(show), params: { show: { attendance: "85" } }
     assert_redirected_to admin_shows_path
     assert_equal 85, show.reload.attendance
   end
@@ -63,13 +63,13 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
   test "blank attendance clears it" do
     show = shows(:past)
     show.update!(attendance: 40)
-    patch stats_admin_show_path(show), params: { show: { attendance: "" } }
+    patch annotate_admin_show_path(show), params: { show: { attendance: "" } }
     assert_nil show.reload.attendance
   end
 
   test "ticket sales are entered in dollars and stored in cents" do
     show = shows(:past)
-    patch stats_admin_show_path(show), params: { show: { attendance: "40", ticket_sales: "1,000" } }
+    patch annotate_admin_show_path(show), params: { show: { attendance: "40", ticket_sales: "1,000" } }
     assert_redirected_to admin_shows_path
     show.reload
     assert_equal 40, show.attendance
@@ -78,14 +78,14 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
 
   test "non-numeric ticket sales are rejected, not stored as zero" do
     show = shows(:past)
-    patch stats_admin_show_path(show), params: { show: { ticket_sales: "lots" } }
+    patch annotate_admin_show_path(show), params: { show: { ticket_sales: "lots" } }
     assert flash[:alert].present?
     assert_nil show.reload.ticket_sales_cents
   end
 
   test "negative attendance is rejected" do
     show = shows(:past)
-    patch stats_admin_show_path(show), params: { show: { attendance: "-3" } }
+    patch annotate_admin_show_path(show), params: { show: { attendance: "-3" } }
     assert_redirected_to admin_shows_path
     assert_nil show.reload.attendance
     assert flash[:alert].present?
@@ -97,5 +97,57 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
     Show.from_bandsintown("id" => show.bandsintown_id, "datetime" => show.starts_at.iso8601,
                           "title" => show.title, "venue" => { "name" => show.venue_name })
     assert_equal 85, show.reload.attendance
+  end
+
+  test "venue override can be set on a synced show and survives a sync" do
+    show = shows(:upcoming)
+    patch annotate_admin_show_path(show), params: { show: { venue_override: "Eagle's 34" } }
+    assert_redirected_to admin_shows_path
+    assert_equal "Eagle's 34", show.reload.venue_override
+
+    Show.from_bandsintown("id" => show.bandsintown_id, "datetime" => show.starts_at.iso8601,
+                          "title" => show.title, "venue" => { "name" => show.title })
+    assert_equal "Eagle's 34", show.reload.venue
+  end
+
+  test "attendance fields only appear on played shows" do
+    get admin_shows_path
+    assert_select "form[action=?] input[name='show[attendance]']", annotate_admin_show_path(shows(:past))
+    assert_select "form[action=?] input[name='show[attendance]']", annotate_admin_show_path(shows(:upcoming)), count: 0
+    assert_select "form[action=?] input[name='show[venue_override]']", annotate_admin_show_path(shows(:upcoming))
+  end
+
+  test "inline save over Turbo replaces only that show's row" do
+    show = shows(:past)
+    patch annotate_admin_show_path(show), params: { show: { attendance: "55" } }, as: :turbo_stream
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_select "turbo-stream[action=replace][target=?]", "show_#{show.id}", count: 1
+    assert_select "turbo-stream template input[name='show[attendance]'][value='55']"
+    assert_select "turbo-stream template [role=status]", "Saved."
+    assert_equal 55, show.reload.attendance
+  end
+
+  test "invalid inline save re-renders the row with the error and keeps the input" do
+    show = shows(:past)
+    patch annotate_admin_show_path(show), params: { show: { attendance: "-3" } }, as: :turbo_stream
+    assert_response :unprocessable_entity
+    assert_select "turbo-stream[action=replace][target=?]", "show_#{show.id}"
+    assert_select "turbo-stream template [role=alert]", /Attendance must be greater than or equal to 0/
+    assert_select "turbo-stream template input[name='show[attendance]'][value='-3']"
+    assert_nil show.reload.attendance
+  end
+
+  test "featured toggle over Turbo replaces only that row" do
+    show = shows(:manual_upcoming)
+    patch toggle_featured_admin_show_path(show), as: :turbo_stream
+    assert_select "turbo-stream[action=replace][target=?]", "show_#{show.id}"
+    assert_select "turbo-stream template button", text: "★ Featured"
+    assert show.reload.featured?
+  end
+
+  test "index rows carry dom ids for stream targets" do
+    get admin_shows_path
+    assert_select "div[id=?]", "show_#{shows(:past).id}"
   end
 end

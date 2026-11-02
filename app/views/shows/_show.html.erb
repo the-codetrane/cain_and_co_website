@@ -10,7 +10,7 @@
   <div class="flex-1 min-w-0">
     <h3 class="text-lg font-bold truncate"><%= link_to show.title, show_path(show), class: "hover:underline" %></h3>
     <p class="mt-1 text-neutral-300">
-      <%= show.venue_name %><% if show.location.present? %> &middot; <%= show.location %><% end %>
+      <%= show.venue %><% if show.venue && show.location.present? %> &middot; <% end %><%= show.location %>
     </p>
     <p class="mt-1 text-sm text-neutral-500">
       <%= show.starts_at.strftime("%A, %B %-d · %-l:%M %p") %>

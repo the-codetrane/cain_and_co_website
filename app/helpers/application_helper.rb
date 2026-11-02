@@ -7,4 +7,12 @@ module ApplicationHelper
   rescue URI::InvalidURIError
     nil
   end
+
+  # A content_for value trimmed for use inside a meta tag attribute. content_for
+  # stores an already-escaped SafeBuffer, but String#strip returns a plain String,
+  # which ERB would escape again ("Cain &amp;amp; Co."). to_str + strip keeps the
+  # escaped text; re-marking it safe is correct because content_for escaped it.
+  def meta_content(name)
+    content_for(name).to_str.strip.html_safe # rubocop:disable Rails/OutputSafety
+  end
 end

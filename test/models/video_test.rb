@@ -47,4 +47,11 @@ class VideoTest < ActiveSupport::TestCase
     v = videos(:medicine_woman)
     assert_equal "https://www.youtube-nocookie.com/embed/#{v.youtube_id}", v.embed_url
   end
+
+  test "display_title trims a cut-off title back to the last full sentence" do
+    v = Video.new(title: "One more from the floor at Eagle's 34. If you weren't there, this is the closest you're gonna get —…")
+    assert_equal "One more from the floor at Eagle's 34.", v.display_title
+    assert_equal "Live at the place", Video.new(title: "Live at the place —…").display_title
+    assert_equal "Medicine Woman", Video.new(title: "Medicine Woman").display_title
+  end
 end

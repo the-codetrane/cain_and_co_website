@@ -1,5 +1,8 @@
 <% content_for :title, "EPK · Cain & Co." %>
-<% content_for :description, "Cain & Co. electronic press kit — live video, music, show history, tech and booking info." %>
+<% content_for :description, "Five-piece blues rock from St. Paul, MN for fans of The Black Crowes and Blackberry Smoke. Live video, music, show history, stage plot and booking." %>
+<% content_for :og_image, @og_image_url %>
+<% content_for :twitter_card, "summary_large_image" %>
+<% content_for :no_push_prompt, "1" %>
 <% content_for :head do %>
   <meta name="robots" content="noindex, nofollow">
 <% end %>
@@ -10,47 +13,79 @@
 
   Copy below is hand-authored on purpose (it changes rarely; keeping it in the view
   means zero lookups). Data-driven parts:
-    - Live video  → Videos flagged "EPK" in Admin › Videos
-    - Photos      → Photos flagged "Press photo on EPK" in Admin › Photos
-    - Shows       → Shows (Bandsintown sync + manual); attendance entered in Admin › Shows
-    - Mailing list→ confirmed newsletter subscribers
+    - Live video → Videos flagged "EPK" in Admin › Videos
+    - Photos     → Photos flagged "Press photo on EPK" in Admin › Photos (caption = alt text)
+    - Shows      → Bandsintown sync + manual shows; venue, attendance in Admin › Shows
 %>
 <% booking_email = "booking@cainandco.band" %>
 <% booking_phone = "612-234-5305" %>
-<% section_label = "text-sm uppercase tracking-[0.3em] text-neutral-400 mb-6" %>
+<% tel_href = "tel:+1#{booking_phone.delete("-")}" %>
+<%# "Request a date" opens the booker's mail app with the details we need to quote. %>
+<% request_body = [
+     "Hi Cain & Co.,", "", "We'd like to book you.", "",
+     "Date(s):", "Venue:", "City:", "Capacity:",
+     "Set length (45 / 60 / 90 min):", "Budget / deal (guarantee, door split):",
+     "Other acts on the bill:", "", "Thanks,", ""
+   ].join("\n") %>
+<% request_href = "mailto:#{booking_email}?subject=#{ERB::Util.url_encode("Date request — Cain & Co.")}&body=#{ERB::Util.url_encode(request_body)}" %>
+<% section_label = "text-sm uppercase tracking-[0.3em] text-neutral-300 mb-6" %>
 <% card = "rounded-2xl border border-neutral-800 bg-neutral-900" %>
+<% album = "Too In Love With Strange" %>
+<% notable_stages = [ "Summit Brewing Co.", "Kolschfest at Omni Brewing", "Backroads MN", "Day Block Brewing", "331 Club" ] %>
+<% short_bio = "Cain & Co. is a five-piece American blues rock band from St. Paul, MN — for fans of The Black Crowes, Blackberry Smoke and The Allman Brothers. Dual guitars, keys and four voices on the harmonies; their 2025 album #{album} is out now." %>
 
-<%# ── Header: pitch + contact (contact goes at the top for bookers) ───────── %>
-<section class="border-b border-neutral-800">
+<%# ── Booker header (replaces the fan site nav: no merch, cart or sign-in exits) ── %>
+<% content_for :nav do %>
+  <header class="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-950/90 backdrop-blur">
+    <div class="container mx-auto max-w-5xl flex items-center justify-between gap-4 px-5 py-3">
+      <a href="#top" class="text-base sm:text-lg font-black tracking-[0.2em] uppercase">Cain&nbsp;&amp;&nbsp;Co.</a>
+      <div class="flex items-center gap-4">
+        <a href="<%= tel_href %>" class="hidden sm:inline text-sm font-semibold text-neutral-200 hover:text-white"><%= booking_phone %></a>
+        <a href="<%= request_href %>"
+           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-neutral-950 hover:bg-neutral-200">Request a date</a>
+      </div>
+    </div>
+  </header>
+<% end %>
+
+<%# ── Hero: pitch, proof, contact ────────────────────────────────────────── %>
+<section id="top" class="border-b border-neutral-800">
   <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
-    <p class="text-sm uppercase tracking-[0.4em] text-neutral-400 mb-4">Electronic Press Kit</p>
+    <p class="text-sm uppercase tracking-[0.4em] text-neutral-300 mb-4">Electronic Press Kit</p>
     <h1 class="text-4xl sm:text-6xl font-black tracking-tight">Cain &amp; Co.</h1>
     <p class="mt-4 text-xl sm:text-2xl text-neutral-200 font-medium max-w-3xl">
       Five-piece American blues rock band from St.&nbsp;Paul, MN &mdash; for fans of
       The Black Crowes, Blackberry Smoke and The Allman Brothers.
     </p>
 
-    <div class="mt-8 <%= card %> p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+    <div class="mt-6 text-sm text-neutral-300">
+      <p>
+        <span class="font-semibold text-white">Played:</span>
+        <%= safe_join(notable_stages, " · ") %>
+      </p>
+      <% if @shows_last_year.positive? %>
+        <p class="mt-1"><span class="font-semibold text-white"><%= @shows_last_year %> shows</span> in the last 12 months</p>
+      <% end %>
+    </div>
+
+    <div class="mt-8 <%= card %> p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] sm:items-center gap-5 text-sm">
       <div>
-        <p class="text-xs uppercase tracking-widest text-neutral-500">Booking email</p>
-        <a href="mailto:<%= booking_email %>?subject=Booking%20inquiry%20%E2%80%94%20Cain%20%26%20Co."
+        <p class="text-xs uppercase tracking-widest text-neutral-400">Booking &middot; St. Paul, MN</p>
+        <a href="mailto:<%= booking_email %>"
            class="mt-1 block text-base font-semibold text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white break-all"><%= booking_email %></a>
+        <a href="<%= tel_href %>"
+           class="mt-1 inline-block text-base font-semibold text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white"><%= booking_phone %></a>
       </div>
-      <div>
-        <p class="text-xs uppercase tracking-widest text-neutral-500">Phone</p>
-        <a href="tel:+1<%= booking_phone.delete("-") %>"
-           class="mt-1 block text-base font-semibold text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white"><%= booking_phone %></a>
-      </div>
-      <div>
-        <p class="text-xs uppercase tracking-widest text-neutral-500">Based in</p>
-        <p class="mt-1 text-base font-semibold text-white">St. Paul, MN &middot; Twin Cities</p>
-      </div>
+      <a href="<%= request_href %>"
+         class="rounded-full bg-white px-6 py-3 text-center text-sm font-bold text-neutral-950 hover:bg-neutral-200">Request a date</a>
+      <a href="/epk/cain-and-co-stage-plot.pdf" download
+         class="rounded-full border border-neutral-600 px-6 py-3 text-center text-sm font-semibold hover:border-white">Stage plot (PDF)</a>
     </div>
 
     <nav aria-label="EPK sections" class="mt-8 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-widest">
       <% [["Live video", "video"], ["Music", "music"], ["Bio", "bio"],
           ["Shows", "shows"], ["Booking info", "booking"], ["Press assets", "assets"]].each do |label, id| %>
-        <a href="#<%= id %>" class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-300 hover:border-white hover:text-white"><%= label %></a>
+        <a href="#<%= id %>" class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-200 hover:border-white hover:text-white"><%= label %></a>
       <% end %>
     </nav>
   </div>
@@ -67,11 +102,14 @@
           <div class="aspect-video w-full overflow-hidden rounded-2xl bg-neutral-900"
                data-controller="youtube-facade"
                data-youtube-facade-src-value="<%= video.embed_url %>"
-               data-youtube-facade-title-value="<%= video.title %>">
+               data-youtube-facade-title-value="<%= video.display_title %>">
             <button type="button" data-action="youtube-facade#play"
-                    class="group relative block w-full h-full" aria-label="Play <%= video.title %>">
-              <img src="https://i.ytimg.com/vi/<%= video.youtube_id %>/hqdefault.jpg" alt=""
-                   class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    class="group relative block w-full h-full" aria-label="Play <%= video.display_title %>">
+              <img src="https://i.ytimg.com/vi/<%= video.youtube_id %>/maxresdefault.jpg"
+                   data-fallback-src="https://i.ytimg.com/vi/<%= video.youtube_id %>/hqdefault.jpg"
+                   data-youtube-facade-target="poster"
+                   alt="" width="1280" height="720" decoding="async"
+                   class="w-full h-full object-cover group-hover:brightness-110 transition"
                    loading="<%= i.zero? ? "eager" : "lazy" %>">
               <span class="absolute inset-0 flex items-center justify-center">
                 <span class="rounded-full bg-red-600 group-hover:bg-red-500 p-4 sm:p-5 shadow-lg transition-colors">
@@ -80,7 +118,7 @@
               </span>
             </button>
           </div>
-          <figcaption class="mt-2 text-sm text-neutral-400"><%= video.title %></figcaption>
+          <figcaption class="mt-2 text-sm text-neutral-300"><%= video.display_title %></figcaption>
         </figure>
       <% end %>
     </div>
@@ -88,20 +126,26 @@
 </section>
 <% end %>
 
-<%# ── Music (strongest track first) ──────────────────────────────────────── %>
+<%# ── Music: three tracks from the album, strongest first ────────────────── %>
 <section id="music" class="scroll-mt-20 border-b border-neutral-800">
   <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
     <h2 class="<%= section_label %>">Listen</h2>
-    <div class="flex flex-col gap-3">
+    <p class="-mt-3 mb-5 text-neutral-200">
+      From the album
+      <a href="https://open.spotify.com/album/7HVh6tGtIXqWPHxdiyE0wS" target="_blank" rel="noopener noreferrer"
+         class="font-semibold italic text-white underline decoration-neutral-600 underline-offset-4 hover:decoration-white"><%= album %></a>
+      (2025)
+    </p>
+    <div class="flex flex-col gap-2">
       <% %w[4eNpR3Dn3qrgq70K1JqrAP 55UPGXoXTebbZTOVjh3B0j 6BaMnMtn4pQFHOxqR8BmSr].each do |track_id| %>
         <iframe src="https://open.spotify.com/embed/track/<%= track_id %>?theme=0"
-                title="Cain &amp; Co. on Spotify"
-                class="w-full rounded-xl" height="152" frameborder="0" loading="lazy"
+                title="<%= album %> track on Spotify"
+                class="w-full rounded-xl" height="80" frameborder="0" loading="lazy"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
       <% end %>
     </div>
     <div class="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
-      <% [["Spotify", "https://open.spotify.com/playlist/6dP0ime4nMxyeNbN3Y30fg"],
+      <% [["Spotify", "https://open.spotify.com/album/7HVh6tGtIXqWPHxdiyE0wS"],
           ["Apple Music", "https://music.apple.com/us/artist/cain-co/1837917282"],
           ["Amazon Music", "https://www.amazon.com/music/player/albums/B0FNYHGK29"],
           ["YouTube", "https://www.youtube.com/@cainandcoband"]].each do |label, url| %>
@@ -112,43 +156,55 @@
   </div>
 </section>
 
-<%# ── Bio (live show + where we've played; no origin story) ──────────────── %>
+<%# ── Bio + social proof ─────────────────────────────────────────────────── %>
 <section id="bio" class="scroll-mt-20 border-b border-neutral-800">
-  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl grid grid-cols-1 md:grid-cols-5 gap-10">
-    <div class="md:col-span-3">
-      <h2 class="<%= section_label %>">Bio</h2>
-      <div class="space-y-4 text-lg text-neutral-300 leading-relaxed">
-        <p>
-          Cain &amp; Co. plays dual-guitar, keys-driven Southern blues rock with four voices on the harmonies.
-          The live show is loud, soulful and built for a full room &mdash; originals with the grit of
-          Skynyrd and the swing of the Allmans, brought up North to the Twin Cities.
-        </p>
-        <p>
-          The lineup: <strong class="text-white">Michael &ldquo;Chris&rdquo; Cain</strong> (lead vocals, guitar),
-          <strong class="text-white">Gabe Voland</strong> (guitar, vocals),
-          <strong class="text-white">Doug Grimm</strong> (keys, acoustic, vocals),
-          <strong class="text-white">Gunnar Bergman</strong> (drums, vocals) and
-          <strong class="text-white">Gavin Peterson</strong> (bass).
-        </p>
-        <p>
-          The band has headlined stages including Summit Brewing Co. and Omni Brewing&rsquo;s Kolschfest,
-          and plays clubs, breweries and festivals within 100 miles of the Twin Cities.
-        </p>
+  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
+    <% if (lead_photo = @photos.first) %>
+      <%= image_tag lead_photo.image.variant(resize_to_limit: [ 1600, 1600 ]),
+            class: "mb-10 w-full aspect-[16/9] object-cover rounded-2xl bg-neutral-900",
+            width: 1600, height: 900, loading: "lazy", decoding: "async",
+            alt: lead_photo.caption.presence || "Cain & Co. performing live" %>
+    <% end %>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-10">
+      <div class="md:col-span-3" data-controller="clipboard">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="<%= section_label %>">Bio</h2>
+          <button type="button" data-clipboard-target="button" data-action="clipboard#copy"
+                  class="text-xs font-semibold uppercase tracking-widest text-neutral-300 hover:text-white">Copy bio</button>
+        </div>
+        <div data-clipboard-target="source" class="space-y-4 text-lg text-neutral-300 leading-relaxed">
+          <p>
+            Cain &amp; Co. plays dual-guitar, keys-driven Southern blues rock with four voices on the harmonies.
+            The live show is loud, soulful and built for a full room &mdash; originals with the grit of
+            Skynyrd and the swing of the Allmans, brought up North to the Twin Cities.
+          </p>
+          <p>
+            The lineup: <strong class="text-white">Michael &ldquo;Chris&rdquo; Cain</strong> (lead vocals, guitar),
+            <strong class="text-white">Gabe Voland</strong> (guitar, vocals),
+            <strong class="text-white">Doug Grimm</strong> (keys, acoustic, vocals),
+            <strong class="text-white">Gunnar Bergman</strong> (drums, vocals) and
+            <strong class="text-white">Gavin Peterson</strong> (bass).
+          </p>
+          <p>
+            Their 2025 album, <em class="text-white"><%= album %></em>, is out on all platforms.
+            The band has headlined stages including Summit Brewing Co. and Omni Brewing&rsquo;s Kolschfest,
+            and plays clubs, breweries and festivals within 100 miles of the Twin Cities.
+          </p>
+        </div>
       </div>
-    </div>
 
-    <%# Social proof %>
-    <div class="md:col-span-2 flex flex-col gap-4">
-      <h2 class="<%= section_label %> md:mb-2">What bookers say</h2>
-      <% @reviews.each do |review| %>
-        <blockquote class="<%= card %> p-5">
-          <p class="text-neutral-100 leading-relaxed">&ldquo;<%= review[:quote].html_safe %>&rdquo;</p>
-          <footer class="mt-3 text-sm">
-            <span class="font-semibold text-white">&mdash; <%= review[:author] %></span>,
-            <span class="text-neutral-400"><%= review[:source] %></span>
-          </footer>
-        </blockquote>
-      <% end %>
+      <div class="md:col-span-2 flex flex-col gap-4">
+        <h2 class="<%= section_label %> md:mb-2">What bookers say</h2>
+        <% @reviews.each do |review| %>
+          <blockquote class="<%= card %> p-5">
+            <p class="text-neutral-100 leading-relaxed">&ldquo;<%= review[:quote].html_safe %>&rdquo;</p>
+            <footer class="mt-3 text-sm">
+              <span class="font-semibold text-white">&mdash; <%= review[:author] %></span>,
+              <span class="text-neutral-300"><%= review[:source] %></span>
+            </footer>
+          </blockquote>
+        <% end %>
+      </div>
     </div>
   </div>
 </section>
@@ -163,9 +219,15 @@
           <li class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 px-5 py-4">
             <span class="sm:w-32 shrink-0 text-sm font-semibold text-neutral-300 tabular-nums"><%= show.starts_at.strftime("%a %b %-d, %Y") %></span>
             <span class="flex-1 min-w-0">
-              <%= link_to show.venue_name.presence || show.title, show_path(show), class: "font-semibold text-white hover:underline" %>
-              <% if show.location.present? %><span class="text-neutral-400"> &middot; <%= show.location %></span><% end %>
+              <%= link_to show.title, show_path(show), class: "font-semibold text-white hover:underline" %>
+              <span class="block text-sm text-neutral-300">
+                <%= safe_join([ show.venue, [ show.city, show.region ].compact_blank.join(", ").presence ].compact, " · ") %>
+              </span>
             </span>
+            <% if (tickets = safe_external_url(show.ticket_url)) %>
+              <a href="<%= tickets %>" target="_blank" rel="noopener noreferrer"
+                 class="self-start sm:self-center rounded-full border border-neutral-600 px-4 py-1.5 text-xs font-semibold hover:border-white">Tickets</a>
+            <% end %>
           </li>
         <% end %>
       </ul>
@@ -173,39 +235,51 @@
 
     <h2 class="<%= section_label %>">Show history</h2>
     <% if @past_shows.any? %>
-      <% cache [ "epk-show-history", @past_shows ] do %>
-        <div class="<%= card %> overflow-hidden">
+      <% cache [ "epk-show-history-v2", @past_shows ] do %>
+        <%# Most recent 10 up front; the rest collapsed behind "Show all". %>
+        <% recent, older = @past_shows.to_a.partition.with_index { |_, i| i < 10 } %>
+        <div class="<%= card %> overflow-hidden" data-controller="reveal">
           <table class="w-full text-left text-sm">
-            <thead class="border-b border-neutral-800 text-xs uppercase tracking-widest text-neutral-500">
+            <thead class="border-b border-neutral-800 text-xs uppercase tracking-widest text-neutral-400">
               <tr>
-                <th scope="col" class="px-4 py-3 font-semibold">Date</th>
-                <th scope="col" class="px-4 py-3 font-semibold">Venue</th>
+                <th scope="col" class="pl-4 pr-2 sm:px-4 py-3 font-semibold">Date</th>
+                <th scope="col" class="px-2 sm:px-4 py-3 font-semibold">Venue</th>
                 <th scope="col" class="hidden sm:table-cell px-4 py-3 font-semibold">Event</th>
-                <th scope="col" class="px-4 py-3 font-semibold text-right">Attendance</th>
+                <th scope="col" class="pl-2 pr-4 sm:px-4 py-3 font-semibold text-right"><span class="sm:hidden">Att.</span><span class="hidden sm:inline">Attendance</span></th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-neutral-800">
-              <% @past_shows.each do |show| %>
-                <tr>
-                  <td class="px-4 py-3 whitespace-nowrap text-neutral-400 tabular-nums"><%= show.starts_at.strftime("%b %-d, %Y") %></td>
-                  <td class="px-4 py-3">
-                    <span class="font-semibold text-white"><%= show.venue_name.presence || "—" %></span>
-                    <% if show.city.present? %><span class="block text-xs text-neutral-500"><%= [ show.city, show.region ].compact_blank.join(", ") %></span><% end %>
-                    <%# On phones the Event column is hidden, so show it under the venue. %>
-                    <span class="sm:hidden block text-xs text-neutral-400"><%= show.title %></span>
-                  </td>
-                  <td class="hidden sm:table-cell px-4 py-3 text-neutral-300"><%= show.title %></td>
-                  <td class="px-4 py-3 text-right tabular-nums <%= show.attendance ? 'font-semibold text-white' : 'text-neutral-600' %>">
-                    <%= show.attendance ? number_with_delimiter(show.attendance) : "—" %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
+            <% [ [ recent, false ], [ older, true ] ].each do |shows, collapsed| %>
+              <% next if shows.empty? %>
+              <tbody class="divide-y divide-neutral-800 <%= 'border-t border-neutral-800' if collapsed %>"
+                     <%= tag.attributes(hidden: collapsed, data: { reveal_target: ("item" if collapsed) }) %>>
+                <% shows.each do |show| %>
+                  <tr>
+                    <td class="pl-4 pr-2 sm:px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-neutral-300 tabular-nums"><%= show.starts_at.strftime("%b %-d, %Y") %></td>
+                    <td class="px-2 sm:px-4 py-3">
+                      <span class="font-semibold text-white"><%= show.venue || "—" %></span>
+                      <% if show.city.present? %><span class="block text-xs text-neutral-400"><%= [ show.city, show.region ].compact_blank.join(", ") %></span><% end %>
+                      <%# On phones the Event column is hidden, so show it under the venue. %>
+                      <span class="sm:hidden block text-xs text-neutral-300"><%= show.title %></span>
+                    </td>
+                    <td class="hidden sm:table-cell px-4 py-3 text-neutral-200"><%= show.title %></td>
+                    <td class="pl-2 pr-4 sm:px-4 py-3 text-right tabular-nums <%= show.attendance ? 'font-semibold text-white' : 'text-neutral-500' %>">
+                      <%= show.attendance ? number_with_delimiter(show.attendance) : "—" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            <% end %>
           </table>
+          <% if older.any? %>
+            <button type="button" data-reveal-target="button" data-action="reveal#show"
+                    class="w-full border-t border-neutral-800 px-4 py-3 text-sm font-semibold text-neutral-200 hover:bg-neutral-800 hover:text-white">
+              Show all <%= @past_shows.size %> shows
+            </button>
+          <% end %>
         </div>
       <% end %>
     <% else %>
-      <p class="text-neutral-400">Show history coming soon.</p>
+      <p class="text-neutral-300">Show history coming soon.</p>
     <% end %>
   </div>
 </section>
@@ -224,7 +298,7 @@
         ["Touring radius", "Within 100 miles of the Twin Cities"]
       ].each do |label, value| %>
         <div class="<%= card %> p-5">
-          <dt class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></dt>
+          <dt class="text-xs uppercase tracking-widest text-neutral-400"><%= label %></dt>
           <dd class="mt-1 text-white font-medium"><%= value %></dd>
         </div>
       <% end %>
@@ -244,16 +318,27 @@
          class="rounded-full border border-neutral-600 px-5 py-2.5 hover:border-white">Logo (transparent PNG)</a>
     </div>
 
+    <div class="mt-8 <%= card %> p-5" data-controller="clipboard">
+      <div class="flex items-baseline justify-between gap-4">
+        <h3 class="text-xs uppercase tracking-widest text-neutral-400">Short bio for listings</h3>
+        <button type="button" data-clipboard-target="button" data-action="clipboard#copy"
+                class="text-xs font-semibold uppercase tracking-widest text-neutral-300 hover:text-white">Copy</button>
+      </div>
+      <p data-clipboard-target="source" class="mt-2 text-neutral-200 leading-relaxed"><%= short_bio %></p>
+      <p class="mt-3 text-xs text-neutral-400">Full bio: <a href="#bio" class="underline hover:text-white">see Bio</a> (has its own copy button).</p>
+    </div>
+
     <% if @photos.any? %>
-      <h3 class="mt-10 mb-4 text-xs uppercase tracking-widest text-neutral-500">Press photos &middot; tap to download full resolution</h3>
+      <h3 class="mt-10 mb-4 text-xs uppercase tracking-widest text-neutral-400">Press photos &middot; tap to download full resolution</h3>
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <% @photos.each do |photo| %>
           <%= link_to rails_blob_path(photo.image, disposition: "attachment"),
-                class: "group block overflow-hidden rounded-xl bg-neutral-900",
+                class: "group block overflow-hidden rounded-xl bg-neutral-800",
                 aria: { label: "Download #{photo.caption.presence || 'press photo'}" } do %>
             <%= image_tag photo.image.variant(resize_to_limit: [ 800, 800 ]),
                   class: "w-full aspect-[4/3] object-cover group-hover:opacity-80 transition-opacity",
-                  loading: "lazy", alt: photo.caption.presence || "Cain & Co. press photo" %>
+                  width: 800, height: 600, loading: "lazy", decoding: "async",
+                  alt: photo.caption.presence || "Cain & Co. press photo" %>
           <% end %>
         <% end %>
       </div>
@@ -262,17 +347,17 @@
     <div class="mt-12 <%= card %> p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
       <div>
         <p class="text-xl font-bold text-white">Ready to book?</p>
-        <p class="mt-1 text-neutral-400">Email or call &mdash; terms are negotiable.</p>
+        <p class="mt-1 text-neutral-300">Send your date, room and deal &mdash; terms are negotiable.</p>
       </div>
       <div class="flex flex-wrap gap-3 text-sm font-semibold">
-        <a href="mailto:<%= booking_email %>?subject=Booking%20inquiry%20%E2%80%94%20Cain%20%26%20Co."
-           class="rounded-full bg-white text-neutral-950 px-5 py-2.5 hover:bg-neutral-200"><%= booking_email %></a>
-        <a href="tel:+1<%= booking_phone.delete("-") %>"
+        <a href="<%= request_href %>"
+           class="rounded-full bg-white text-neutral-950 px-5 py-2.5 hover:bg-neutral-200">Request a date</a>
+        <a href="<%= tel_href %>"
            class="rounded-full border border-neutral-600 px-5 py-2.5 hover:border-white"><%= booking_phone %></a>
       </div>
     </div>
 
-    <div class="mt-10 flex flex-wrap gap-5 text-xs uppercase tracking-widest text-neutral-400">
+    <div class="mt-10 flex flex-wrap gap-5 text-xs uppercase tracking-widest text-neutral-300">
       <% [["Instagram", "https://www.instagram.com/cainandcoband/"],
           ["Facebook", "https://www.facebook.com/cainandcoband"],
           ["TikTok", "https://www.tiktok.com/@cainandcoband"],

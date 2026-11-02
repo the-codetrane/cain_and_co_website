@@ -122,4 +122,13 @@ class ShowTest < ActiveSupport::TestCase
     show.ticket_sales = ""
     assert_nil show.ticket_sales_cents
   end
+
+  test "venue prefers the override, and hides a synced venue that just repeats the title" do
+    show = Show.new(title: "Rogue Royal w. Cain & Co.", venue_name: "Rogue Royal w. Cain & Co.")
+    assert_nil show.venue
+    show.venue_name = "The Turf Club"
+    assert_equal "The Turf Club", show.venue
+    show.venue_override = "Rogue Royal"
+    assert_equal "Rogue Royal", show.venue
+  end
 end

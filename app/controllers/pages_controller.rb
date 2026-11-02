@@ -44,8 +44,20 @@ class PagesController < ApplicationController
 
     @upcoming_shows = Show.upcoming.limit(5)
     @past_shows = Show.played.limit(EPK_PAST_SHOW_LIMIT)
+    @shows_last_year = Show.played.where(starts_at: 12.months.ago..).count
     @reviews = REVIEWS
+    @og_image_url = epk_og_image_url
   end
+
+  # Link-preview image for the EPK when it's pasted into email/Slack/iMessage:
+  # the lead press photo when there is one, else the band logo.
+  def epk_og_image_url
+    photo = @photos.first
+    return helpers.image_url("logo_banner.png") unless photo
+
+    photo.image.blob.service.public? ? photo.image.url : rails_blob_url(photo.image)
+  end
+  private :epk_og_image_url
 
   # Legal pages. LAST_UPDATED is rendered on both and should be bumped whenever
   # the policy text changes.

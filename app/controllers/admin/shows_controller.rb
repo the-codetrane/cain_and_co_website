@@ -1,6 +1,6 @@
 module Admin
   class ShowsController < BaseController
-    before_action :set_show, only: %i[edit update destroy toggle_featured stats]
+    before_action :set_show, only: %i[edit update destroy toggle_featured annotate]
     # Synced shows are owned by Bandsintown; editing them would be overwritten on the
     # next sync. Only manual shows can be edited or deleted here.
     before_action :require_manual_show, only: %i[edit update destroy]
@@ -49,20 +49,37 @@ module Admin
     # Featured is a local flag (survives sync), so it can be toggled on any show.
     def toggle_featured
       @show.update(featured: !@show.featured?)
-      redirect_to admin_shows_path, notice: "Updated featured shows."
+      respond_to do |format|
+        format.turbo_stream { render_row }
+        format.html { redirect_to admin_shows_path, notice: "Updated featured shows." }
+      end
     end
 
-    # Attendance and ticket sales are local fields the Bandsintown sync never
-    # writes, so like featured they can be set on synced shows too. Blank clears.
-    def stats
-      if @show.update(params.require(:show).permit(:attendance, :ticket_sales))
-        redirect_to admin_shows_path, notice: "Saved draw for #{@show.title.truncate(40)}."
-      else
-        redirect_to admin_shows_path, alert: @show.errors.full_messages.to_sentence
+    # Venue override, attendance and ticket sales are local fields the Bandsintown
+    # sync never writes, so like featured they can be set on synced shows too.
+    # Blank clears.
+    def annotate
+      saved = @show.update(params.require(:show).permit(:venue_override, :attendance, :ticket_sales))
+      respond_to do |format|
+        format.turbo_stream { render_row(saved: saved, status: saved ? :ok : :unprocessable_entity) }
+        format.html do
+          if saved
+            redirect_to admin_shows_path, notice: "Saved #{@show.title.truncate(40)}."
+          else
+            redirect_to admin_shows_path, alert: @show.errors.full_messages.to_sentence
+          end
+        end
       end
     end
 
     private
+
+    # Replace just this show's row in the list.
+    def render_row(saved: false, status: :ok)
+      render turbo_stream: turbo_stream.replace(
+        helpers.dom_id(@show), partial: "admin/shows/row", locals: { show: @show, saved: saved }
+      ), status: status
+    end
 
     def set_show
       @show = Show.find(params[:id])
