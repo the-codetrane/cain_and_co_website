@@ -20,8 +20,6 @@ class Show < ApplicationRecord
   scope :featured, -> { active.where(featured: true) }
   # Shows we actually played: past and not canceled. Drives the EPK show history.
   scope :played, -> { active.past }
-  # Played shows with recorded ticket sales, best first. Drives the EPK draw highlights.
-  scope :top_ticket_sales, -> { played.where.not(ticket_sales_cents: nil).reorder(ticket_sales_cents: :desc) }
 
   def canceled?
     status == "canceled"

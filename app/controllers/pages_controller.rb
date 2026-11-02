@@ -44,13 +44,6 @@ class PagesController < ApplicationController
 
     @upcoming_shows = Show.upcoming.limit(5)
     @past_shows = Show.played.limit(EPK_PAST_SHOW_LIMIT)
-    @shows_played = Show.played.count
-    # One aggregate query over the shows that have a recorded headcount.
-    @counted_shows, @total_attendance, @best_attendance =
-      Show.played.unscope(:order).where.not(attendance: nil)
-          .pick(Arel.sql("COUNT(*)"), Arel.sql("SUM(attendance)"), Arel.sql("MAX(attendance)"))
-    @ticket_sales_highlights = Show.top_ticket_sales.limit(3)
-    @subscriber_count = Subscriber.active.count
     @reviews = REVIEWS
   end
 

@@ -35,40 +35,6 @@ class EpkTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Pulled gig"
   end
 
-  test "draw stats only report headcounts that were recorded" do
-    get epk_path
-    assert_select "#draw dt", text: "Average headcount", count: 0
-
-    shows(:past).update!(attendance: 80)
-    Show.create!(title: "Turf Club", venue_name: "Turf Club", starts_at: 60.days.ago,
-                 source: "manual", attendance: 100)
-    get epk_path
-    assert_select "#draw dt", text: "Average headcount"
-    assert_select "#draw dd", text: "90"
-    assert_select "#draw dd", text: "100"
-  end
-
-  test "draw highlights come from recorded ticket sales, best first" do
-    get epk_path
-    assert_select "#draw li", count: 0
-
-    shows(:past).update!(ticket_sales_cents: 47_500, attendance: 45)
-    Show.create!(title: "Zhora", venue_name: "Zhora Darling", starts_at: 60.days.ago,
-                 source: "manual", ticket_sales_cents: 100_000)
-    get epk_path
-    items = css_select("#draw li").map { |li| li.text.squish }
-    assert_match(/\A\$1,000 in ticket sales at Zhora Darling/, items.first)
-    assert_match(/\A\$475 in ticket sales and 45 through the door at The Basement/, items.second)
-  end
-
-  test "mailing list stat counts only confirmed subscribers" do
-    expected = Subscriber.active.count + 1
-    Subscriber.create!(email: "epk-fan@example.com", confirmed_at: Time.current)
-    Subscriber.create!(email: "epk-pending@example.com")
-    get epk_path
-    assert_select "#draw div", text: /Mailing list\s*#{expected}\b/
-  end
-
   test "upcoming shows are listed" do
     get epk_path
     assert_select "#shows a", text: shows(:upcoming).venue_name

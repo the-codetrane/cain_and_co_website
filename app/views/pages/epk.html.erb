@@ -1,5 +1,5 @@
 <% content_for :title, "EPK · Cain & Co." %>
-<% content_for :description, "Cain & Co. electronic press kit — live video, music, draw, show history, tech and booking info." %>
+<% content_for :description, "Cain & Co. electronic press kit — live video, music, show history, tech and booking info." %>
 <% content_for :head do %>
   <meta name="robots" content="noindex, nofollow">
 <% end %>
@@ -12,7 +12,7 @@
   means zero lookups). Data-driven parts:
     - Live video  → Videos flagged "EPK" in Admin › Videos
     - Photos      → Photos flagged "Press photo on EPK" in Admin › Photos
-    - Shows/draw  → Shows (Bandsintown sync + manual); attendance entered in Admin › Shows
+    - Shows       → Shows (Bandsintown sync + manual); attendance entered in Admin › Shows
     - Mailing list→ confirmed newsletter subscribers
 %>
 <% booking_email = "booking@cainandco.band" %>
@@ -48,7 +48,7 @@
     </div>
 
     <nav aria-label="EPK sections" class="mt-8 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-widest">
-      <% [["Live video", "video"], ["Music", "music"], ["Bio", "bio"], ["Draw", "draw"],
+      <% [["Live video", "video"], ["Music", "music"], ["Bio", "bio"],
           ["Shows", "shows"], ["Booking info", "booking"], ["Press assets", "assets"]].each do |label, id| %>
         <a href="#<%= id %>" class="rounded-full border border-neutral-700 px-4 py-2 text-neutral-300 hover:border-white hover:text-white"><%= label %></a>
       <% end %>
@@ -150,50 +150,6 @@
         </blockquote>
       <% end %>
     </div>
-  </div>
-</section>
-
-<%# ── Draw ───────────────────────────────────────────────────────────────── %>
-<section id="draw" class="scroll-mt-20 border-b border-neutral-800">
-  <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
-    <h2 class="<%= section_label %>">Draw</h2>
-    <p class="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-snug">
-      &ldquo;We promote every show with a 4-week campaign and bring our own crowd.&rdquo;
-    </p>
-
-    <%# Best nights by recorded ticket sales (Admin › Shows). %>
-    <% if @ticket_sales_highlights.any? %>
-      <ul class="mt-6 flex flex-col gap-3 text-neutral-300">
-        <% @ticket_sales_highlights.each do |show| %>
-          <li>
-            <strong class="text-white text-lg tabular-nums"><%= number_to_currency(show.ticket_sales_cents / 100.0, precision: 0) %></strong> in ticket sales<% if show.attendance %> and
-            <strong class="text-white text-lg tabular-nums"><%= number_with_delimiter(show.attendance) %></strong> through the door<% end %> at
-            <strong class="text-white"><%= show.venue_name.presence || show.title %></strong>
-            <span class="text-neutral-500">(<%= show.starts_at.in_time_zone("America/Chicago").strftime("%b %Y") %>)</span>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-
-    <% stats = [ [ number_with_delimiter(@shows_played), "Shows played" ] ]
-       if @counted_shows.to_i.positive?
-         stats << [ number_with_delimiter((@total_attendance.to_f / @counted_shows).round), "Average headcount" ]
-         stats << [ number_with_delimiter(@best_attendance), "Best night" ]
-       end
-       stats << [ number_with_delimiter(@subscriber_count), "Mailing list" ] if @subscriber_count.positive? %>
-    <dl class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <% stats.each do |value, label| %>
-        <div class="<%= card %> p-5">
-          <dt class="text-xs uppercase tracking-widest text-neutral-500"><%= label %></dt>
-          <dd class="mt-2 text-3xl font-black tabular-nums"><%= value %></dd>
-        </div>
-      <% end %>
-    </dl>
-    <% if @counted_shows.to_i.positive? %>
-      <p class="mt-3 text-xs text-neutral-500">
-        Headcounts from <%= pluralize(@counted_shows, "show") %> with recorded attendance.
-      </p>
-    <% end %>
   </div>
 </section>
 

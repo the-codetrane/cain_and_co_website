@@ -122,12 +122,4 @@ class ShowTest < ActiveSupport::TestCase
     show.ticket_sales = ""
     assert_nil show.ticket_sales_cents
   end
-
-  test "top_ticket_sales lists played shows with sales, best first" do
-    low = Show.create!(title: "a", starts_at: 3.days.ago, source: "manual", ticket_sales_cents: 100)
-    high = Show.create!(title: "b", starts_at: 4.days.ago, source: "manual", ticket_sales_cents: 900)
-    Show.create!(title: "c", starts_at: 5.days.ago, source: "manual", ticket_sales_cents: 5_000, status: "canceled")
-    Show.create!(title: "d", starts_at: 5.days.from_now, source: "manual", ticket_sales_cents: 5_000)
-    assert_equal [ high, low ], Show.top_ticket_sales.to_a
-  end
 end
