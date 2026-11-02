@@ -75,6 +75,9 @@
           </div>
           <div class="absolute top-1.5 left-1.5 flex gap-1">
             <span class="rounded bg-neutral-900/70 px-1.5 py-0.5 text-[10px] font-semibold text-white">#<%= photo.position %></span>
+            <% if photo.epk? %>
+              <span class="rounded bg-amber-500/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">EPK</span>
+            <% end %>
             <% unless photo.published? %>
               <span class="rounded bg-neutral-500/80 px-1.5 py-0.5 text-[10px] font-semibold text-white">Hidden</span>
             <% end %>

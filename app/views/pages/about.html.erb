@@ -146,22 +146,7 @@
 <% end %>
 
 <%# ── Press & Reviews ─────────────────────────────────────────────────── %>
-<%#
-  When the Review model is built, replace the array below with:
-    @reviews.map { |r| { quote: r.quote, author: r.author, source: r.source } }
-%>
-<% reviews = [
-  {
-    quote: "Cain & Co were the perfect headline act&hellip; their energy, professionalism and musicianship is second to none. Glorious Rock and Roll at its absolute finest!",
-    author: "Paul Bowser",
-    source: "Summit Brewing Co."
-  },
-  {
-    quote: "Cain and Co came, saw, and conquered our patio at Omni Brewing Co in Maple Grove for our Kolschfest celebration. I can&rsquo;t recommend this rocking group enough!",
-    author: "Paul Canavati",
-    source: "Omni Brewing"
-  }
-] %>
+<% reviews = @reviews %>
 <section class="border-b border-neutral-800">
   <div class="container mx-auto px-5 py-16">
     <h2 class="text-sm uppercase tracking-[0.3em] text-neutral-400 mb-8">Press &amp; Reviews</h2>

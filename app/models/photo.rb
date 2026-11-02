@@ -5,6 +5,8 @@ class Photo < ApplicationRecord
   validates :image, presence: true
 
   scope :published, -> { where(published: true).order(:position) }
+  # Press photos hand-picked for the booker-facing /epk page.
+  scope :epk, -> { published.where(epk: true) }
 
   before_validation :assign_position, on: :create
 

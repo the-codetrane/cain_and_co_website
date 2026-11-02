@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_195931) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_130000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -126,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_195931) do
   create_table "photos", force: :cascade do |t|
     t.string "caption"
     t.datetime "created_at", null: false
+    t.boolean "epk", default: false, null: false
     t.integer "position", default: 1, null: false
     t.boolean "published", default: true, null: false
     t.datetime "updated_at", null: false
@@ -160,6 +161,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_195931) do
   end
 
   create_table "shows", force: :cascade do |t|
+    t.integer "attendance"
     t.string "bandsintown_id"
     t.string "bandsintown_url"
     t.string "city"
@@ -177,6 +179,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_195931) do
     t.string "source", default: "bandsintown", null: false
     t.datetime "starts_at", null: false
     t.string "status", default: "active", null: false
+    t.integer "ticket_sales_cents"
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "venue_name"
@@ -228,6 +231,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_195931) do
 
   create_table "videos", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "epk", default: false, null: false
     t.datetime "published_at", null: false
     t.boolean "short", default: false, null: false
     t.string "thumbnail_url"

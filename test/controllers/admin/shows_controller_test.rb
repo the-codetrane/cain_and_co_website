@@ -52,4 +52,50 @@ class Admin::ShowsControllerTest < ActionDispatch::IntegrationTest
       delete admin_show_path(show)
     end
   end
+
+  test "attendance can be recorded on a synced show" do
+    show = shows(:past)
+    patch stats_admin_show_path(show), params: { show: { attendance: "85" } }
+    assert_redirected_to admin_shows_path
+    assert_equal 85, show.reload.attendance
+  end
+
+  test "blank attendance clears it" do
+    show = shows(:past)
+    show.update!(attendance: 40)
+    patch stats_admin_show_path(show), params: { show: { attendance: "" } }
+    assert_nil show.reload.attendance
+  end
+
+  test "ticket sales are entered in dollars and stored in cents" do
+    show = shows(:past)
+    patch stats_admin_show_path(show), params: { show: { attendance: "40", ticket_sales: "1,000" } }
+    assert_redirected_to admin_shows_path
+    show.reload
+    assert_equal 40, show.attendance
+    assert_equal 100_000, show.ticket_sales_cents
+  end
+
+  test "non-numeric ticket sales are rejected, not stored as zero" do
+    show = shows(:past)
+    patch stats_admin_show_path(show), params: { show: { ticket_sales: "lots" } }
+    assert flash[:alert].present?
+    assert_nil show.reload.ticket_sales_cents
+  end
+
+  test "negative attendance is rejected" do
+    show = shows(:past)
+    patch stats_admin_show_path(show), params: { show: { attendance: "-3" } }
+    assert_redirected_to admin_shows_path
+    assert_nil show.reload.attendance
+    assert flash[:alert].present?
+  end
+
+  test "sync does not overwrite recorded attendance" do
+    show = shows(:past)
+    show.update!(attendance: 85)
+    Show.from_bandsintown("id" => show.bandsintown_id, "datetime" => show.starts_at.iso8601,
+                          "title" => show.title, "venue" => { "name" => show.venue_name })
+    assert_equal 85, show.reload.attendance
+  end
 end

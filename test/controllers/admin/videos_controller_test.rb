@@ -36,6 +36,14 @@ class Admin::VideosControllerTest < ActionDispatch::IntegrationTest
     assert videos(:hidden_video).reload.visible?
   end
 
+  test "update can flag a video for the EPK without changing visibility" do
+    patch admin_video_path(videos(:medicine_woman)), params: { video: { epk: true } }
+    assert_redirected_to admin_videos_path
+    video = videos(:medicine_woman).reload
+    assert video.epk?
+    assert video.visible?
+  end
+
   # ── sync ───────────────────────────────────────────────────────────────
 
   test "sync runs the job and redirects with notice" do

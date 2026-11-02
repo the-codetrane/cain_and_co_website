@@ -86,6 +86,11 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Updated caption", photos(:outdoor_shoot).reload.caption
   end
 
+  test "update can flag a photo for the EPK" do
+    patch admin_photo_path(photos(:outdoor_shoot)), params: { photo: { epk: "1" } }
+    assert photos(:outdoor_shoot).reload.epk?
+  end
+
   test "update can toggle published flag" do
     patch admin_photo_path(photos(:hidden_draft)), params: {
       photo: { published: "1" }

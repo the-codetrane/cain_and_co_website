@@ -114,4 +114,12 @@ class ShowTest < ActiveSupport::TestCase
     show = Show.from_bandsintown(payload)
     assert_equal 2030, show.starts_at.year
   end
+
+  test "ticket_sales reads and writes whole dollars over cents" do
+    show = Show.new(ticket_sales: "$1,000")
+    assert_equal 100_000, show.ticket_sales_cents
+    assert_equal 1000, show.ticket_sales
+    show.ticket_sales = ""
+    assert_nil show.ticket_sales_cents
+  end
 end
