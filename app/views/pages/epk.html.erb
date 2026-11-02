@@ -161,6 +161,16 @@
       &ldquo;We promote every show with a 4-week campaign and bring our own crowd.&rdquo;
     </p>
 
+    <%# Hand-kept from the band's Gig History sheet. %>
+    <ul class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-6 text-neutral-300">
+      <% [["$1,000", "Zhora Darling", "Jan 2025"], ["$475", "KJ’s Hideaway", "Jan 2024"]].each do |amount, venue, date| %>
+        <li>
+          <strong class="text-white text-lg tabular-nums"><%= amount %></strong> in ticket sales at
+          <strong class="text-white"><%= venue %></strong> <span class="text-neutral-500">(<%= date %>)</span>
+        </li>
+      <% end %>
+    </ul>
+
     <% stats = [ [ number_with_delimiter(@shows_played), "Shows played" ] ]
        if @counted_shows.to_i.positive?
          stats << [ number_with_delimiter((@total_attendance.to_f / @counted_shows).round), "Average headcount" ]

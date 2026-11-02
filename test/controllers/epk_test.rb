@@ -48,6 +48,12 @@ class EpkTest < ActionDispatch::IntegrationTest
     assert_select "#draw dd", text: "100"
   end
 
+  test "draw section cites ticket sales" do
+    get epk_path
+    assert_select "#draw li", text: /\$1,000\s+in ticket sales at\s+Zhora Darling/
+    assert_select "#draw li", text: /\$475\s+in ticket sales at\s+KJ’s Hideaway/
+  end
+
   test "mailing list stat counts only confirmed subscribers" do
     expected = Subscriber.active.count + 1
     Subscriber.create!(email: "epk-fan@example.com", confirmed_at: Time.current)
