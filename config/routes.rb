@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :shows, except: :show do
-      member { patch :toggle_featured; patch :stats }
+      member { patch :toggle_featured; patch :annotate }
       collection { post :sync }
     end
     resources :subscribers, only: %i[index new create destroy] do

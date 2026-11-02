@@ -88,7 +88,7 @@ class NewsletterDrafter
     return "There are no upcoming shows on the calendar right now." if shows.empty?
 
     lines = shows.map do |show|
-      bits = [ show.starts_at&.to_fs(:long), show.venue_name.presence, show.location.presence ].compact
+      bits = [ show.starts_at&.to_fs(:long), show.venue, show.location.presence ].compact
       ticket = show.ticket_url
       bits << "tickets: #{ticket}" if ticket.present?
       "- #{show.title} (#{bits.join(' · ')})"

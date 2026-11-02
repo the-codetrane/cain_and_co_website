@@ -1,5 +1,5 @@
 <% content_for :title, "#{@show.title} · Cain & Co." %>
-<% content_for :description, "#{@show.title} — #{@show.starts_at.strftime("%B %-d, %Y")}#{" at #{@show.venue_name}" if @show.venue_name.present?}. #{@show.location}".strip %>
+<% content_for :description, "#{@show.title} — #{@show.starts_at.strftime("%B %-d, %Y")}#{" at #{@show.venue}" if @show.venue.present?}. #{@show.location}".strip %>
 
 <section class="container mx-auto px-5 py-16 max-w-3xl">
   <%= link_to (@show.starts_at.past? ? "← Past shows" : "← Upcoming shows"),
@@ -25,11 +25,11 @@
           <%= @show.starts_at.strftime("%-l:%M %p") %><% if @show.ends_at %> – <%= @show.ends_at.strftime("%-l:%M %p") %><% end %>
         </dd>
       </div>
-      <% if @show.venue_name.present? || @show.location.present? %>
+      <% if @show.venue.present? || @show.location.present? %>
         <div>
           <dt class="text-xs uppercase tracking-widest text-neutral-500">Where</dt>
           <dd>
-            <% if @show.venue_name.present? %><div class="font-semibold"><%= @show.venue_name %></div><% end %>
+            <% if @show.venue.present? %><div class="font-semibold"><%= @show.venue %></div><% end %>
             <% if @show.location.present? %><div><%= @show.location %></div><% end %>
           </dd>
         </div>

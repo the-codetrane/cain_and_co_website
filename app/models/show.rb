@@ -54,6 +54,14 @@ class Show < ApplicationRecord
     self.ticket_sales_cents = dollars.blank? ? nil : (Float(dollars, exception: false)&.then { (_1 * 100).round } || dollars)
   end
 
+  # Venue name to display. Prefers the admin-entered override; otherwise the
+  # synced venue name, unless it's just the event title again (how this band's
+  # Bandsintown events are entered), in which case nil so views don't repeat it.
+  def venue
+    return venue_override if venue_override.present?
+    venue_name if venue_name.present? && venue_name != title
+  end
+
   def location
     [ city, region, country ].compact_blank.join(", ")
   end
