@@ -1,7 +1,9 @@
 require "csv"
 
-# Applies hand-kept headcounts (db/data/gig_history_attendance.csv, exported from
-# the band's "Gig History" sheet) to Shows.
+# One-off seed: applies hand-kept headcounts and ticket sales
+# (db/data/gig_history_attendance.csv, exported from the band's "Gig History" sheet)
+# to Shows. After this runs, the database is the source of truth; keep new numbers
+# up to date in Admin › Shows, not in the CSV.
 #
 # Each row is matched to an existing active show on the same local (Central) date
 # whose venue name matches loosely ("The Garage" == "Garage", "Rök Bar" == "Rok Bar").
@@ -33,12 +35,16 @@ class AttendanceImport
 
   def apply(row)
     date = Date.iso8601(row["date"])
-    attendance = Integer(row["attendance"])
+    stats = { attendance: Integer(row["attendance"]) }
+    # Only touch ticket sales when the sheet has a figure, so a blank cell never
+    # wipes a number entered in admin.
+    stats[:ticket_sales_cents] = Integer(row["ticket_sales"]) * 100 if row["ticket_sales"].present?
     show = find_match(date, row["venue"])
 
     if show
-      action = show.attendance == attendance ? :unchanged : :updated
-      show.update!(attendance: attendance) unless @dry_run || action == :unchanged
+      show.assign_attributes(stats)
+      action = show.changed? ? :updated : :unchanged
+      show.save! unless @dry_run || action == :unchanged
     else
       action = :created
       show = Show.new(
@@ -46,7 +52,7 @@ class AttendanceImport
         title: row["title"].presence || "Cain & Co. at #{row["venue"]}",
         venue_name: row["venue"],
         starts_at: Time.find_zone!(ZONE).local(date.year, date.month, date.day, DEFAULT_START_HOUR),
-        attendance: attendance
+        **stats
       )
       show.save! unless @dry_run
     end

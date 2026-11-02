@@ -48,10 +48,17 @@ class EpkTest < ActionDispatch::IntegrationTest
     assert_select "#draw dd", text: "100"
   end
 
-  test "draw section cites ticket sales and headcounts" do
+  test "draw highlights come from recorded ticket sales, best first" do
     get epk_path
-    assert_select "#draw li", text: /\$1,000\s+in ticket sales and\s+40\s+through the door at\s+Zhora Darling/
-    assert_select "#draw li", text: /\$475\s+in ticket sales and\s+45\s+through the door at\s+KJ’s Hideaway/
+    assert_select "#draw li", count: 0
+
+    shows(:past).update!(ticket_sales_cents: 47_500, attendance: 45)
+    Show.create!(title: "Zhora", venue_name: "Zhora Darling", starts_at: 60.days.ago,
+                 source: "manual", ticket_sales_cents: 100_000)
+    get epk_path
+    items = css_select("#draw li").map { |li| li.text.squish }
+    assert_match(/\A\$1,000 in ticket sales at Zhora Darling/, items.first)
+    assert_match(/\A\$475 in ticket sales and 45 through the door at The Basement/, items.second)
   end
 
   test "mailing list stat counts only confirmed subscribers" do

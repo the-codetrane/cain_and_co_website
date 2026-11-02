@@ -161,16 +161,19 @@
       &ldquo;We promote every show with a 4-week campaign and bring our own crowd.&rdquo;
     </p>
 
-    <%# Hand-kept from the band's Gig History sheet. %>
-    <ul class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-6 text-neutral-300">
-      <% [["$1,000", 40, "Zhora Darling", "Jan 2025"], ["$475", 45, "KJ’s Hideaway", "Jan 2024"]].each do |amount, headcount, venue, date| %>
-        <li>
-          <strong class="text-white text-lg tabular-nums"><%= amount %></strong> in ticket sales and
-          <strong class="text-white text-lg tabular-nums"><%= headcount %></strong> through the door at
-          <strong class="text-white"><%= venue %></strong> <span class="text-neutral-500">(<%= date %>)</span>
-        </li>
-      <% end %>
-    </ul>
+    <%# Best nights by recorded ticket sales (Admin › Shows). %>
+    <% if @ticket_sales_highlights.any? %>
+      <ul class="mt-6 flex flex-col gap-3 text-neutral-300">
+        <% @ticket_sales_highlights.each do |show| %>
+          <li>
+            <strong class="text-white text-lg tabular-nums"><%= number_to_currency(show.ticket_sales_cents / 100.0, precision: 0) %></strong> in ticket sales<% if show.attendance %> and
+            <strong class="text-white text-lg tabular-nums"><%= number_with_delimiter(show.attendance) %></strong> through the door<% end %> at
+            <strong class="text-white"><%= show.venue_name.presence || show.title %></strong>
+            <span class="text-neutral-500">(<%= show.starts_at.in_time_zone("America/Chicago").strftime("%b %Y") %>)</span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
 
     <% stats = [ [ number_with_delimiter(@shows_played), "Shows played" ] ]
        if @counted_shows.to_i.positive?

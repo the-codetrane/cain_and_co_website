@@ -4,9 +4,9 @@ class AttendanceImportTest < ActiveSupport::TestCase
   setup do
     @csv = Tempfile.new([ "attendance", ".csv" ])
     @csv.write(<<~CSV)
-      date,venue,attendance,title
-      2025-04-26,Rök Bar,25,
-      2025-02-01,Shaw's,40,Cain & Co. at Shaw's (with July Figher)
+      date,venue,attendance,ticket_sales,title
+      2025-04-26,Rök Bar,25,,
+      2025-02-01,Shaw's,40,1000,Cain & Co. at Shaw's (with July Figher)
     CSV
     @csv.flush
   end
@@ -31,8 +31,16 @@ class AttendanceImportTest < ActiveSupport::TestCase
     shaws = Show.find_by!(venue_name: "Shaw's")
     assert_equal "Cain & Co. at Shaw's (with July Figher)", shaws.title
     assert_equal 40, shaws.attendance
+    assert_equal 100_000, shaws.ticket_sales_cents
     assert_equal Date.new(2025, 2, 1), shaws.starts_at.in_time_zone("America/Chicago").to_date
     assert_equal "Cain & Co. at Rök Bar", Show.find_by!(venue_name: "Rök Bar").title
+  end
+
+  test "a blank ticket-sales cell never clears a figure entered in admin" do
+    synced = Show.create!(title: "Rok", venue_name: "Rök Bar", starts_at: Time.utc(2025, 4, 27, 1),
+                          source: "bandsintown", bandsintown_id: "rok-2", ticket_sales_cents: 30_000)
+    import
+    assert_equal 30_000, synced.reload.ticket_sales_cents
   end
 
   test "is idempotent" do

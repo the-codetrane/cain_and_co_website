@@ -8,6 +8,7 @@ class Show < ApplicationRecord
   # Bandsintown shows carry a unique event id; manual shows leave it nil.
   validates :bandsintown_id, uniqueness: true, allow_nil: true
   validates :attendance, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :ticket_sales_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
   scope :active, -> { where(status: "active") }
   scope :canceled, -> { where(status: "canceled") }
@@ -19,6 +20,8 @@ class Show < ApplicationRecord
   scope :featured, -> { active.where(featured: true) }
   # Shows we actually played: past and not canceled. Drives the EPK show history.
   scope :played, -> { active.past }
+  # Played shows with recorded ticket sales, best first. Drives the EPK draw highlights.
+  scope :top_ticket_sales, -> { played.where.not(ticket_sales_cents: nil).reorder(ticket_sales_cents: :desc) }
 
   def canceled?
     status == "canceled"
@@ -40,6 +43,17 @@ class Show < ApplicationRecord
     return available["url"] if available
 
     bandsintown_url.presence if source == "manual"
+  end
+
+  # Whole-dollar view of ticket_sales_cents for admin forms. Blank clears it;
+  # non-numeric input is kept as-is so validation rejects it instead of storing 0.
+  def ticket_sales
+    ticket_sales_cents && ticket_sales_cents / 100
+  end
+
+  def ticket_sales=(dollars)
+    dollars = dollars.to_s.delete("$,").strip
+    self.ticket_sales_cents = dollars.blank? ? nil : (Float(dollars, exception: false)&.then { (_1 * 100).round } || dollars)
   end
 
   def location

@@ -114,4 +114,20 @@ class ShowTest < ActiveSupport::TestCase
     show = Show.from_bandsintown(payload)
     assert_equal 2030, show.starts_at.year
   end
+
+  test "ticket_sales reads and writes whole dollars over cents" do
+    show = Show.new(ticket_sales: "$1,000")
+    assert_equal 100_000, show.ticket_sales_cents
+    assert_equal 1000, show.ticket_sales
+    show.ticket_sales = ""
+    assert_nil show.ticket_sales_cents
+  end
+
+  test "top_ticket_sales lists played shows with sales, best first" do
+    low = Show.create!(title: "a", starts_at: 3.days.ago, source: "manual", ticket_sales_cents: 100)
+    high = Show.create!(title: "b", starts_at: 4.days.ago, source: "manual", ticket_sales_cents: 900)
+    Show.create!(title: "c", starts_at: 5.days.ago, source: "manual", ticket_sales_cents: 5_000, status: "canceled")
+    Show.create!(title: "d", starts_at: 5.days.from_now, source: "manual", ticket_sales_cents: 5_000)
+    assert_equal [ high, low ], Show.top_ticket_sales.to_a
+  end
 end

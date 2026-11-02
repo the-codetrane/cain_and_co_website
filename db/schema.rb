@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_130000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -179,6 +179,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_120000) do
     t.string "source", default: "bandsintown", null: false
     t.datetime "starts_at", null: false
     t.string "status", default: "active", null: false
+    t.integer "ticket_sales_cents"
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "venue_name"
