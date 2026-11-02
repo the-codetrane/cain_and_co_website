@@ -5,8 +5,10 @@ class Photo < ApplicationRecord
   validates :image, presence: true
 
   scope :published, -> { where(published: true).order(:position) }
-  # Press photos hand-picked for the booker-facing /epk page.
-  scope :epk, -> { published.where(epk: true) }
+  # Press photos hand-picked for the booker-facing /epk page. Independent of
+  # `published` (the public /about gallery): a press photo may be one the band
+  # wants bookers to download but not show in the gallery.
+  scope :epk, -> { where(epk: true).order(:position) }
 
   before_validation :assign_position, on: :create
 

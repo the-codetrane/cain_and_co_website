@@ -108,4 +108,27 @@ class EpkTest < ActionDispatch::IntegrationTest
     assert_select "meta[property='og:image'][content^=?]", "http://www.example.com/rails/active_storage/blobs/"
     assert_no_match(/&amp;amp;/, response.body)
   end
+
+  test "press photos include flagged photos hidden from the public gallery" do
+    photos(:hidden_draft).update_columns(epk: true)
+    photos(:outdoor_shoot).update_columns(epk: true)
+
+    get epk_path
+    assert_select "a[aria-label=?]", "Download #{photos(:hidden_draft).caption}"
+    assert_select "a[aria-label=?]", "Download #{photos(:outdoor_shoot).caption}"
+    assert_select "a[aria-label=?]", "Download #{photos(:stage_shot).caption}", count: 0
+  end
+
+  test "every flagged press photo is shown, not just the first few" do
+    gif = File.binread(Rails.root.join("test/fixtures/files/test_photo.gif"))
+    flagged = Array.new(PagesController::EPK_PHOTO_LIMIT + 2) do |i|
+      photo = Photo.new(caption: "Press #{i}", published: i.even?, epk: true)
+      photo.image.attach(io: StringIO.new(gif), filename: "press#{i}.gif", content_type: "image/gif")
+      photo.save!
+      photo
+    end
+
+    get epk_path
+    flagged.each { |photo| assert_select "a[aria-label=?]", "Download #{photo.caption}" }
+  end
 end

@@ -36,10 +36,11 @@ class PagesController < ApplicationController
 
     # Hand-picked (EPK-flagged) media first; until some are flagged, fall back to
     # the newest full-length videos / first published photos so the page is never empty.
+    # Every flagged press photo is shown — the limit only caps the fallback.
     @videos = Video.epk.limit(EPK_VIDEO_LIMIT).presence ||
               Video.visible.where(short: false).limit(EPK_VIDEO_LIMIT)
     photos = Photo.joins(:image_attachment).with_attached_image
-    @photos = photos.epk.limit(EPK_PHOTO_LIMIT).presence ||
+    @photos = photos.epk.presence ||
               photos.published.limit(EPK_PHOTO_LIMIT)
 
     @upcoming_shows = Show.upcoming.limit(5)
