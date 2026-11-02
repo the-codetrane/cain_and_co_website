@@ -6,7 +6,7 @@ class AttendanceImportTest < ActiveSupport::TestCase
     @csv.write(<<~CSV)
       date,venue,attendance,ticket_sales,title
       2025-04-26,Rök Bar,25,,
-      2025-02-01,Shaw's,40,1000,Cain & Co. at Shaw's (with July Figher)
+      2025-02-01,Shaw's,40,1000,Cain & Co. at Shaw's (with July Fighter)
     CSV
     @csv.flush
   end
@@ -29,7 +29,7 @@ class AttendanceImportTest < ActiveSupport::TestCase
       import
     end
     shaws = Show.find_by!(venue_name: "Shaw's")
-    assert_equal "Cain & Co. at Shaw's (with July Figher)", shaws.title
+    assert_equal "Cain & Co. at Shaw's (with July Fighter)", shaws.title
     assert_equal 40, shaws.attendance
     assert_equal 100_000, shaws.ticket_sales_cents
     assert_equal Date.new(2025, 2, 1), shaws.starts_at.in_time_zone("America/Chicago").to_date
