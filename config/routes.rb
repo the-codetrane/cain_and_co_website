@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     resources :products do
       resources :variants, except: %i[show index] do
         collection { post :add_sizes }
+        member { patch :increment_stock; patch :decrement_stock }
       end
     end
     resources :orders, only: %i[index show] do

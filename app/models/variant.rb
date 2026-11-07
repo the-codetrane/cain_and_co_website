@@ -60,6 +60,15 @@ class Variant < ApplicationRecord
     stock_quantity > 0
   end
 
+  # Applies delta in a single UPDATE so a hand count can't overwrite a sale that
+  # OrderPaymentSync records at the same moment. Floors at zero, as that sync does.
+  def adjust_stock(delta)
+    self.class.where(id: id).update_all(
+      [ "stock_quantity = MAX(stock_quantity + ?, 0), updated_at = ?", delta, Time.current ]
+    )
+    reload
+  end
+
   # The weight ShippingRate should bill for. An unweighed variant (0) falls back to
   # DEFAULT_WEIGHT_OZ rather than adding nothing to the parcel.
   def shipping_weight_oz
