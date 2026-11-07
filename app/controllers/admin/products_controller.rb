@@ -45,7 +45,13 @@ module Admin
     end
 
     def product_params
-      params.require(:product).permit(:name, :description, :published, :featured, images: [])
+      permitted = params.require(:product).permit(:name, :description, :published, :featured, images: []).to_h
+
+      # The file field submits a blank entry when nothing is chosen, and assigning
+      # only blanks would detach every image, so leave them out unless files came in.
+      uploads = Array(permitted.delete(:images)).compact_blank
+      permitted[:images] = uploads.map { |upload| Product.image_attachable(upload) } if uploads.any?
+      permitted
     end
   end
 end

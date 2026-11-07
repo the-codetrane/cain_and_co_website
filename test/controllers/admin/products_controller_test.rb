@@ -48,6 +48,33 @@ class Admin::ProductsControllerTest < ActionDispatch::IntegrationTest
     assert products(:draft_vinyl).reload.published?
   end
 
+  test "create stores uploaded images under the Product Images folder" do
+    post admin_products_path, params: { product: { name: "Poster", images: [ "", image_upload ] } }
+
+    blob = Product.find_by!(name: "Poster").images.sole.blob
+    assert_match %r{\AProduct Images/[a-z0-9]{28}\z}, blob.key
+    assert_equal "test_photo.gif", blob.filename.to_s
+    assert blob.service.exist?(blob.key)
+  end
+
+  test "update with new images stores them under the Product Images folder" do
+    product = products(:published_shirt)
+
+    patch admin_product_path(product), params: { product: { images: [ "", image_upload ] } }
+
+    assert_match %r{\AProduct Images/}, product.reload.images.sole.blob.key
+  end
+
+  test "update without choosing a file keeps the existing images" do
+    product = products(:published_shirt)
+    product.images.attach(io: file_fixture("test_photo.gif").open, filename: "test_photo.gif")
+
+    patch admin_product_path(product), params: { product: { name: "Renamed", images: [ "" ] } }
+
+    assert_equal "Renamed", product.reload.name
+    assert_equal 1, product.images.count
+  end
+
   test "destroy removes the product and all its variants" do
     product = products(:draft_vinyl)
     variant_count_before = Variant.count
@@ -56,5 +83,11 @@ class Admin::ProductsControllerTest < ActionDispatch::IntegrationTest
     end
     assert Variant.count < variant_count_before
     assert_redirected_to admin_products_path
+  end
+
+  private
+
+  def image_upload
+    fixture_file_upload("test_photo.gif", "image/gif")
   end
 end
