@@ -1,0 +1,9 @@
+<%# Decorative: the product name always sits beside it. Uploads aren't restricted to
+    types that can be resized, and asking for a variant of one that can't raises. %>
+<% image = product.images.first %>
+<% if image&.variable? %>
+  <%= image_tag image.variant(resize_to_fill: [100, 100]),
+        class: "h-12 w-12 shrink-0 rounded-md bg-neutral-100 object-cover", loading: "lazy", alt: "" %>
+<% else %>
+  <div class="h-12 w-12 shrink-0 rounded-md bg-neutral-100"></div>
+<% end %>

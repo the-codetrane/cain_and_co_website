@@ -16,6 +16,42 @@ class Admin::ProductsControllerTest < ActionDispatch::IntegrationTest
     assert_match products(:draft_vinyl).name, response.body
   end
 
+  test "index shows a thumbnail of the first image in both layouts" do
+    attach_image(products(:published_shirt))
+
+    get admin_products_path
+
+    assert_select "img[src*='test_photo.gif']", count: 2
+  end
+
+  test "index shows a placeholder for a product with no images" do
+    get admin_products_path
+
+    assert_response :success
+    assert_select "img", count: 0
+    assert_select "div.h-12.w-12", count: Product.count * 2
+  end
+
+  test "index shows a placeholder for an attachment that can't be resized" do
+    products(:published_shirt).images.attach(
+      io: StringIO.new("not an image"), filename: "notes.txt", content_type: "text/plain"
+    )
+
+    get admin_products_path
+
+    assert_response :success
+    assert_select "img", count: 0
+  end
+
+  test "index preloads images rather than querying them per product" do
+    attach_image(products(:published_shirt))
+    attach_image(products(:draft_vinyl))
+
+    assert_no_queries_match(/FROM "active_storage_attachments".*"record_id" = /) do
+      get admin_products_path
+    end
+  end
+
   test "show renders the product and its variants" do
     get admin_product_path(products(:published_shirt))
     assert_response :success
@@ -86,6 +122,10 @@ class Admin::ProductsControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def attach_image(product)
+    product.images.attach(io: file_fixture("test_photo.gif").open, filename: "test_photo.gif")
+  end
 
   def image_upload
     fixture_file_upload("test_photo.gif", "image/gif")
