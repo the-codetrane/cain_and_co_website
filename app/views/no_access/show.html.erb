@@ -1,0 +1,20 @@
+<% content_for :title, "No access yet · Cain & Co." %>
+
+<div class="min-h-screen flex items-center justify-center px-5">
+  <div class="w-full max-w-sm text-center">
+    <%= link_to root_path, class: "text-xl font-black tracking-[0.2em] uppercase hover:opacity-80 transition" do %>
+      Cain&nbsp;&amp;&nbsp;Co.
+    <% end %>
+
+    <div class="mt-8 rounded-2xl border border-neutral-800 bg-neutral-900 p-8">
+      <h1 class="font-bold">You don't have access yet</h1>
+      <p class="mt-2 text-sm text-neutral-400">
+        You're signed in as <%= Current.user.email_address %>. An admin needs to grant you
+        access before you can manage the site.
+      </p>
+      <%= button_to "Sign out", session_path, method: :delete,
+            form_class: "mt-6",
+            class: "w-full rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-neutral-900 hover:bg-neutral-100 transition cursor-pointer" %>
+    </div>
+  </div>
+</div>

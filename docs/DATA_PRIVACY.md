@@ -26,8 +26,9 @@ Every table below holds personal data. Line references are to `db/schema.rb`.
 | `subscribers` | `email`, `confirmed_at`, `unsubscribed_at` | Newsletter delivery, proof of double opt-in | Until unsubscribe |
 | `deliveries` | `subscriber_id` → `newsletter_id`, `status`, `sent_at`, `error` | Which subscriber got which newsletter; send diagnostics | Cascades on subscriber delete (`dependent: :destroy`) |
 | `push_subscriptions` | `endpoint` (unique per browser/device), `p256dh_key`, `auth_key`, `user_agent` | Delivering Web Push notifications | Until the user disables notifications or the endpoint 404/410s and `WebPushJob` prunes it |
-| `sessions` | `ip_address`, `user_agent`, `user_id` | Admin sign-in audit trail | Until sign-out / session record deleted |
-| `users` | `email_address`, `password_digest` | Admin login — **not** fan-facing; no public signup | Life of the admin account |
+| `sessions` | `ip_address`, `user_agent`, `user_id` | Account sign-in audit trail | Until sign-out / session record deleted |
+| `users` | `email_address`, `password_digest`, `admin` | Login for invited accounts — **not** fan-facing; no public signup | Life of the account |
+| `invitations` | `email`, `admin`, `sent_at` | Sending an account invitation | Deleted on acceptance or when cancelled in Admin › Users. An unaccepted invite otherwise stays, shown as expired — there is no automatic purge |
 | `carts` | `token` (random, in the Rails session cookie) | Cart persistence across requests | Not identifying on its own; becomes linkable only if the cart converts to an order |
 
 **Collected only with consent:** the Meta Pixel (`_fbp` cookie, page views, IP, user-agent sent to
@@ -53,7 +54,7 @@ function requires (Meta only for visitors who opt in).
 | Vendor | Receives | Role |
 |---|---|---|
 | Stripe | Buyer name, email, shipping and card details entered on Stripe Checkout | Payment processing |
-| Mailgun | Subscriber and buyer email addresses, message contents (`config/environments/production.rb:62`) | Transactional email + newsletter delivery |
+| Mailgun | Subscriber, buyer, and invited-user email addresses, message contents (`config/environments/production.rb:62`) | Transactional email + newsletter delivery |
 | DigitalOcean | Everything at rest — SQLite volume + Spaces object storage (`config/storage.yml`) | Hosting and image storage |
 | Meta | Page views, IP address, user-agent, `_fbp` cookie — **opt-in only** | Advertising measurement (Meta Pixel) |
 
@@ -64,7 +65,7 @@ them no personal data. A YouTube embed does let Google set its own cookies in th
 
 ## Servicing a request
 
-A request to `info@2100enterprises.com` touches up to four places. There is **no automated DSAR
+A request to `info@2100enterprises.com` touches up to five places. There is **no automated DSAR
 tooling** — this is a manual runbook today.
 
 1. **Verify the requester** controls the email address before disclosing or deleting anything.
@@ -73,9 +74,12 @@ tooling** — this is a manual runbook today.
 3. **Orders** — `Order.where(buyer_email: …)`. Deletion conflicts with tax retention; the usual
    answer is to keep the financial record and redact the shipping fields once the retention window
    passes. Decide this deliberately, not ad hoc.
-4. **Push** — `PushSubscription` keys off an opaque `endpoint`, not an email, so it generally can't
+4. **Accounts** — cancel a pending invite in Admin › Users. For an account,
+   `User.find_by(email_address: …)` and destroy it from the console; there is no admin UI for that.
+   Destroying a user cascades to `sessions`.
+5. **Push** — `PushSubscription` keys off an opaque `endpoint`, not an email, so it generally can't
    be matched to a person by request. Ask the requester to disable notifications in their browser.
-5. **Stripe and Mailgun** hold their own copies. Deleting our row does not delete theirs; handle
+6. **Stripe and Mailgun** hold their own copies. Deleting our row does not delete theirs; handle
    those in each vendor's dashboard.
 
 ---
