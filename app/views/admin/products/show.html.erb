@@ -83,11 +83,7 @@
               <% end %>
             </td>
             <td class="px-4 py-3">
-              <% if variant.in_stock? %>
-                <span class="text-emerald-700"><%= variant.stock_quantity %></span>
-              <% else %>
-                <span class="text-red-600">Out of stock</span>
-              <% end %>
+              <%= render "admin/variants/stock", product: @product, variant: variant %>
             </td>
             <td class="px-4 py-3 text-right">
               <%= link_to "Edit", edit_admin_product_variant_path(@product, variant), class: "text-neutral-500 hover:text-neutral-900 mr-3" %>

@@ -39,6 +39,49 @@ class Admin::VariantsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_product_path(products(:published_shirt))
   end
 
+  test "increment_stock adds one and replaces the stock cell" do
+    variant = variants(:shirt_small)
+    patch increment_stock_admin_product_variant_path(variant.product, variant), as: :turbo_stream
+    assert_response :success
+    assert_equal 11, variant.reload.stock_quantity
+    assert_select "turbo-stream[action=replace][target=?]", "stock_variant_#{variant.id}"
+  end
+
+  test "decrement_stock removes one and replaces the stock cell" do
+    variant = variants(:shirt_small)
+    patch decrement_stock_admin_product_variant_path(variant.product, variant), as: :turbo_stream
+    assert_response :success
+    assert_equal 9, variant.reload.stock_quantity
+    assert_select "turbo-stream[action=replace][target=?]", "stock_variant_#{variant.id}"
+  end
+
+  test "decrement_stock stops at zero" do
+    variant = variants(:shirt_large)
+    patch decrement_stock_admin_product_variant_path(variant.product, variant), as: :turbo_stream
+    assert_response :success
+    assert_equal 0, variant.reload.stock_quantity
+  end
+
+  test "stock buttons redirect back to the product without Turbo" do
+    variant = variants(:shirt_small)
+    patch increment_stock_admin_product_variant_path(variant.product, variant)
+    assert_redirected_to admin_product_path(variant.product)
+    assert_equal 11, variant.reload.stock_quantity
+  end
+
+  test "stock buttons can't reach another product's variant" do
+    patch increment_stock_admin_product_variant_path(products(:published_shirt), variants(:vinyl_standard))
+    assert_response :not_found
+    assert_equal 5, variants(:vinyl_standard).reload.stock_quantity
+  end
+
+  test "stock buttons require login" do
+    delete session_path
+    patch increment_stock_admin_product_variant_path(products(:published_shirt), variants(:shirt_small))
+    assert_redirected_to new_session_path
+    assert_equal 10, variants(:shirt_small).reload.stock_quantity
+  end
+
   test "add_sizes creates one variant per selected size" do
     product = Product.create!(name: "Hoodie")
     assert_difference -> { Variant.count }, 3 do

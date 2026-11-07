@@ -134,6 +134,22 @@ class VariantTest < ActiveSupport::TestCase
     assert_equal 12, variant.shipping_weight_oz
   end
 
+  test "adjust_stock applies the delta to the stored count, not the loaded one" do
+    variant = variants(:shirt_small)
+    Variant.find(variant.id).update!(stock_quantity: 4) # a sale lands after this copy loaded
+
+    variant.adjust_stock(1)
+
+    assert_equal 5, variant.stock_quantity
+    assert_equal 5, Variant.find(variant.id).stock_quantity
+  end
+
+  test "adjust_stock floors at zero" do
+    variant = variants(:shirt_large)
+    variant.adjust_stock(-1)
+    assert_equal 0, variant.stock_quantity
+  end
+
   test "weight_oz rejects negative weights" do
     variant = variants(:shirt_small)
     variant.weight_oz = -1

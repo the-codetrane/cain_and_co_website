@@ -1,7 +1,7 @@
 module Admin
   class VariantsController < BaseController
     before_action :set_product
-    before_action :set_variant, only: %i[edit update destroy]
+    before_action :set_variant, only: %i[edit update destroy increment_stock decrement_stock]
 
     def new
       @variant = @product.variants.new
@@ -64,7 +64,30 @@ module Admin
       redirect_to admin_product_path(@product), notice: "Variant deleted.", status: :see_other
     end
 
+    # The +/- buttons in the product page's variants table.
+    def increment_stock
+      adjust_stock(1)
+    end
+
+    def decrement_stock
+      adjust_stock(-1)
+    end
+
     private
+
+    # Replace just this variant's stock cell, so a run of clicks doesn't reload the page.
+    def adjust_stock(delta)
+      @variant.adjust_stock(delta)
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            helpers.dom_id(@variant, :stock), partial: "admin/variants/stock",
+            locals: { product: @product, variant: @variant }
+          )
+        end
+        format.html { redirect_to admin_product_path(@product), status: :see_other }
+      end
+    end
 
     def set_product
       @product = Product.find(params[:product_id])
