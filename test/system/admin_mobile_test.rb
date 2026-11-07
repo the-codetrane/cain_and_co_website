@@ -90,6 +90,24 @@ class AdminMobileTest < ApplicationSystemTestCase
     end
   end
 
+  # iOS zooms into a field under 16px, and Turbo carries that zoom into the admin after
+  # signing in, which leaves every page hanging off the right of the screen.
+  test "sign-in fields are large enough to avoid the iOS focus zoom" do
+    click_on "More"
+    within("#admin_more_menu") { click_on "Sign out" }
+    assert_text "Admin sign in"
+
+    [ new_session_path, new_password_path ].each do |path|
+      visit path
+      sizes = page.evaluate_script(<<~JS)
+        [...document.querySelectorAll("input:not([type=hidden]):not([type=submit])")]
+          .map(field => parseFloat(getComputedStyle(field).fontSize))
+      JS
+      assert_not_empty sizes
+      assert sizes.all? { |size| size >= 16 }, "Fields under 16px on #{path}: #{sizes}"
+    end
+  end
+
   test "no control is pushed off a phone screen" do
     product = products(:published_shirt)
     [ admin_product_path(product), admin_products_path, admin_orders_path, admin_shows_path,
