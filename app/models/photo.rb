@@ -1,5 +1,6 @@
 class Photo < ApplicationRecord
   has_one_attached :image, dependent: :purge_later do |attachable|
+    attachable.variant :admin_grid, resize_to_fill: [ 400, 400 ], format: :webp, preprocessed: true
     attachable.variant :carousel, resize_to_limit: [ 1600, 1600 ], format: :webp, preprocessed: :published?
     attachable.variant :press_lead, resize_to_limit: [ 1600, 1600 ], preprocessed: :epk?
     attachable.variant :press_thumb, resize_to_limit: [ 800, 800 ], preprocessed: :epk?

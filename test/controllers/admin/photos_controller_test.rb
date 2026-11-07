@@ -115,6 +115,79 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_no_match photos(:hidden_draft).caption, response.body
   end
 
+  test "visible is not paginated, because reorder needs every photo" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5, published: true)
+
+    get visible_admin_photos_path
+
+    assert_select "[data-photo-id]", Photo.where(published: true).count
+  end
+
+  # ── endless scroll ───────────────────────────────────────────────────────
+
+  test "index shows the first page and a frame for the next" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5)
+
+    get admin_photos_path
+
+    assert_select "#photos_grid input[type=checkbox]", Admin::PhotosController::PER_PAGE
+    assert_select "turbo-frame#photos_next_page[loading=lazy][src=?]", admin_photos_path(page: 2)
+  end
+
+  test "index has no next frame when everything fits on a page" do
+    get admin_photos_path
+
+    assert_select "turbo-frame#photos_next_page", 0
+  end
+
+  test "the next page keeps the filter" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5, published: false)
+
+    get admin_photos_path(filter: "hidden")
+
+    assert_select "turbo-frame#photos_next_page[src=?]", admin_photos_path(filter: "hidden", page: 2)
+  end
+
+  test "a frame request appends its cards and points at the following page" do
+    add_photos(Admin::PhotosController::PER_PAGE * 2 + 5)
+
+    get admin_photos_path(page: 2), headers: { "Turbo-Frame" => "photos_next_page" }
+
+    assert_response :success
+    assert_select "turbo-frame#photos_next_page turbo-stream[action=append][target=photos_grid]"
+    assert_select "turbo-frame#photos_next_page turbo-stream[action=replace][target=photos_next_page]"
+    assert_no_match "<h1", response.body
+  end
+
+  test "the last page removes the frame" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5)
+
+    get admin_photos_path(page: 2), headers: { "Turbo-Frame" => "photos_next_page" }
+
+    assert_select "turbo-stream[action=remove][target=photos_next_page]"
+    assert_select "turbo-stream[action=replace]", 0
+  end
+
+  test "pages don't repeat or skip photos that share a position" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5, position: 7)
+
+    ids = [ 1, 2 ].flat_map do |page|
+      get admin_photos_path(page: page)
+      css_select("#photos_grid input[type=checkbox]").map { |box| box["value"] }
+    end
+
+    assert_equal Photo.count, ids.uniq.size
+  end
+
+  test "the grid shows a thumbnail rather than the original" do
+    photo = photos(:outdoor_shoot)
+    photo.image.attach(io: file_fixture("test_photo.gif").open, filename: "photo.gif", content_type: "image/gif")
+
+    get admin_photos_path
+
+    assert_select "#photos_grid img[src*='/representations/']"
+  end
+
   # ── reorder ───────────────────────────────────────────────────────────────
 
   test "reorder updates positions of visible photos in submitted order" do
@@ -165,6 +238,23 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_photos_path(filter: "hidden")
   end
 
+  test "bulk_update with select_all covers photos that were never loaded" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5, published: true)
+
+    patch bulk_update_admin_photos_path, params: { select_all: "1", published: "0" }
+
+    assert_equal 0, Photo.where(published: true).count
+  end
+
+  test "bulk_update with select_all stays inside the filter" do
+    patch bulk_update_admin_photos_path, params: { select_all: "1", published: "1", filter: "hidden" }
+    assert_equal 0, Photo.where(published: false).count
+
+    photos(:hidden_draft).update_column(:published, false)
+    patch bulk_update_admin_photos_path, params: { select_all: "1", published: "0", filter: "visible" }
+    assert_equal Photo.count, Photo.where(published: false).count
+  end
+
   test "bulk_update with no ids redirects with alert" do
     patch bulk_update_admin_photos_path, params: { published: "1" }
     assert_redirected_to admin_photos_path
@@ -180,5 +270,15 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to admin_photos_path
     assert_equal "Photo removed.", flash[:notice]
+  end
+
+  private
+
+  def add_photos(count, published: true, position: nil)
+    next_position = Photo.maximum(:position).to_i
+    rows = Array.new(count) do |n|
+      { position: position || next_position + n + 1, published: published, created_at: Time.current, updated_at: Time.current }
+    end
+    Photo.insert_all!(rows)
   end
 end

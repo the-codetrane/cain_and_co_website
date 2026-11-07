@@ -52,6 +52,45 @@ class AdminMobileTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Edit Photo"
   end
 
+  test "the photo grid loads more as it scrolls" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5)
+    total = Photo.count
+
+    visit admin_photos_path
+    assert_selector "#photos_grid input[type=checkbox]", count: Admin::PhotosController::PER_PAGE
+
+    page.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+
+    assert_selector "#photos_grid input[type=checkbox]", count: total
+    assert_no_selector "#photos_next_page"
+  end
+
+  test "select all reaches photos that haven't been scrolled to" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5)
+    total = Photo.count
+
+    visit admin_photos_path
+    first("#photos_grid input[type=checkbox]").click
+    click_on "Select all"
+    assert_text "#{total} selected"
+
+    click_on "Hide"
+
+    assert_text "#{total} photo(s) updated."
+    assert_equal 0, Photo.where(published: true).count
+  end
+
+  test "unticking one photo drops select all back to the loaded rows" do
+    add_photos(Admin::PhotosController::PER_PAGE + 5)
+
+    visit admin_photos_path
+    first("#photos_grid input[type=checkbox]").click
+    click_on "Select all"
+    first("#photos_grid input[type=checkbox]").click
+
+    assert_text "#{Admin::PhotosController::PER_PAGE - 1} selected"
+  end
+
   # A swipe that starts on a tile used to leave Sortable mid-drag, so the next press did nothing.
   test "photos can be reordered by touch straight after scrolling the grid" do
     with_forgery_protection do # the save reads the CSRF meta tag, absent when this is off
@@ -118,6 +157,11 @@ class AdminMobileTest < ApplicationSystemTestCase
   end
 
   private
+
+  def add_photos(count)
+    start = Photo.maximum(:position).to_i
+    Photo.insert_all!(Array.new(count) { |n| { position: start + n + 1, published: true, created_at: Time.current, updated_at: Time.current } })
+  end
 
   def with_forgery_protection
     original = ActionController::Base.allow_forgery_protection

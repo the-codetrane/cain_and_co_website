@@ -33,4 +33,12 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     assert_select "footer a[href=?]", privacy_path
     assert_select "footer a[href=?]", tos_path
   end
+
+  test "about shows a poster per video and leaves the YouTube player until play" do
+    get about_path
+
+    assert Video.visible.any?
+    assert_select "[data-controller=youtube-facade]", Video.visible.count
+    assert_select "iframe", 0
+  end
 end
