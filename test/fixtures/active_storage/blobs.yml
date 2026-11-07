@@ -1,10 +1,16 @@
+<%# The real size and checksum of the file system tests store under these keys, which
+    Active Storage verifies before making a variant. %>
+<% gif = Rails.root.join("test/fixtures/files/test_photo.gif") %>
+<% byte_size = gif.size %>
+<% checksum = OpenSSL::Digest::MD5.file(gif).base64digest %>
+
 outdoor_shoot_blob:
   key: outdoor-shoot-blob-key
   filename: outdoor_shoot.gif
   content_type: image/gif
   metadata: "{}"
-  byte_size: 43
-  checksum: "abc123checksum=="
+  byte_size: <%= byte_size %>
+  checksum: "<%= checksum %>"
   service_name: test
 
 stage_shot_blob:
@@ -12,8 +18,8 @@ stage_shot_blob:
   filename: stage_shot.gif
   content_type: image/gif
   metadata: "{}"
-  byte_size: 43
-  checksum: "abc123checksum=="
+  byte_size: <%= byte_size %>
+  checksum: "<%= checksum %>"
   service_name: test
 
 hidden_draft_blob:
@@ -21,6 +27,6 @@ hidden_draft_blob:
   filename: hidden_draft.gif
   content_type: image/gif
   metadata: "{}"
-  byte_size: 43
-  checksum: "abc123checksum=="
+  byte_size: <%= byte_size %>
+  checksum: "<%= checksum %>"
   service_name: test

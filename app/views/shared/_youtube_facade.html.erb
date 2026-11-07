@@ -1,0 +1,21 @@
+<%# locals: (video:, css:, eager: false) -%>
+<%# A poster and play button, swapped for the real player on click (see youtube_facade_controller.js). %>
+<div class="<%= css %>"
+     data-controller="youtube-facade"
+     data-youtube-facade-src-value="<%= video.embed_url %>"
+     data-youtube-facade-title-value="<%= video.display_title %>">
+  <button type="button" data-action="youtube-facade#play"
+          class="group relative block w-full h-full" aria-label="Play <%= video.display_title %>">
+    <img src="https://i.ytimg.com/vi/<%= video.youtube_id %>/maxresdefault.jpg"
+         data-fallback-src="https://i.ytimg.com/vi/<%= video.youtube_id %>/hqdefault.jpg"
+         data-youtube-facade-target="poster"
+         alt="" width="1280" height="720" decoding="async"
+         class="w-full h-full object-cover group-hover:brightness-110 transition"
+         loading="<%= eager ? "eager" : "lazy" %>">
+    <span class="absolute inset-0 flex items-center justify-center">
+      <span class="rounded-full bg-red-600 group-hover:bg-red-500 p-4 sm:p-5 shadow-lg transition-colors">
+        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white translate-x-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </span>
+  </button>
+</div>

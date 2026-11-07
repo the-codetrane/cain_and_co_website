@@ -18,6 +18,10 @@ namespace :media do
       product.images.each { |image| generate.call(image, Product::IMAGE_VARIANTS) if image.variable? }
     end
 
+    Photo.with_attached_image.find_each do |photo|
+      generate.call(photo.image, %i[ admin_grid ]) if photo.image.attached? && photo.image.variable?
+    end
+
     Photo.published.with_attached_image.find_each do |photo|
       generate.call(photo.image, %i[ carousel ]) if photo.image.attached? && photo.image.variable?
     end

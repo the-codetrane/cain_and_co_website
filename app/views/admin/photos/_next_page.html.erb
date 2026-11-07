@@ -1,0 +1,6 @@
+<%# Loads the next page when scrolled into view. It sits outside the grid because a lazy
+    frame needs a box of its own to be seen, and the link covers keyboard users. %>
+<% next_page_path = admin_photos_path(filter: @filter, page: @next_page) %>
+<%= turbo_frame_tag "photos_next_page", src: next_page_path, loading: :lazy, class: "mt-6 block text-center" do %>
+  <%= link_to "Load more photos", next_page_path, class: "text-sm font-semibold text-neutral-600 hover:underline" %>
+<% end %>

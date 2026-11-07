@@ -17,7 +17,7 @@
       <div class="group relative rounded-xl overflow-hidden border border-neutral-200 bg-white select-none"
            data-photo-id="<%= photo.id %>">
         <% if photo.image.attached? %>
-          <%= image_tag photo.image_src, class: "w-full aspect-square object-cover pointer-events-none", loading: "lazy", alt: photo.caption.presence || "Photo #{photo.position}" %>
+          <%= image_tag media_src(photo.display(:admin_grid)), class: "w-full aspect-square object-cover pointer-events-none", loading: "lazy", alt: photo.caption.presence || "Photo #{photo.position}" %>
         <% else %>
           <div class="w-full aspect-square bg-neutral-100 flex items-center justify-center">
             <span class="text-xs text-neutral-400">No image</span>
