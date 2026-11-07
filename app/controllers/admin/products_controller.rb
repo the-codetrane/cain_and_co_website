@@ -3,7 +3,7 @@ module Admin
     before_action :set_product, only: %i[show edit update destroy]
 
     def index
-      @products = Product.includes(:variants).by_name
+      @products = Product.includes(:variants).with_attached_images.by_name
     end
 
     def show
