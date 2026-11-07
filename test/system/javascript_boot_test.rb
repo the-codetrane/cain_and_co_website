@@ -22,6 +22,9 @@ class JavascriptBootTest < ApplicationSystemTestCase
     find("button[aria-label='Toggle menu']").click
     assert_selector "#mobile-nav-menu", visible: :visible
     assert_link "Merch", visible: :visible
+  ensure
+    # The browser is shared, so a size left here would apply to whichever test runs next.
+    page.driver.browser.manage.window.resize_to(*SCREEN_SIZE)
   end
 
   test "visitor adds a product to the cart" do

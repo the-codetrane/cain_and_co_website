@@ -1,7 +1,14 @@
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [ 1280, 900 ]
+  SCREEN_SIZE = [ 1280, 900 ]
+
+  # The fixtures sign in with "password", which Chrome's leak check knows is breached. Its
+  # warning is native browser UI that takes all input, so later clicks and keystrokes in
+  # the same browser never reach the page and tests fail far from the sign-in that caused it.
+  driven_by :selenium, using: :headless_chrome, screen_size: SCREEN_SIZE do |options|
+    options.add_preference("profile.password_manager_leak_detection", false)
+  end
 
   private
 
