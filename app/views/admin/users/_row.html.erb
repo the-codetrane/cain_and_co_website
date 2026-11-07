@@ -1,7 +1,7 @@
 <%# One account in the Admin › Users list. Re-rendered on its own (Turbo Stream replace
     by dom id) when admin access changes, so the rest of the page is left alone. %>
 <div id="<%= dom_id(user) %>" class="flex flex-wrap items-center gap-3 px-4 py-3">
-  <div class="flex-1 min-w-0">
+  <div class="min-w-0 basis-full md:flex-1 md:basis-0">
     <p class="font-medium truncate"><%= user.email_address %></p>
     <p class="text-xs text-neutral-500">joined <%= user.created_at.to_date.to_fs(:long) %></p>
   </div>

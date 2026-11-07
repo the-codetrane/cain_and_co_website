@@ -30,7 +30,7 @@
     <%= hidden_field_tag :filter, @filter %>
     <input type="hidden" name="published" data-bulk-select-target="published" value="">
 
-    <div data-bulk-select-target="bar" class="hidden mt-4 flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5">
+    <div data-bulk-select-target="bar" class="hidden mt-4 flex flex-wrap items-center gap-x-3 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2.5">
       <span class="text-sm font-medium text-neutral-700" data-bulk-select-target="count">0 selected</span>
       <span class="h-4 w-px bg-neutral-300"></span>
       <button type="button" data-action="click->bulk-select#publish"
@@ -47,17 +47,17 @@
   <% end %>
 
   <% if @photos.any? %>
-    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
       <% @photos.each do |photo| %>
         <div class="group relative rounded-xl overflow-hidden border border-neutral-200 bg-white">
-          <label class="absolute top-1.5 right-1.5 z-10 cursor-pointer">
+          <label class="absolute top-0 right-0 z-20 flex size-11 cursor-pointer items-center justify-center md:top-1.5 md:right-1.5 md:size-auto">
             <input type="checkbox"
                    name="photo_ids[]"
                    value="<%= photo.id %>"
                    form="bulk-photos-form"
                    data-bulk-select-target="checkbox"
                    data-action="change->bulk-select#toggle"
-                   class="h-4 w-4 rounded border-white/50 bg-white/80 accent-neutral-900 shadow-sm">
+                   class="size-6 rounded border-white/50 bg-white/80 accent-neutral-900 shadow-sm md:size-4">
           </label>
           <% if photo.image.attached? %>
             <%= image_tag photo.image_src, class: "w-full aspect-square object-cover", loading: "lazy", alt: photo.caption.presence || "Photo #{photo.position}" %>
@@ -66,14 +66,7 @@
               <span class="text-xs text-neutral-400">No image</span>
             </div>
           <% end %>
-          <div class="absolute inset-0 bg-neutral-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-            <%= link_to "Edit", edit_admin_photo_path(photo),
-                  class: "rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-neutral-100" %>
-            <%= button_to "Delete", admin_photo_path(photo), method: :delete,
-                  form: { data: { turbo_confirm: "Remove this photo?" } },
-                  class: "rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700" %>
-          </div>
-          <div class="absolute top-1.5 left-1.5 flex gap-1">
+          <div class="absolute top-1.5 left-1.5 z-10 flex gap-1">
             <span class="rounded bg-neutral-900/70 px-1.5 py-0.5 text-[10px] font-semibold text-white">#<%= photo.position %></span>
             <% if photo.epk? %>
               <span class="rounded bg-amber-500/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">EPK</span>
@@ -85,10 +78,19 @@
           <% if photo.caption.present? %>
             <p class="px-2 py-1.5 text-xs text-neutral-600 truncate"><%= photo.caption %></p>
           <% end %>
+          <%# Always visible under the photo on phones, where there's no hover to reveal it.
+              From md up it's the overlay, kept last so it doesn't push the caption down. %>
+          <div class="flex gap-2 p-2 md:absolute md:inset-0 md:flex-col md:items-center md:justify-center md:bg-neutral-900/60 md:p-0 md:opacity-0 md:transition-opacity md:group-hover:opacity-100 md:focus-within:opacity-100">
+            <%= link_to "Edit", edit_admin_photo_path(photo),
+                  class: "flex-1 rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-center text-xs font-semibold text-neutral-900 hover:bg-neutral-100 md:flex-none md:border-0" %>
+            <%= button_to "Delete", admin_photo_path(photo), method: :delete,
+                  form: { class: "flex-1 md:flex-none", data: { turbo_confirm: "Remove this photo?" } },
+                  class: "w-full rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 md:w-auto" %>
+          </div>
         </div>
       <% end %>
     </div>
-    <p class="mt-4 text-xs text-neutral-500">Hover a photo to edit or delete. Use the position field to control display order.</p>
+    <p class="mt-4 hidden text-xs text-neutral-500 md:block">Hover a photo to edit or delete. Use the position field to control display order.</p>
   <% else %>
     <div class="mt-8 rounded-xl border border-neutral-200 bg-white p-10 text-center">
       <% if @filter == "visible" %>

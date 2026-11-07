@@ -29,10 +29,10 @@
       <%= f.text_field :caption, class: field, placeholder: "e.g. Cain & Co. at First Avenue, Minneapolis" %>
     </div>
 
-    <div class="flex items-center gap-6">
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
       <div>
         <%= f.label :position, "Display order", class: label %>
-        <%= f.number_field :position, min: 1, class: "w-24 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
+        <%= f.number_field :position, min: 1, inputmode: "numeric", class: "w-24 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" %>
       </div>
       <label class="flex items-center gap-2 text-sm font-medium text-neutral-700 mt-5">
         <%= f.check_box :published, class: "h-4 w-4 rounded border-neutral-300" %>
@@ -47,6 +47,6 @@
 
   <div class="mt-6 flex items-center gap-3">
     <%= f.submit class: "rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700 cursor-pointer" %>
-    <%= link_to "Cancel", admin_photos_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+    <%= link_to "Cancel", admin_photos_path, class: "admin-tap text-sm text-neutral-500 hover:text-neutral-900" %>
   </div>
 <% end %>

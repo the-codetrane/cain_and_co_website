@@ -17,7 +17,7 @@
   <div class="mt-4 overflow-hidden rounded-xl border border-neutral-200 bg-white divide-y divide-neutral-200">
     <% @invitations.each do |invitation| %>
       <div id="<%= dom_id(invitation) %>" class="flex flex-wrap items-center gap-3 px-4 py-3">
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0 basis-full md:flex-1 md:basis-0">
           <p class="font-medium truncate"><%= invitation.email %></p>
           <p class="text-xs text-neutral-500">
             sent <%= invitation.sent_at.to_date.to_fs(:long) %>

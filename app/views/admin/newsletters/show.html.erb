@@ -6,7 +6,7 @@
 <div id="draft_status" class="mb-6 empty:hidden"></div>
 
 <div class="mb-6">
-  <%= link_to "← Newsletters", admin_newsletters_path, class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+  <%= link_to "← Newsletters", admin_newsletters_path, class: "admin-tap text-sm text-neutral-500 hover:text-neutral-900" %>
   <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
     <h1 class="text-2xl font-bold tracking-tight"><%= @newsletter.subject %></h1>
     <%= tag.span @newsletter.status,
@@ -83,7 +83,7 @@
 
 <%# AI drafting (draft only) %>
 <% if @newsletter.draft? %>
-  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6">
+  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
     <h2 class="font-semibold">Draft with AI</h2>
     <p class="mt-1 text-sm text-neutral-500">
       Claude writes a first draft from your upcoming shows and an optional topic. You can edit it afterward.
@@ -99,13 +99,13 @@
 
 <%# Schedule controls (draft only) %>
 <% if @newsletter.draft? %>
-  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-6">
+  <div class="mt-6 rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
     <h2 class="font-semibold">Schedule for later</h2>
     <%= form_with url: schedule_admin_newsletter_path(@newsletter), method: :post, class: "mt-3 flex flex-wrap items-end gap-3" do |f| %>
-      <div>
+      <div class="w-full sm:w-auto">
         <%= f.label "newsletter[scheduled_at]", "Send at", class: "block text-sm font-medium text-neutral-700 mb-1" %>
         <%= f.datetime_local_field "newsletter[scheduled_at]", min: Time.current.strftime("%Y-%m-%dT%H:%M"),
-              class: "rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none", required: true %>
+              class: "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none sm:w-auto", required: true %>
       </div>
       <%= f.submit "Schedule", class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
     <% end %>

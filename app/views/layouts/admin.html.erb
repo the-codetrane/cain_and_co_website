@@ -2,7 +2,7 @@
 <html>
   <head>
     <title><%= content_for(:title) || "Admin · Cain & Co." %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="robots" content="noindex,nofollow">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,30 +11,34 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-neutral-100 text-neutral-900 antialiased">
+  <body class="admin-shell min-h-screen bg-neutral-100 text-neutral-900 antialiased">
     <header class="border-b border-neutral-300 bg-white">
-      <div class="mx-auto max-w-5xl flex items-center justify-between px-5 py-4">
+      <div class="mx-auto max-w-5xl flex items-center justify-between px-4 py-3 md:px-5 md:py-4">
         <%= link_to "Cain & Co. · Admin", admin_root_path, class: "font-bold tracking-tight" %>
-        <div class="flex items-center gap-4 text-sm">
+        <div class="hidden items-center gap-4 text-sm md:flex">
           <%= link_to "View site", root_path, class: "text-neutral-500 hover:text-neutral-900", target: "_blank", rel: "noopener" %>
           <% if authenticated? %>
-            <span class="text-neutral-400 hidden sm:inline"><%= Current.user.email_address %></span>
+            <span class="text-neutral-400"><%= Current.user.email_address %></span>
             <%= button_to "Sign out", session_path, method: :delete,
                   class: "rounded-md bg-neutral-900 px-3 py-1.5 text-white text-xs font-semibold hover:bg-neutral-700" %>
           <% end %>
         </div>
       </div>
+      <%= render "admin/shared/top_nav" if authenticated? %>
     </header>
 
     <% if notice || alert %>
-      <div class="mx-auto max-w-5xl px-5 mt-4">
+      <div class="mx-auto max-w-5xl px-4 mt-4 md:px-5">
         <% if notice %><p class="rounded-md bg-emerald-100 border border-emerald-300 px-4 py-2 text-sm text-emerald-900"><%= notice %></p><% end %>
         <% if alert %><p class="rounded-md bg-red-100 border border-red-300 px-4 py-2 text-sm text-red-900"><%= alert %></p><% end %>
       </div>
     <% end %>
 
-    <main class="mx-auto max-w-5xl px-5 py-8">
+    <%# The bottom padding keeps the last controls clear of the fixed tab bar. %>
+    <main class="mx-auto max-w-5xl px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:px-5 md:py-8">
       <%= yield %>
     </main>
+
+    <%= render "admin/shared/tab_bar" if authenticated? %>
   </body>
 </html>
