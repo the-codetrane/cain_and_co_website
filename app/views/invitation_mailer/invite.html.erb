@@ -1,0 +1,15 @@
+<p>You've been invited to create an account on the Cain &amp; Co. site.</p>
+
+<p>
+  <%= link_to "Accept your invitation", @accept_url %>
+</p>
+
+<p style="color:#666;font-size:13px;">
+  If the link doesn't work, copy and paste this into your browser:<br>
+  <%= @accept_url %>
+</p>
+
+<p style="color:#666;font-size:13px;">
+  This link expires in <%= distance_of_time_in_words(Invitation::EXPIRES_IN) %>. If you weren't
+  expecting this, you can ignore this email and no account will be created.
+</p>

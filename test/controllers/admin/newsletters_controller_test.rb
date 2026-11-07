@@ -1,7 +1,7 @@
 require "test_helper"
 
 class Admin::NewslettersControllerTest < ActionDispatch::IntegrationTest
-  setup { sign_in_as(User.take) }
+  setup { sign_in_as(users(:one)) }
 
   test "index requires authentication" do
     reset!

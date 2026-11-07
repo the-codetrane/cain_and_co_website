@@ -1,7 +1,7 @@
 require "test_helper"
 
 class Admin::VariantsControllerTest < ActionDispatch::IntegrationTest
-  setup { sign_in_as(User.take) }
+  setup { sign_in_as(users(:one)) }
 
   test "new renders the form" do
     get new_admin_product_variant_path(products(:published_shirt))

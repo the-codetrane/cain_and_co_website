@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
+  resources :invitations, param: :token, only: %i[edit update]
+  get "no-access" => "no_access#show", as: :no_access
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,7 +12,7 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Admin area — all controllers inherit Admin::BaseController, which requires login.
+  # Admin area — all controllers inherit Admin::BaseController, which requires an admin.
   namespace :admin do
     root "dashboard#index"
     resources :shows, except: :show do
@@ -53,6 +55,8 @@ Rails.application.routes.draw do
       collection { post :sync }
     end
     resource :push_notification, only: %i[new create]
+    resources :users, only: %i[index update]
+    resources :invitations, only: %i[new create destroy]
   end
 
   # Public, fan-facing pages

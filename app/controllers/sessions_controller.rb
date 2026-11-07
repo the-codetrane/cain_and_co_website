@@ -24,8 +24,9 @@ class SessionsController < ApplicationController
   end
 
   private
-    # Only admins log in; default them to the admin dashboard (a deep-linked
-    # return_to still wins via the stored session value).
+    # Only invited accounts log in; default them to the admin dashboard, which shows
+    # a holding page to non-admins (a deep-linked return_to still wins via the stored
+    # session value).
     def after_authentication_url
       session.delete(:return_to_after_authenticating) || admin_root_url
     end

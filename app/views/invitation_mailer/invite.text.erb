@@ -1,0 +1,8 @@
+You've been invited to create an account on the Cain & Co. site.
+
+Accept your invitation by visiting this link:
+
+<%= @accept_url %>
+
+This link expires in <%= distance_of_time_in_words(Invitation::EXPIRES_IN) %>. If you weren't
+expecting this, you can ignore this email and no account will be created.
