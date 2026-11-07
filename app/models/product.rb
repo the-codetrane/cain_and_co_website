@@ -20,7 +20,7 @@ class Product < ApplicationRecord
       io: upload.tempfile,
       filename: upload.original_filename,
       content_type: upload.content_type,
-      key: "#{IMAGE_FOLDER}/#{ActiveStorage::Blob.generate_unique_secure_token}"
+      key: "#{IMAGE_FOLDER}/#{SecureRandom.base36(ActiveStorage::Blob::MINIMUM_TOKEN_LENGTH)}"
     }
   end
 
