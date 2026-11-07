@@ -1,4 +1,8 @@
 class Product < ApplicationRecord
+  # Folder in the shared Spaces bucket. Objects left in the bucket root get filed
+  # away by hand, and a moved object 404s because its blob still holds the old key.
+  IMAGE_FOLDER = "Product Images"
+
   has_many :variants, -> { ordered }, dependent: :destroy, inverse_of: :product
   has_many_attached :images
 
@@ -9,6 +13,16 @@ class Product < ApplicationRecord
   scope :by_name, -> { order(:name) }
 
   after_commit :broadcast_push_on_publish, on: :update
+
+  # An attachable for `images` that stores the upload inside IMAGE_FOLDER.
+  def self.image_attachable(upload)
+    {
+      io: upload.tempfile,
+      filename: upload.original_filename,
+      content_type: upload.content_type,
+      key: "#{IMAGE_FOLDER}/#{ActiveStorage::Blob.generate_unique_secure_token}"
+    }
+  end
 
   def lowest_price_cents
     variants.minimum(:price_cents)
