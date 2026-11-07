@@ -24,6 +24,9 @@ Rails.application.configure do
   # Store uploaded files on DigitalOcean Spaces (S3-compatible).
   config.active_storage.service = :digitalocean
 
+  # Spaces CDN endpoint for that bucket. Images link here directly (see MediaSource).
+  config.x.media_cdn_host = "ig-mcp-images.sfo3.cdn.digitaloceanspaces.com"
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 

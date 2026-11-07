@@ -49,7 +49,7 @@
              class="flex transition-transform duration-500 ease-in-out will-change-transform">
           <% @photos.each do |photo| %>
             <div data-carousel-target="slide" class="min-w-full">
-              <%= image_tag photo.image_src, class: "w-full aspect-[4/3] object-cover",
+              <%= image_tag media_src(photo.display(:carousel)), class: "w-full aspect-[4/3] object-cover",
                     loading: "lazy", alt: photo.caption.presence || "Cain & Co." %>
             </div>
           <% end %>

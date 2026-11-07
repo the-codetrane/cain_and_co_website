@@ -55,7 +55,7 @@ function requires (Meta only for visitors who opt in).
 |---|---|---|
 | Stripe | Buyer name, email, shipping and card details entered on Stripe Checkout | Payment processing |
 | Mailgun | Subscriber, buyer, and invited-user email addresses, message contents (`config/environments/production.rb:62`) | Transactional email + newsletter delivery |
-| DigitalOcean | Everything at rest — SQLite volume + Spaces object storage (`config/storage.yml`) | Hosting and image storage |
+| DigitalOcean | Everything at rest — SQLite volume + Spaces object storage (`config/storage.yml`). Visitors' IP address and user-agent when images load from the Spaces CDN, which runs on Cloudflare and sets a 30-minute `__cf_bm` security cookie on `digitaloceanspaces.com` | Hosting, image storage, and image delivery |
 | Meta | Page views, IP address, user-agent, `_fbp` cookie — **opt-in only** | Advertising measurement (Meta Pixel) |
 
 Bandsintown (show sync) and YouTube (embedded video) are outbound/inbound content only — we send

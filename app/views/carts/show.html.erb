@@ -13,7 +13,7 @@
       <% @cart.cart_items.each do |item| %>
         <div class="flex items-center gap-4 p-4">
           <% if item.variant.product.images.attached? %>
-            <%= image_tag item.variant.product.images.first.variant(resize_to_fill: [80, 80]),
+            <%= image_tag media_src(item.variant.product.images.first.variant(:cart)),
                   class: "h-16 w-16 flex-shrink-0 rounded-lg object-cover",
                   alt: item.variant.product.name %>
           <% else %>

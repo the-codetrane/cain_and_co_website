@@ -3,14 +3,25 @@ class Product < ApplicationRecord
   # away by hand, and a moved object 404s because its blob still holds the old key.
   IMAGE_FOLDER = "Product Images"
 
+  IMAGE_VARIANTS = %i[ card hero thumb cart ].freeze
+
+  # Everything MediaSource reads to link a variant directly, for use in `includes`.
+  IMAGE_PRELOAD = { images_attachments: { blob: { variant_records: { image_attachment: :blob } } } }.freeze
+
   has_many :variants, -> { ordered }, dependent: :destroy, inverse_of: :product
-  has_many_attached :images
+  has_many_attached :images do |attachable|
+    attachable.variant :card, resize_to_fill: [ 400, 400 ], preprocessed: true
+    attachable.variant :hero, resize_to_fill: [ 600, 600 ], preprocessed: true
+    attachable.variant :thumb, resize_to_fill: [ 100, 100 ], preprocessed: true
+    attachable.variant :cart, resize_to_fill: [ 80, 80 ], preprocessed: true
+  end
 
   validates :name, presence: true
 
   scope :published, -> { where(published: true) }
   scope :featured, -> { where(featured: true) }
   scope :by_name, -> { order(:name) }
+  scope :with_image_variants, -> { includes(IMAGE_PRELOAD) }
 
   after_commit :broadcast_push_on_publish, on: :update
 
@@ -25,11 +36,11 @@ class Product < ApplicationRecord
   end
 
   def lowest_price_cents
-    variants.minimum(:price_cents)
+    variants.map(&:price_cents).min
   end
 
   def in_stock?
-    variants.in_stock.exists?
+    variants.any?(&:in_stock?)
   end
 
   # Every size already defined on this product, so the admin picker can show which
