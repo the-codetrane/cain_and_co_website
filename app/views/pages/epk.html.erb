@@ -160,7 +160,7 @@
 <section id="bio" class="scroll-mt-20 border-b border-neutral-800">
   <div class="container mx-auto px-5 py-12 sm:py-16 max-w-5xl">
     <% if (lead_photo = @photos.first) %>
-      <%= image_tag lead_photo.image.variant(resize_to_limit: [ 1600, 1600 ]),
+      <%= image_tag media_src(lead_photo.display(:press_lead)),
             class: "mb-10 w-full aspect-[16/9] object-cover rounded-2xl bg-neutral-900",
             width: 1600, height: 900, loading: "lazy", decoding: "async",
             alt: lead_photo.caption.presence || "Cain & Co. performing live" %>
@@ -335,7 +335,7 @@
           <%= link_to rails_blob_path(photo.image, disposition: "attachment"),
                 class: "group block overflow-hidden rounded-xl bg-neutral-800",
                 aria: { label: "Download #{photo.caption.presence || 'press photo'}" } do %>
-            <%= image_tag photo.image.variant(resize_to_limit: [ 800, 800 ]),
+            <%= image_tag media_src(photo.display(:press_thumb)),
                   class: "w-full aspect-[4/3] object-cover group-hover:opacity-80 transition-opacity",
                   width: 800, height: 600, loading: "lazy", decoding: "async",
                   alt: photo.caption.presence || "Cain & Co. press photo" %>

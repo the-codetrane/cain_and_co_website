@@ -68,6 +68,26 @@ class PhotoTest < ActiveSupport::TestCase
     end
   end
 
+  test "display returns the named variant for a resizable image" do
+    photo = attached_photo(position: 97)
+    photo.save!
+    assert_instance_of ActiveStorage::VariantWithRecord, photo.display(:carousel)
+  end
+
+  test "the carousel variant is a webp" do
+    photo = attached_photo(position: 96)
+    photo.save!
+    variant = photo.display(:carousel).processed
+    assert_equal "image/webp", variant.image.content_type
+  end
+
+  test "display falls back to the original for a format that can't be resized" do
+    photo = attached_photo(position: 95)
+    photo.save!
+    photo.image.blob.update!(content_type: "application/pdf")
+    assert_equal photo.image, photo.display(:carousel)
+  end
+
   # ── Scopes ───────────────────────────────────────────────────────────────
 
   test "published scope excludes unpublished photos" do

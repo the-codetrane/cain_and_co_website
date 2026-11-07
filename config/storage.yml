@@ -14,3 +14,7 @@ digitalocean:
   region: sfo3
   bucket: ig-mcp-images
   public: true
+  # A blob's key never changes hands (a replaced image gets a new key), so stored files
+  # are safe to cache forever. Overwriting a file by hand needs a CDN purge.
+  upload:
+    cache_control: "public, max-age=31536000, immutable"

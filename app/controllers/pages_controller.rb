@@ -20,7 +20,7 @@ class PagesController < ApplicationController
   ].freeze
 
   def about
-    @photos = Photo.published.with_attached_image
+    @photos = Photo.published.with_image_variants
     @videos = Video.visible
     @reviews = REVIEWS
   end
@@ -39,7 +39,7 @@ class PagesController < ApplicationController
     # Every flagged press photo is shown — the limit only caps the fallback.
     @videos = Video.epk.limit(EPK_VIDEO_LIMIT).presence ||
               Video.visible.where(short: false).limit(EPK_VIDEO_LIMIT)
-    photos = Photo.joins(:image_attachment).with_attached_image
+    photos = Photo.joins(:image_attachment).with_image_variants
     @photos = photos.epk.presence ||
               photos.published.limit(EPK_PHOTO_LIMIT)
 
@@ -62,7 +62,7 @@ class PagesController < ApplicationController
 
   # Legal pages. LAST_UPDATED is rendered on both and should be bumped whenever
   # the policy text changes.
-  LAST_UPDATED = Date.new(2026, 11, 6)
+  LAST_UPDATED = Date.new(2026, 11, 7)
 
   def privacy
     @last_updated = LAST_UPDATED

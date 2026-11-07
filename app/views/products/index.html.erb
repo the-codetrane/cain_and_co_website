@@ -5,13 +5,15 @@
   <h1 class="text-4xl font-black tracking-tight">Merch</h1>
 
   <% if @products.any? %>
+    <% cache @grid_cache_key do %>
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <% @products.each do |product| %>
         <%= link_to product_path(product), class: "group block rounded-2xl border border-neutral-800 bg-neutral-900 overflow-hidden hover:border-neutral-600 transition-colors" do %>
           <% if product.images.attached? %>
             <div class="aspect-square bg-neutral-800 overflow-hidden">
-              <%= image_tag product.images.first.variant(resize_to_fill: [400, 400]),
+              <%= image_tag media_src(product.images.first.variant(:card)),
                     class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300",
+                    loading: "lazy",
                     alt: product.name %>
             </div>
           <% else %>
@@ -38,6 +40,7 @@
         <% end %>
       <% end %>
     </div>
+    <% end %>
   <% else %>
     <div class="mt-16 text-center">
       <p class="text-lg text-neutral-400">No products available yet. Check back soon.</p>

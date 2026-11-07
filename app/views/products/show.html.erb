@@ -11,14 +11,14 @@
     <div>
       <% if @product.images.attached? %>
         <div class="aspect-square rounded-2xl overflow-hidden bg-neutral-900">
-          <%= image_tag @product.images.first.variant(resize_to_fill: [600, 600]),
+          <%= image_tag media_src(@product.images.first.variant(:hero)),
                 class: "w-full h-full object-cover",
                 alt: @product.name %>
         </div>
-        <% if @product.images.count > 1 %>
+        <% if @product.images.size > 1 %>
           <div class="mt-3 flex gap-3 overflow-x-auto">
             <% @product.images.each do |image| %>
-              <%= image_tag image.variant(resize_to_fill: [100, 100]),
+              <%= image_tag media_src(image.variant(:thumb)),
                     class: "h-20 w-20 flex-shrink-0 rounded-lg object-cover border border-neutral-700",
                     alt: @product.name %>
             <% end %>
