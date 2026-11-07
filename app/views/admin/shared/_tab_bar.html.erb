@@ -1,0 +1,43 @@
+<%# Bottom tab bar below md. More opens a sheet with the remaining sections and the
+    account actions, which the phone header has no room for. Closed before Turbo caches
+    the page, so going back doesn't reopen it. %>
+<% tab_class = "flex h-16 flex-col items-center justify-center gap-0.5 text-[11px] font-medium" %>
+<% more_current = admin_more_sections.any? { |section| admin_section_current?(section) } %>
+<nav aria-label="Admin sections" class="md:hidden" data-controller="mobile-menu"
+     data-action="turbo:before-cache@document->mobile-menu#close keydown.esc@window->mobile-menu#close">
+  <div id="admin_more_menu" class="fixed inset-0 z-40 hidden" data-mobile-menu-target="menu">
+    <button type="button" class="absolute inset-0 size-full bg-neutral-900/40" aria-label="Close menu"
+            data-action="mobile-menu#close"></button>
+    <div class="absolute inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white p-2">
+      <% admin_more_sections.each do |section| %>
+        <% current = admin_section_current?(section) %>
+        <%= link_to section[:label], admin_section_path(section), "aria-current": ("page" if current),
+              class: "flex min-h-12 items-center rounded-lg px-4 font-medium #{current ? 'bg-neutral-100 text-neutral-900' : 'text-neutral-700'}" %>
+      <% end %>
+      <div class="mt-2 border-t border-neutral-200 pt-2">
+        <%= link_to "View site", root_path, target: "_blank", rel: "noopener",
+              class: "flex min-h-12 items-center rounded-lg px-4 font-medium text-neutral-700" %>
+        <p class="truncate px-4 pt-2 text-xs text-neutral-500"><%= Current.user.email_address %></p>
+        <%= button_to "Sign out", session_path, method: :delete,
+              class: "flex min-h-12 w-full items-center rounded-lg px-4 font-medium text-red-600" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-neutral-300 bg-white pb-[env(safe-area-inset-bottom)]">
+    <% admin_tab_sections.each do |section| %>
+      <% current = admin_section_current?(section) %>
+      <%= link_to admin_section_path(section), "aria-current": ("page" if current),
+            class: "#{tab_class} #{current ? 'text-neutral-900' : 'text-neutral-500'}" do %>
+        <%= admin_nav_icon(section[:icon]) %>
+        <%= section[:tab] %>
+      <% end %>
+    <% end %>
+    <button type="button" class="<%= tab_class %> <%= more_current ? 'text-neutral-900' : 'text-neutral-500' %>"
+            aria-expanded="false" aria-controls="admin_more_menu"
+            data-mobile-menu-target="button" data-action="mobile-menu#toggle">
+      <%= admin_nav_icon(:more) %>
+      More
+    </button>
+  </div>
+</nav>

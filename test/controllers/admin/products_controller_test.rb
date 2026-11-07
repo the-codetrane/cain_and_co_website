@@ -3,6 +3,13 @@ require "test_helper"
 class Admin::ProductsControllerTest < ActionDispatch::IntegrationTest
   setup { sign_in_as(users(:one)) }
 
+  test "nav marks the section that owns the current page" do
+    product = products(:published_shirt)
+    get edit_admin_product_variant_path(product, variants(:shirt_small))
+    assert_select "nav a[aria-current=page]", text: "Products"
+    assert_select "nav a[aria-current=page]", text: "Orders", count: 0
+  end
+
   test "index requires authentication" do
     reset!
     get admin_products_path

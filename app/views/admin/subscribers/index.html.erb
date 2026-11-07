@@ -2,7 +2,7 @@
 
 <div class="flex flex-wrap items-center justify-between gap-3">
   <h1 class="text-2xl font-bold tracking-tight">Email list</h1>
-  <div class="flex items-center gap-3">
+  <div class="flex flex-wrap items-center gap-3">
     <%= link_to "Export CSV", admin_subscribers_path(format: :csv, q: @query.presence),
           class: "rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold hover:bg-neutral-50" %>
     <%= link_to "Import CSV", import_admin_subscribers_path,
@@ -40,7 +40,7 @@
   <% if @subscribers.any? %>
     <% @subscribers.each do |subscriber| %>
       <div class="flex flex-wrap items-center gap-3 px-4 py-3">
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0 basis-full md:flex-1 md:basis-0">
           <p class="font-medium truncate"><%= subscriber.email %></p>
           <p class="text-xs text-neutral-500">
             joined <%= subscriber.created_at.to_date.to_fs(:long) %>

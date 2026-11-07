@@ -3,7 +3,7 @@
 <div class="flex flex-wrap items-center justify-between gap-3">
   <div>
     <h1 class="text-2xl font-bold tracking-tight">Photo Order</h1>
-    <p class="mt-1 text-sm text-neutral-500">Drag photos to set the display order on the About page.</p>
+    <p class="mt-1 text-sm text-neutral-500"><span class="md:hidden">Press and hold a photo, then drag</span><span class="hidden md:inline">Drag photos</span> to set the display order on the About page.</p>
   </div>
   <%= link_to "← All photos", admin_photos_path,
         class: "rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50" %>
@@ -26,7 +26,7 @@
         <div class="absolute top-1.5 left-1.5">
           <span class="rounded bg-neutral-900/70 px-1.5 py-0.5 text-[10px] font-semibold text-white">#<%= photo.position %></span>
         </div>
-        <div class="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div class="absolute top-1.5 right-1.5 transition-opacity md:opacity-0 md:group-hover:opacity-100">
           <span class="rounded bg-neutral-900/70 px-1.5 py-0.5 text-[10px] text-white select-none">⠿</span>
         </div>
         <% if photo.caption.present? %>

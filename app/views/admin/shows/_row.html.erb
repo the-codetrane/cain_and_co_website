@@ -2,42 +2,51 @@
     replace by dom id) after an inline save or featured toggle, so the rest of the
     page — and anything typed into other rows — is left alone. %>
 <div id="<%= dom_id(show) %>" class="flex flex-wrap items-center gap-3 px-4 py-3">
-  <div class="w-28 shrink-0 text-sm text-neutral-500">
+  <div class="w-full shrink-0 text-sm text-neutral-500 md:w-28">
     <%= show.starts_at.strftime("%b %-d, %Y") %>
   </div>
-  <div class="flex-1 min-w-0">
-    <p class="font-medium truncate">
+  <div class="min-w-0 basis-full md:flex-1 md:basis-0">
+    <p class="font-medium md:truncate">
       <%= show.title %>
       <% if show.canceled? %>
         <span class="ml-1 rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-700">Canceled</span>
       <% end %>
     </p>
-    <p class="text-sm text-neutral-500 truncate">
+    <p class="text-sm text-neutral-500 md:truncate">
       <%= show.venue %><% if show.venue && show.location.present? %> · <% end %><%= show.location %>
       <span class="ml-1 text-xs text-neutral-400">(<%= show.source %>)</span>
     </p>
   </div>
-  <div class="flex shrink-0 items-center gap-2">
+  <div class="flex w-full flex-wrap items-end gap-2 md:w-auto md:shrink-0 md:flex-nowrap md:items-center">
     <%= form_with model: show, url: annotate_admin_show_path(show), method: :patch,
-          class: "flex items-center gap-1" do |f| %>
-      <%= f.text_field :venue_override, placeholder: "Venue",
-            "aria-label": "Venue for #{show.title}",
-            class: "w-36 rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none" %>
+          class: "flex w-full flex-wrap items-end gap-2 md:w-auto md:flex-nowrap md:items-center md:gap-1" do |f| %>
+      <label class="w-full md:w-auto">
+        <span class="mb-1 block text-xs text-neutral-500 md:hidden">Venue</span>
+        <%= f.text_field :venue_override, placeholder: "Venue",
+              "aria-label": "Venue for #{show.title}",
+              class: "w-full rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none md:w-36" %>
+      </label>
       <% if show.starts_at.past? && !show.canceled? %>
-        <%= f.number_field :attendance, min: 0, placeholder: "Count",
-              "aria-label": "Attendance for #{show.title}",
-              class: "w-20 rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none" %>
-        <%= f.number_field :ticket_sales, min: 0, step: 1, placeholder: "$ sales",
-              "aria-label": "Ticket sales in dollars for #{show.title}",
-              class: "w-24 rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none" %>
+        <label class="min-w-0 flex-1 md:flex-none">
+          <span class="mb-1 block text-xs text-neutral-500 md:hidden">Attendance</span>
+          <%= f.number_field :attendance, min: 0, inputmode: "numeric", placeholder: "Count",
+                "aria-label": "Attendance for #{show.title}",
+                class: "w-full rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none md:w-20" %>
+        </label>
+        <label class="min-w-0 flex-1 md:flex-none">
+          <span class="mb-1 block text-xs text-neutral-500 md:hidden">Ticket sales ($)</span>
+          <%= f.number_field :ticket_sales, min: 0, step: 1, inputmode: "numeric", placeholder: "$ sales",
+                "aria-label": "Ticket sales in dollars for #{show.title}",
+                class: "w-full rounded-md border border-neutral-300 px-2 py-1 text-xs focus:border-neutral-900 focus:outline-none md:w-24" %>
+        </label>
       <% end %>
-      <%= f.submit "Save", class: "rounded-md border border-neutral-300 px-2 py-1 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 cursor-pointer" %>
+      <%= f.submit "Save", class: "w-full rounded-md border border-neutral-300 px-2 py-1 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 cursor-pointer md:w-auto" %>
     <% end %>
     <%= button_to (show.featured? ? "★ Featured" : "☆ Feature"),
           toggle_featured_admin_show_path(show), method: :patch,
           class: "rounded-md px-2.5 py-1 text-xs font-semibold #{show.featured? ? 'bg-amber-100 text-amber-800' : 'border border-neutral-300 text-neutral-600 hover:bg-neutral-50'}" %>
     <% if show.source == "manual" %>
-      <%= link_to "Edit", edit_admin_show_path(show), class: "rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-semibold text-neutral-600 hover:bg-neutral-50" %>
+      <%= link_to "Edit", edit_admin_show_path(show), class: "rounded-md border border-neutral-300 px-3 py-1 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 md:px-2.5" %>
       <%= button_to "Delete", admin_show_path(show), method: :delete,
             form: { data: { turbo_confirm: "Delete this show?" } },
             class: "rounded-md border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50" %>

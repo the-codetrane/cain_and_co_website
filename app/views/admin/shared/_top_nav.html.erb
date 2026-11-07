@@ -1,0 +1,10 @@
+<%# Section links for md and up. Phones get admin/shared/tab_bar instead. %>
+<nav aria-label="Admin sections" class="hidden border-t border-neutral-200 md:block">
+  <div class="mx-auto flex max-w-5xl flex-wrap gap-1 px-5 py-2">
+    <% AdminNavHelper::ADMIN_SECTIONS.each do |section| %>
+      <% current = admin_section_current?(section) %>
+      <%= link_to section[:label], admin_section_path(section), "aria-current": ("page" if current),
+            class: "rounded-md px-3 py-1.5 text-sm font-medium transition-colors #{current ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}" %>
+    <% end %>
+  </div>
+</nav>

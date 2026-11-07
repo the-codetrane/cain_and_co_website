@@ -1,1 +1,35 @@
 @import "tailwindcss";
+
+/* Admin on phones. Below md: 44px touch targets, and 16px form fields because iOS Safari
+   zooms the page when a smaller field takes focus. Unlayered so these beat the text-sm
+   and padding utilities repeated across the admin views. */
+@media (width < 48rem) {
+  .admin-shell :is(input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]), select, textarea, trix-editor) {
+    font-size: 1rem;
+  }
+
+  .admin-shell main :is(button, select, input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"])) {
+    min-height: 2.75rem;
+  }
+
+  .admin-shell main label:has(> input[type="checkbox"]) {
+    min-height: 2.75rem;
+  }
+
+  .admin-shell main a[class*="rounded-md"]:not(.hidden) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+  }
+}
+
+/* The same 44px target for admin links styled as plain text, which the rule above can't
+   tell apart from a link inside a sentence. */
+@utility admin-tap {
+  @media (width < 48rem) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+}

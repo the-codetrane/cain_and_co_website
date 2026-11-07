@@ -3,9 +3,9 @@
 <h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
 <p class="mt-2 text-neutral-500">Welcome back. Manage the site from here.</p>
 
-<div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+<div class="mt-6 grid gap-3 sm:grid-cols-2 md:mt-8 md:gap-4 lg:grid-cols-3">
   <%# Live admin sections %>
-  <%= link_to admin_shows_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_shows_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Shows</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -13,7 +13,7 @@
     <p class="mt-2 text-sm text-neutral-500">Sync &amp; feature tour dates</p>
   <% end %>
 
-  <%= link_to admin_subscribers_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_subscribers_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Email list</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -21,7 +21,7 @@
     <p class="mt-2 text-sm text-neutral-500">Subscribers &amp; CSV export</p>
   <% end %>
 
-  <%= link_to admin_newsletters_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_newsletters_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Newsletter</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -29,7 +29,7 @@
     <p class="mt-2 text-sm text-neutral-500">Compose, AI drafts &amp; send to subscribers</p>
   <% end %>
 
-  <%= link_to admin_products_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_products_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Products</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -37,7 +37,7 @@
     <p class="mt-2 text-sm text-neutral-500">Merch catalog &amp; variants</p>
   <% end %>
 
-  <%= link_to admin_orders_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_orders_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Orders</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -45,7 +45,7 @@
     <p class="mt-2 text-sm text-neutral-500">Fulfillment queue &amp; order history</p>
   <% end %>
 
-  <%= link_to admin_photos_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_photos_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Photos</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -53,7 +53,7 @@
     <p class="mt-2 text-sm text-neutral-500">Band photo gallery on the About page</p>
   <% end %>
 
-  <%= link_to admin_videos_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_videos_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Videos</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -61,7 +61,7 @@
     <p class="mt-2 text-sm text-neutral-500">YouTube videos synced from @cainandcoband</p>
   <% end %>
 
-  <%= link_to new_admin_push_notification_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to new_admin_push_notification_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Notifications</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>
@@ -71,7 +71,7 @@
     </p>
   <% end %>
 
-  <%= link_to admin_users_path, class: "block rounded-xl border border-neutral-200 bg-white p-6 hover:border-neutral-400" do %>
+  <%= link_to admin_users_path, class: "block rounded-xl border border-neutral-200 bg-white p-4 hover:border-neutral-400 md:p-6" do %>
     <div class="flex items-center justify-between">
       <h2 class="font-semibold">Users</h2>
       <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">Live</span>

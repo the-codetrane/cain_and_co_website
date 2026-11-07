@@ -7,6 +7,12 @@ export default class extends Controller {
   connect() {
     this.sortable = Sortable.create(this.element, {
       animation: 150,
+      // On touch a drag needs a press first, so a swipe across the grid still scrolls.
+      delay: 200,
+      delayOnTouchOnly: true,
+      // In pointer mode the cancel from that scroll goes unnoticed and leaves Sortable
+      // mid-drag, so it ignores the next press. Touch events always reach its cleanup.
+      supportPointer: false,
       ghostClass: "opacity-30",
       chosenClass: "opacity-75",
       dragClass: "shadow-xl",

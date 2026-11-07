@@ -22,20 +22,20 @@
         <%= f.label :price_cents, "Price (in cents)", class: label %>
         <div class="relative">
           <span class="absolute inset-y-0 left-3 flex items-center text-neutral-400 text-sm">¢</span>
-          <%= f.number_field :price_cents, class: "#{field} pl-7", min: 0, required: true,
+          <%= f.number_field :price_cents, inputmode: "numeric", class: "#{field} pl-7", min: 0, required: true,
                 placeholder: "2500 = $25.00" %>
         </div>
         <p class="mt-1 text-xs text-neutral-400">Enter price in cents, e.g. 2500 for $25.00</p>
       </div>
       <div>
         <%= f.label :stock_quantity, "Stock quantity", class: label %>
-        <%= f.number_field :stock_quantity, class: field, min: 0, required: true %>
+        <%= f.number_field :stock_quantity, inputmode: "numeric", class: field, min: 0, required: true %>
       </div>
     </div>
 
     <div>
       <%= f.label :weight_oz, "Shipping weight (oz)", class: label %>
-      <%= f.number_field :weight_oz, class: field, min: 0 %>
+      <%= f.number_field :weight_oz, inputmode: "numeric", class: field, min: 0 %>
       <p class="mt-1 text-xs text-neutral-400">
         Shipping is priced from the total weight of the cart. Leave at 0 to assume
         <%= Variant::DEFAULT_WEIGHT_OZ %> oz — roughly a tee. A vinyl LP is about 16 oz.
@@ -49,7 +49,7 @@
       </div>
       <div>
         <%= f.label :position, "Sort order (optional)", class: label %>
-        <%= f.number_field :position, class: field, min: 0 %>
+        <%= f.number_field :position, inputmode: "numeric", class: field, min: 0 %>
         <p class="mt-1 text-xs text-neutral-400">
           Leave at 0 to place automatically — recognised sizes
           (<%= Variant::SIZES.join(", ") %>) sort in that order, anything else goes last.
@@ -60,6 +60,6 @@
 
   <div class="mt-6 flex items-center gap-3">
     <%= f.submit class: "rounded-md bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-700" %>
-    <%= link_to "Cancel", admin_product_path(product), class: "text-sm text-neutral-500 hover:text-neutral-900" %>
+    <%= link_to "Cancel", admin_product_path(product), class: "admin-tap text-sm text-neutral-500 hover:text-neutral-900" %>
   </div>
 <% end %>
